@@ -13,6 +13,7 @@ import { Worker } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
+import { downLoadExcel } from "jsxtabletoexcel"
 
 function ProgrammeMINHDU(){
 
@@ -243,7 +244,7 @@ function ProgrammeMINHDU(){
                 if(resData.type==="succes"){
                     window.setTimeout(()=>{
                         navigate("/programmes")
-                    },3000)
+                    },2000)
                 }
             }
         }catch(e){
@@ -294,6 +295,11 @@ function ProgrammeMINHDU(){
 
     }
 
+    const exportExcel=(fileName)=>{
+        
+        downLoadExcel(document.querySelector(".table"),"feuille 1",fileName)
+    }
+
     if(loader){
         return(
             <Loader/>
@@ -304,12 +310,24 @@ function ProgrammeMINHDU(){
         <div className="container pb-10" >
             <Notification ref={notification} />
 
-            <div className="box b-search">
-                <SearchBar/>
+            <div className="flex">
+                <div className="retour-container">
+                    <button className="retour-btn" onClick={()=>navigate(-1)}>
+                        <i className="fa-solid fa-arrow-left"></i>
+                         Retour
+                    </button>
+                </div>
+                <div className="box b-search">
+                    <SearchBar/>
+                </div>
             </div>
+            
             <div className="box">
                 <div id="pg-title" className={statut.includes(programme.statut)?"":"mb-25"}>
                     <h1>{programme.intitule}</h1>
+                    <button className="download-btn" onClick={()=>exportExcel(programme.intitule)}>
+                        <i className="fa-solid fa-down-long"></i>
+                    </button>
                 </div>
                 {statut.includes(programme.statut) &&(
 

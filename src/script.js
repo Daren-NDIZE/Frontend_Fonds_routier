@@ -209,6 +209,19 @@ projet.forEach(i =>{
 return total
 }
 
+export function totalPayement(payement, attribut){
+
+	let total=0;
+	if(payement.length>0){
+
+		payement.forEach(i=>{
+			total=total + i[attribut]
+		})
+	}
+
+	return total
+}
+
 export function decode(token){
 
 try{
@@ -224,8 +237,10 @@ export function parseTable(motif){
 
 	let table=[]
 
-	if(motif.length>0){
-		table=motif.split(';')
+	let motifs=motif ||""
+	
+	if(motifs.length>0){
+		table=motifs.split(';')
 		table.pop()
 	}
 

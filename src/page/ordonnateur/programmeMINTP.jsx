@@ -1,7 +1,5 @@
 import ModalBox from "../../component/modalBox";
 import SearchBar from "../../component/searchBar";
-import "table2excel"
-
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Fetch, fetchGet } from "../../config/FetchRequest";
@@ -10,6 +8,7 @@ import Notification from "../../component/notification";
 import PageLoader from "../../component/pageLoader";
 import FormMINTP from "../../component/formMINTP.";
 import { numStr, totalBudget } from "../../script";
+import { downLoadExcel } from "jsxtabletoexcel";
 
 function ProgrammeMINTP (){
 
@@ -216,7 +215,7 @@ function ProgrammeMINTP (){
                 if(resData.type==="succes"){
                     window.setTimeout(()=>{
                         navigate("/programmes")
-                    },3000)
+                    },2000)
                 }
             }
         }catch(e){
@@ -304,6 +303,11 @@ function ProgrammeMINTP (){
         modal.current.setModal(true)
     }
 
+    const exportExcel=(fileName)=>{
+        
+        downLoadExcel(document.querySelector(".table"),"feuille 1",fileName)
+    }
+
 
     if(loader){
         return(
@@ -315,12 +319,24 @@ function ProgrammeMINTP (){
         <div className="container pb-10" >
             <Notification ref={notification} />
 
-            <div className="box b-search">
-                <SearchBar/>
+            <div className="flex">
+                <div className="retour-container">
+                    <button className="retour-btn" onClick={()=>navigate(-1)}>
+                        <i className="fa-solid fa-arrow-left"></i>
+                         Retour
+                    </button>
+                </div>
+                <div className="box b-search">
+                    <SearchBar/>
+                </div>
             </div>
+
             <div className="box">
                 <div id="pg-title">
                     <h1>{programme.intitule}</h1>
+                    <button className="download-btn" onClick={()=>exportExcel(programme.intitule)} >
+                        <i className="fa-solid fa-down-long"></i>
+                    </button>
                 </div>
                 <div className="top-element">
                     <div>
@@ -442,6 +458,7 @@ function ProgrammeMINTP (){
                     </div>            
                 </form>
             </ModalBox>
+            
             <ModalBox ref={modal2}>
                 <div className="pg-modal">
                     <p>Voulez vous vraiment supprimer ce projet?</p>

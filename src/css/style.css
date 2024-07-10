@@ -385,17 +385,24 @@ table,tr,th,td{
 }
 
 .table tr{
-    height: 42px;
+    height: 35px;
 }
 .table td,.table th{
     text-align: left;
 }
 .table td, .table th{
-    padding: 8px 10px;
+    padding: 6px 10px;
 }
 tbody tr:nth-child(2n+1){
     background: #f5f6fc;
 }
+tr.height-line{
+    height: min-content;
+}
+.height-line th{
+    padding: 3px 10px;
+}
+
 .t-action{
     display: flex;
     gap: 10px;
@@ -474,6 +481,12 @@ tbody tr:nth-child(2n+1){
 .min-w1{
     min-width: 400px;
 }
+.min-w1{
+    min-width: 400px;
+}
+.min-w12{
+    min-width: 320px;
+}
 .min-w2{
     min-width: 210px;
 }
@@ -487,7 +500,19 @@ tbody tr:nth-child(2n+1){
     padding-bottom: 10px;
 }
 .mb-25{
-    margin-bottom: 25px;
+    margin-bottom: 20px;
+}
+.flex{
+    display: flex;
+}
+.bold{
+    font-weight: bold;
+}
+.text-center{
+    text-align: center;
+}
+table .text-center{
+    text-align: center;
 }
 .suivi-pg{
     display: flex;
@@ -736,8 +761,28 @@ form .load-button{
     padding: 28px;
     padding-bottom: 5px;
 }
+#pg-title{
+    display: flex;
+}
 #pg-title > h1{
     padding: 0;
+    flex-grow: 1;
+}
+.download-btn{
+    padding: 3px 8px;
+    font-size: 11px;
+    border-radius: 3px;
+    font-weight: bold;
+    background: #e6e6e6;
+    border: solid 1px rgb(167, 167, 167);
+    color: #4a92ff;
+    margin-right: 10px;
+    height: min-content;
+}
+
+.suivi-pg .download-btn{
+    margin: auto;
+    margin-right: 20px;
 }
 .pg-hidden{
     position: absolute;
@@ -1018,7 +1063,7 @@ li.active{
     height: 100vh;
     border-radius: 0;
     width: 800px;
-    padding-bottom: 10px;
+    padding: 10px 40px;
 }
 .deco{
     color: #06b800;

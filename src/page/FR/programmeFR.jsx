@@ -7,6 +7,7 @@ import PageLoader from "../../component/pageLoader"
 import { useNavigate, useParams } from "react-router-dom"
 import { fetchFormData, fetchGet} from "../../config/FetchRequest"
 import { numStr, totalBudget } from "../../script"
+import { downLoadExcel } from "jsxtabletoexcel"
 
 function ProgrammeFR(){
 
@@ -134,6 +135,11 @@ function ProgrammeFR(){
         })
         li.classList.add("active")
     }
+
+    const exportExcel=(fileName)=>{
+        
+        downLoadExcel(document.querySelector(".table"),"feuille 1",fileName)
+    }
     
 
     if(loader){
@@ -146,14 +152,26 @@ function ProgrammeFR(){
         <div className="container pb-10" >
             <Notification ref={notification} />
 
-            <div className="box b-search">
-                <SearchBar/>
+            <div className="flex">
+                <div className="retour-container">
+                    <button className="retour-btn" onClick={()=>navigate(-1)}>
+                        <i className="fa-solid fa-arrow-left"></i>
+                         Retour
+                    </button>
+                </div>
+                <div className="box b-search">
+                    <SearchBar/>
+                </div>
             </div>
+            
             <div className="box">
                 <div id="pg-title" className="suivi-pg"  style={programme.ordonnateur==="MINTP"?{paddingBottom:"0px"}:{}}>
                     <div>
                         <h1>{programme.intitule}</h1>
                     </div>
+                    <button className="download-btn" onClick={()=>exportExcel(programme.intitule)}>
+                        <i className="fa-solid fa-down-long"></i>
+                    </button>
                     {programme.statut==="SOUMIS" &&(
                     <div className="n-projet">
                         <button onClick={open} >Decision</button>
@@ -313,17 +331,17 @@ const TableMINHDU=({data,annee})=>{
                         <th>N°</th>
                         <th>Région</th>
                         <th>Ville</th>
-                        <th>Type_de_travaux</th>
-                        <th>Troçons</th>
+                        <th className="min-w1">Type de travaux</th>
+                        <th className="min-w1">Troçons</th>
                         <th>Linéaire_(ml)</th>
                         <th>Cout_total_du_projet_TTC</th>
-                        <th>Budget_antérieur</th>
-                        <th>{`Budget_${annee}`}</th>
-                        <th>{`Projection_${annee+1}`}</th>
-                        <th>{`Projection_${annee+2}`}</th>
-                        <th>Prestataire</th>
+                        <th className="min-w4">Budget antérieur</th>
+                        <th className="min-w4">{`Budget ${annee}`}</th>
+                        <th className="min-w4">{`Projection ${annee+1}`}</th>
+                        <th className="min-w4">{`Projection ${annee+2}`}</th>
+                        <th className="min-w3">Prestataire</th>
                         <th>Ordonnateurs</th>
-                        <th>Observations</th>
+                        <th className="min-w1">Observations</th>
                         
                     </tr>
                 </thead>
@@ -333,17 +351,17 @@ const TableMINHDU=({data,annee})=>{
                             <td>{j+1}</td>
                             <td>{i.region}</td>
                             <td >{i.ville}</td>
-                            <td className="min-w1">{i.type_travaux}</td>
-                            <td className="min-w1">{i.troçon}</td>
+                            <td>{i.type_travaux}</td>
+                            <td>{i.troçon}</td>
                             <td>{numStr(i.lineaire,"")}</td>
                             <td>{numStr(i.ttc,"")}</td>
-                            <td className="min-w4">{numStr(i.budget_anterieur,"")}</td>
-                            <td className="min-w4">{numStr(i.budget_n, " ") }</td>
-                            <td className="min-w4">{numStr(i.budget_n1,"")}</td>
-                            <td className="min-w4">{numStr(i.budget_n2,"")}</td>
-                            <td className="min-w3">{i.prestataire}</td>
+                            <td>{numStr(i.budget_anterieur,"")}</td>
+                            <td>{numStr(i.budget_n, " ") }</td>
+                            <td>{numStr(i.budget_n1,"")}</td>
+                            <td>{numStr(i.budget_n2,"")}</td>
+                            <td>{i.prestataire}</td>
                             <td>{i.ordonnateur}</td>
-                            <td className="min-w1">{i.observation}</td>
+                            <td>{i.observation}</td>
                             
                         </tr>
                     )
@@ -364,17 +382,17 @@ const TableMINT=({data,annee})=>{
                     <tr>
                         <th>N°_de_lot</th>
                         <th>Region</th>
-                        <th>Mission</th>
-                        <th>Objectifs</th>
-                        <th>Allotissement</th>
+                        <th className="min-w1">Mission</th>
+                        <th className="min-w1">Objectifs</th>
+                        <th className="min-w12">Allotissement</th>
                         <th>Cout_total_du_projet_TTC</th>
-                        <th>Budget_antérieur</th>
-                        <th>{`Budget_${annee}`}</th>
-                        <th>{`Projection_${annee+1}`}</th>
-                        <th>{`Projection_${annee+2}`}</th>
-                        <th>Prestataire</th>
+                        <th className="min-w4">Budget antérieur</th>
+                        <th className="min-w4">{`Budget ${annee}`}</th>
+                        <th className="min-w4">{`Projection ${annee+1}`}</th>
+                        <th className="min-w4">{`Projection ${annee+2}`}</th>
+                        <th className="min-w3">Prestataire</th>
                         <th>Ordonnateurs</th>
-                        <th>Observations</th> 
+                        <th className="min-w1">Observations</th> 
                     </tr>
                 </thead>
                 <tbody> 
@@ -382,20 +400,19 @@ const TableMINT=({data,annee})=>{
                         <tr key={j}>
                             <td>{j+1}</td>
                             <td>{i.region}</td>
-                            <td className="min-w1">{i.mission}</td>
-                            <td className="min-w1">{i.objectif}</td>
+                            <td>{i.mission}</td>
+                            <td>{i.objectif}</td>
                             <td>{i.allotissement}</td>
                             <td>{numStr(i.ttc,"")}</td>
-                            <td className="min-w4">{numStr(i.budget_anterieur,"")}</td>
-                            <td className="min-w4">{numStr(i.budget_n, " ") }</td>
-                            <td className="min-w4">{numStr(i.budget_n1,"")}</td>
-                            <td className="min-w4">{numStr(i.budget_n2,"")}</td>
-                            <td className="min-w3">{i.prestataire}</td>
+                            <td>{numStr(i.budget_anterieur,"")}</td>
+                            <td>{numStr(i.budget_n, " ") }</td>
+                            <td>{numStr(i.budget_n1,"")}</td>
+                            <td>{numStr(i.budget_n2,"")}</td>
+                            <td>{i.prestataire}</td>
                             <td>{i.ordonnateur}</td>
-                            <td className="min-w1">{i.observation}</td>
+                            <td>{i.observation}</td>
                         </tr>
-                    )
-                    }
+                    )}
                     
                 </tbody>
             </table>
@@ -415,66 +432,51 @@ const TableMINTP=({data,categorie,annee})=>{
                     <th>Région</th>
                     {categorie==="COMMUNE" &&(
                     <>
-                        <th>Département</th>
-                        <th>Commune</th>
+                        <th className="min-w3">Département</th>
+                        <th className="min-w3">Commune</th>
                     </>
                     )}
-                    <th>Catégorie</th>
-                    <th>Projets/troçons</th>
+                    <th className="min-w2">Catégorie</th>
+                    <th className="min-w1">Projets/troçons</th>
                     <th>Code route</th>
                     <th>Linéaire_route (km)</th>
                     <th>Linéaire_OA (ml)</th>
                     <th>Montant_TTC_projet</th>
-                    <th>Budget_antérieur</th>
-                    <th>Budget_{annee}</th>
-                    <th>Projection_{annee+1}</th>
-                    <th>Projection_{annee+2}</th>
-                    <th>Pretataire</th>
-                    <th>Observations</th>
+                    <th className="min-w4">Budget antérieur</th>
+                    <th className="min-w4">Budget {annee}</th>
+                    <th className="min-w4">Projection {annee+1}</th>
+                    <th className="min-w4">Projection {annee+2}</th>
+                    <th className="min-w3">Pretataire</th>
+                    <th className="min-w1">Observations</th>
                 </tr>
             </thead>
             <tbody>
-            {categorie==="CENTRALE"?
+            {
                 data.map((i,j)=>
                 <tr key={j}>
                     <td>{j+1}</td>
                     <td>{i.region}</td>
-                    <td className="min-w2">{i.categorie}</td>
-                    <td className="min-w1">{i.projet}</td>
+                    {categorie==="COMMUNE" &&(
+                    <>
+                        <td>{i.departement}</td>
+                        <td>{i.commune}</td>
+                    </>
+                    )}
+                    <td>{i.categorie}</td>
+                    <td>{i.projet}</td>
                     <td>{i.code_route}</td>
                     <td>{numStr(i.lineaire_route)}</td>
                     <td>{numStr(i.lineaire_oa)}</td>
                     <td>{numStr(i.ttc)}</td>
-                    <td className="min-w4">{numStr(i.budget_anterieur)}</td>
-                    <td className="min-w4">{numStr(i.budget_n) }</td>
-                    <td className="min-w4">{numStr(i.budget_n1)}</td>
-                    <td className="min-w4">{numStr(i.budget_n2)}</td>
-                    <td className="min-w3">{i.prestataire}</td>
-                    <td className="min-w1">{i.observation}</td>    
+                    <td >{numStr(i.budget_anterieur)}</td>
+                    <td>{numStr(i.budget_n) }</td>
+                    <td>{numStr(i.budget_n1)}</td>
+                    <td>{numStr(i.budget_n2)}</td>
+                    <td>{i.prestataire}</td>
+                    <td>{i.observation}</td>    
                 </tr>
-            )
-            :
-            data.map((i,j)=>
-                <tr key={j}>
-                    <td>{j+1}</td>
-                    <td>{i.region}</td>
-                    <td className="min-w3">{i.departement}</td>
-                    <td className="min-w3">{i.commune}</td>
-                    <td className="min-w2">{i.categorie}</td>
-                    <td className="min-w1">{i.projet}</td>
-                    <td>{i.code_route}</td>
-                    <td >{numStr(i.lineaire_route)}</td>
-                    <td>{numStr(i.lineaire_oa)}</td>
-                    <td>{numStr(i.ttc)}</td>
-                    <td className="min-w4">{numStr(i.budget_anterieur)}</td>
-                    <td className="min-w4">{numStr(i.budget_n) }</td>
-                    <td className="min-w4">{numStr(i.budget_n1)}</td>
-                    <td className="min-w4">{numStr(i.budget_n2)}</td>
-                    <td className="min-w3">{i.prestataire}</td>
-                    <td className="min-w1">{i.observation}</td>
-                </tr>
-            )
-            }
+
+            )}
                 
             </tbody>
         </table>

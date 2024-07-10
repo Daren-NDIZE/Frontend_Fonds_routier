@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 
 function Header({user}){
 
-
     return(
         <header>
             <div className="h-logo">
@@ -12,15 +11,15 @@ function Header({user}){
             </div>
             <div>
                 <div className="h-theme">
-                    <div>
+                    {/* <div>
                         
-                    </div>
+                    </div> */}
                 </div>
                 <div className="h-profil">
                     {user.nom?
                         <>
                             <div>
-                                <img src="/profil.png" alt="error"/>
+                                <img src="/patrie.jpg" alt="error"/>
                             </div>
                             <div>
                                 <p>
@@ -28,7 +27,7 @@ function Header({user}){
                                     {user.prenom+" "+user.nom}
                                     </Link>
                                 </p>
-                                <p>{user.role   }</p>
+                                <p>{user.role.replaceAll("_"," ")}</p>
                             </div>
                         </>
                     :

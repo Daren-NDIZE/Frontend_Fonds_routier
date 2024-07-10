@@ -52,7 +52,7 @@ function Form({submit,annee}){
                 </div>
                 <div className="form-line">
                     <label>Allotissement</label>
-                    <input type="text"  name="allotissement"/>
+                    <textarea  name="allotissement"/>
                 </div>
                 <div className="form-line">
                     <label>Cout total du projet TTC</label>
@@ -134,7 +134,7 @@ function UpdateForm({submit,data,annee}){
                 </div>
                 <div className="form-line">
                     <label>Allotissement</label>
-                    <input type="text"  name="allotissement" defaultValue={data.allotissement}/>
+                    <textarea  name="allotissement" defaultValue={data.allotissement}/>
                 </div>
                 <div className="form-line">
                     <label>Cout total du projet TTC</label>

@@ -1,13 +1,10 @@
 import { useRef,useState,useEffect } from "react"
 import SearchBar from "../../component/searchBar"
 import Loader from "../../component/loader"
-import Notification from "../../component/notification"
-import PageLoader from "../../component/pageLoader"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import { fetchFormData, fetchGet } from "../../config/FetchRequest"
-import { Rejet, numStr, parseTable, selectValue, totalBudget } from "../../script"
+import {  numStr, parseTable, totalBudget } from "../../script"
 import ModalBox from "../../component/modalBox"
-import Select from 'react-select'
 import { Viewer } from '@react-pdf-viewer/core';
 import { Worker } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
@@ -17,34 +14,29 @@ import { downLoadExcel } from "jsxtabletoexcel"
 
 
 
-function SuiviProgramme({ordonnateur}){
+function ClotureDetail(){
 
-    let modal=useRef()
     let modalBox1=useRef()
-    let notification=useRef()
     let projet=useRef([])
 
     let [programme,setProgramme]=useState({})
     let [loader,setLoader]=useState(true)
-    let [statut,setStatut]=useState()
-    let [motif,setMotif]=useState([])
-    let [erreur,setErreur]=useState("")
-    let [pageLoader,setPageLoader]=useState()
     let [data,setData]=useState([])
-    let [projetId,setProjetId]=useState()
     let [pdf,setPdf]=useState()
     let [categorie,setCategorie]=useState("CENTRALE")
     
     const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
     const {id}=useParams()
+    const {ordonnateur}=useParams()
     const navigate=useNavigate()
 
 
     useEffect(()=>{
         (async function (){
 
-            if(isNaN(id)){
+            let type=["programme-MINT","programme-MINTP","programme-MINHDU"]
+            if(isNaN(id) || !type.includes(ordonnateur)){
                 navigate(-1)
                 return;
             }
@@ -53,9 +45,7 @@ function SuiviProgramme({ordonnateur}){
                 if(res.ok){
                     let resData= await res.json()
 
-
-                    if(resData.type==="erreur" || resData.statut!=="VALIDER" ||
-                        resData.ordonnateur!==ordonnateur){
+                    if(resData.type==="erreur" || resData.statut!=="VALIDER" || resData.ordonnateur!==ordonnateur.substring(10)){
                         navigate(-1)
                     }else{
                         setProgramme(resData)
@@ -76,11 +66,11 @@ function SuiviProgramme({ordonnateur}){
         })()
     },[id,ordonnateur,navigate])
 
+
     const changeTable=(e,i)=>{
 
         let li=e.target
         setCategorie(i)
-        setStatut("Traitment DCO")
         if(i==="CENTRALE"){
             setData(projet.current.filter(i=>i.categorie!=="PROJET A GESTION COMMUNALE"))
         }else{
@@ -96,87 +86,8 @@ function SuiviProgramme({ordonnateur}){
         li.classList.add("active")
     }
 
-    const open=(id)=>{
-        setStatut("Traitment DCO")
-        setProjetId(id)
-        modal.current.setModal(true) 
-    }
 
-    const submit= async(e)=>{
-
-        e.preventDefault()
-        setErreur("")
-        let form=e.target
-
-        if(form.other && form.other.value){
-            let value=motif
-            value.push({value: form.other.value})
-            setMotif(value)
-        }
-        if(form.statut.value==="" )
-        {
-            setErreur("veuillez remplir tous les champs")
-            return;
-        }
-        if(statut==="Attente de visa" && (form.engagement.value==="" || form.prestataire.value==="")){
-            setErreur("veuillez remplir tous les champs")
-            return;
-        }
-        if((statut==="Rejeter" || statut==="En attente pour correction") && selectValue(motif)===""){
-            setErreur("veuillez remplir tous les champs")
-            return;
-        }
-        
-        let projet =data.find(i=>i.id===projetId)
-
-        if(form.engagement && (parseInt(form.engagement.value) > projet.budget_n)){
-
-            let confirm=window.confirm("Le montant a engagé est superieure au montant prévisionnel, l'excédent sera engagé dans la prévision de réserve")
-            if(!confirm){
-                return;
-            }
-        }
-
-        let formData =new FormData(form);
-        formData.append("motif", selectValue(motif))
-        modal.current.setModal(false)
-        setPageLoader(true)
-        try{
-            let res= await fetchFormData(`suiviProjet/${projetId}`,"POST",formData)
-            if(res.ok){
-                let resData= await res.json()
-
-                if(resData.type==="succes"){
-
-                    let response = await fetchGet(`programme/${id}`)
-
-                    if(response.ok){
-                        let dataRes =await response.json() 
-                        setProgramme(dataRes)
-                        projet.current=dataRes.projetList.filter(i=>i.financement!=="RESERVE")
-                        if(dataRes.ordonnateur==="MINTP"){
-                            setData(dataRes.projetList.filter(i=>(i.financement!=="RESERVE" && i.categorie!=="PROJET A GESTION COMMUNALE") ))                 
-                        }else{
-                            setData(dataRes.projetList.filter(i=>i.financement!=="RESERVE"))
-                        }
-                    }
-       
-                }
-                window.scroll({top: 0, behavior:"smooth"})
-                notification.current.setNotification(
-                    {visible: true, type:resData.type,message:resData.message}
-                )
-
-            }
-        }catch(e){
-            console.log(e)
-        }finally{
-            setMotif([])
-            setPageLoader(false)
-        }
-
-    }
-
+    
     const loadPdf=async(id)=>{
 
         modalBox1.current.setModal(true)
@@ -208,7 +119,6 @@ function SuiviProgramme({ordonnateur}){
 
     return(
         <div className="container pb-10 suivi" >
-            <Notification ref={notification} />
 
             <div className="flex">
                 <div className="retour-container">
@@ -239,16 +149,16 @@ function SuiviProgramme({ordonnateur}){
                 )}
                 
                 
-                {ordonnateur==="MINHDU"?
+                {programme.ordonnateur==="MINHDU"?
 
-                    <TableMINHDU data={data} programme={programme} onLoadPdf={loadPdf} onHandleClick={open} />
+                    <TableMINHDU data={data} programme={programme} onLoadPdf={loadPdf}  />
 
-                :ordonnateur==="MINT"?
+                :programme.ordonnateur==="MINT"?
 
-                    <TableMINT data={data} programme={programme} onLoadPdf={loadPdf} onHandleClick={open} />
+                    <TableMINT data={data} programme={programme} onLoadPdf={loadPdf}  />
 
                 :  
-                    <TableMINTP data={data} programme={programme} categorie={categorie}  onLoadPdf={loadPdf} onHandleClick={open} />
+                    <TableMINTP data={data} programme={programme} categorie={categorie}  onLoadPdf={loadPdf}  />
 
                 }
                
@@ -330,67 +240,6 @@ function SuiviProgramme({ordonnateur}){
 
             }
 
-            <ModalBox ref={modal}>
-                <form className="flex-form" encType="multipart/form-data" onSubmit={submit} >
-                    <div>
-                        {erreur.length!==0 &&(
-                            <p className="error-msg">{erreur}</p>
-                        )}
-                        <div className="form-line" >
-                            <label>Situation</label>
-                            <select name="statut" onChange={(e)=>setStatut(e.target.value)} required >
-                                <option value="Traitment DCO">Traitment DCO</option>
-                                <option value="Traitement DAF">Traitement DAF</option>
-                                <option value="En attente pour correction">En attente pour corrections</option>
-                                <option value="Rejeter">Rejter</option>
-                                <option value="Transmis pour visa">Transmis pour visa</option>
-                                <option value="Visé">Visé</option>
-                            </select>
-                        </div>
-
-                        {statut==="Rejeter" || statut==="En attente pour correction"?
-                        <>
-                            <div className="form-line">
-                                <label>Motifs</label>
-                                <Select options={Rejet}  placeholder="motif" onChange={setMotif} isMulti className="multi-select" />
-                            </div> 
-                            <div className="form-line">
-                                <label>Autres motifs</label>
-                                <input type="text" id="other" />
-                            </div> 
-                        </>
-                        
-                        
-                        :<></>
-                       
-                        }
-                        {statut==="Transmis pour visa" &&(
-                            <>
-                            <div className="form-line">
-                                <label>Engament</label>
-                                <input type="number" name="engagement"  min="0" required />
-                            </div> 
-                            <div className="form-line">
-                                <label>Prestataire</label>
-                                <input type="text" defaultValue={data.find(i=>i.id===projetId).prestataire} name="prestataire" required/>
-                            </div>
-                            </>     
-                        )}
-
-                        {statut==="Visé" &&(
-                            <div className="form-line">
-                                <label>Bordereau signé (MAX 2MB)</label>
-                                <input type="file" name="file" accept=".pdf" required />
-                            </div> 
-                        )}
-                        
-                        <div className="form-line" style={{margin: "0"}}>
-                            <button type="submit">Enregistrer</button>
-                        </div>
-                    </div>     
-                </form>
-            </ModalBox>
-
             <div className="view-pdf">
                 <ModalBox ref={modalBox1}>
                     <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
@@ -405,17 +254,15 @@ function SuiviProgramme({ordonnateur}){
                 </ModalBox>
             </div>
  
-            {pageLoader &&(
-                <PageLoader/>
-            )}
+            
         </div>
     )
 }
 
-export default SuiviProgramme;
+export default ClotureDetail;
 
 
-const TableMINHDU=({data,programme,onLoadPdf,onHandleClick})=>{
+const TableMINHDU=({data,programme,onLoadPdf})=>{
 
     return(
 
@@ -439,10 +286,8 @@ const TableMINHDU=({data,programme,onLoadPdf,onHandleClick})=>{
                         <th className="min-w4">{`Projection ${programme.annee+2}`}</th>
                         <th>Ordonnateurs</th>
                         <th className="min-w1">Observations</th>
-                        <th className="min-w4">Situation</th>
+                        <th>Situation</th>
                         <th className="min-w1">Motifs</th>
-                        <th className="min-w4">suivi Travaux</th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -450,12 +295,12 @@ const TableMINHDU=({data,programme,onLoadPdf,onHandleClick})=>{
                         <tr key={j}>
                             <td>{j+1}</td>
                             <td>{i.region}</td>
-                            <td>{i.ville}</td>
+                            <td >{i.ville}</td>
                             <td>{i.type_travaux}</td>
                             <td>{i.troçon}</td>
                             <td>{numStr(i.lineaire)}</td>
                             <td>{numStr(i.ttc)}</td>
-                            <td >{numStr(i.budget_anterieur)}</td>
+                            <td>{numStr(i.budget_anterieur)}</td>
                             <td>{numStr(i.budget_n) }</td>
                             <td>{i.suivi && numStr(i.suivi.engagement)}</td>
                             <td>{(i.suivi && i.suivi.engagement!==0) && numStr((i.budget_n - i.suivi.engagement),0)}</td>
@@ -477,13 +322,6 @@ const TableMINHDU=({data,programme,onLoadPdf,onHandleClick})=>{
                                     parseTable(i.suivi.motif).map((k,l)=><li key={l}>{k}</li>)
                                 )}
                             </td>
-                            <td>{(i.bordereau) && 
-                                <Link to={`/execution-des-programme/projet/${i.id}/suivi-des-travaux`}>Détails</Link>
-                                }
-                            </td>
-                            <td>
-                                <i className="fa-solid fa-circle-plus i-circle" onClick={()=>onHandleClick(i.id)}></i>
-                            </td>
                         </tr>
                     )
                     }
@@ -491,8 +329,8 @@ const TableMINHDU=({data,programme,onLoadPdf,onHandleClick})=>{
                         <td colSpan="8">Prévision de réserve</td>
                         <td>{numStr(programme.prevision,0)} fcfa</td>
                         <td>{numStr(totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
-                        <td>{numStr(programme.prevision-totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
-                        <td colSpan="8">
+                        <td>{numStr(programme.prevision - totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
+                        <td colSpan="7">
                             <Link to={`/execution-des-programme/programme-MINHDU/${programme.id}/prévision`} >Détails</Link>
                         </td>
                     </tr>
@@ -502,7 +340,7 @@ const TableMINHDU=({data,programme,onLoadPdf,onHandleClick})=>{
     )
 }
 
-const TableMINT=({data,programme,onLoadPdf,onHandleClick})=>{
+const TableMINT=({data,programme,onLoadPdf})=>{
 
     return(
 
@@ -527,8 +365,6 @@ const TableMINT=({data,programme,onLoadPdf,onHandleClick})=>{
                         <th className="min-w1">Observations</th> 
                         <th className="min-w4">situation</th>
                         <th className="min-w1">Motifs</th>
-                        <th className="min-w4">suivi Travaux</th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody> 
@@ -536,9 +372,9 @@ const TableMINT=({data,programme,onLoadPdf,onHandleClick})=>{
                         <tr key={j}>
                             <td>{j+1}</td>
                             <td>{i.region}</td>
-                            <td >{i.mission}</td>
-                            <td >{i.objectif}</td>
-                            <td >{i.allotissement}</td>
+                            <td>{i.mission}</td>
+                            <td>{i.objectif}</td>
+                            <td>{i.allotissement}</td>
                             <td>{numStr(i.ttc,"")}</td>
                             <td>{numStr(i.budget_anterieur)}</td>
                             <td>{numStr(i.budget_n) }</td>
@@ -561,14 +397,7 @@ const TableMINT=({data,programme,onLoadPdf,onHandleClick})=>{
                                 {i.suivi && (
                                     parseTable(i.suivi.motif).map((k,l)=><li key={l}>{k}</li>)
                                 )}
-                            </td> 
-                            <td>{(i.bordereau) && 
-                                <Link to={`/execution-des-programme/projet/${i.id}/suivi-des-travaux`}>Détails</Link>
-                                }
-                            </td>                      
-                            <td>
-                                <i className="fa-solid fa-circle-plus i-circle" onClick={()=>onHandleClick(i.id)}></i>
-                            </td>
+                            </td>                           
                         </tr>
                     )
                     }
@@ -577,7 +406,7 @@ const TableMINT=({data,programme,onLoadPdf,onHandleClick})=>{
                         <td>{numStr(programme.prevision,0)} fcfa</td>
                         <td>{numStr(totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
                         <td>{numStr(programme.prevision-totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
-                        <td colSpan="8">
+                        <td colSpan="7">
                             <Link to={`/execution-des-programme/programme-MINT/${programme.id}/prévision`} >Détails</Link>
                         </td>
                     </tr>
@@ -587,7 +416,7 @@ const TableMINT=({data,programme,onLoadPdf,onHandleClick})=>{
     )
 }
 
-const TableMINTP=({data,programme,categorie,onLoadPdf,onHandleClick})=>{
+const TableMINTP=({data,programme,categorie,onLoadPdf})=>{
 
     return(
 
@@ -599,7 +428,7 @@ const TableMINTP=({data,programme,categorie,onLoadPdf,onHandleClick})=>{
                     <th>Région</th>
                     {categorie==="COMMUNE" &&(
                     <>
-                        <th>Département</th>
+                        <th className="min-w3">Département</th>
                         <th className="min-w3">Commune</th>
                     </>
                     )}
@@ -619,8 +448,6 @@ const TableMINTP=({data,programme,categorie,onLoadPdf,onHandleClick})=>{
                     <th className="min-w1">Observations</th>
                     <th className="min-w4">Situation</th>
                     <th className="min-w1">Motifs</th>
-                    <th className="min-w4">Suivi Travaux</th>
-                    <th></th>
                 </tr>
             </thead>
                 <tbody> 
@@ -660,14 +487,8 @@ const TableMINTP=({data,programme,categorie,onLoadPdf,onHandleClick})=>{
                                 {i.suivi && (
                                     parseTable(i.suivi.motif).map((k,l)=><li key={l}>{k}</li>)
                                 )}
-                            </td> 
-                            <td>{(i.bordereau) && 
-                                <Link to={`/execution-des-programme/projet/${i.id}/suivi-des-travaux`}>Détails</Link>
-                                }
-                            </td>                          
-                            <td>
-                                <i className="fa-solid fa-circle-plus i-circle" onClick={()=>onHandleClick(i.id)}></i>
-                            </td>
+                            </td>                           
+                            
                         </tr>
                     )
                     }
@@ -676,7 +497,7 @@ const TableMINTP=({data,programme,categorie,onLoadPdf,onHandleClick})=>{
                         <td>{numStr(programme.prevision,0)} fcfa</td>
                         <td>{numStr(totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
                         <td>{numStr(programme.prevision-totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
-                        <td colSpan="7">
+                        <td colSpan="6">
                             <Link to={`/execution-des-programme/programme-MINTP/${programme.id}/prévision`} >Détails</Link>
                         </td>
                     </tr>

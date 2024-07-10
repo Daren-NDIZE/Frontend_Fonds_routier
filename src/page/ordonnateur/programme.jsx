@@ -81,6 +81,7 @@ function Programme(){
 
     const loadPdf=async(id,modal)=>{
 
+        setPdf(null)
         modal.current.setModal(false)
         modalBox2.current.setModal(true)
         try{
@@ -187,9 +188,9 @@ function Programme(){
                             <Viewer 
                             fileUrl={pdf}
                             plugins={[defaultLayoutPluginInstance]}
-                        />
-                        )}
-                        
+                            />
+                        )} 
+                    
                     </Worker>
                 </ModalBox>
             </div>

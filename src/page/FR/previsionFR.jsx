@@ -106,7 +106,7 @@ function PrevisionFR(){
 
             <Notification ref={notification} />
 
-            <div style={{display: 'flex'}}>
+            <div className="flex">
                 <div className="retour-container">
                     <button className="retour-btn" onClick={()=>navigate(-1)}>
                         <i className="fa-solid fa-arrow-left"></i>
@@ -119,8 +119,11 @@ function PrevisionFR(){
             </div>
             
             <div className="box">
-                <div id="pg-title">
+                <div id="pg-title"> 
                     <h1>Détails prévison {`${programme.ordonnateur} ${programme.annee}`}</h1>
+                    <button className="download-btn" >
+                        <i className="fa-solid fa-down-long"></i>
+                    </button>
                 </div>
                 
                 <div className="top-element">
@@ -128,7 +131,11 @@ function PrevisionFR(){
                         <label htmlFor="check">Modifier</label>
                         <input type="checkbox" id="check" onChange={change}/>
                     </div>
-                </div>  
+                    <div className="n-projet">
+                        <button>Nouveau</button>
+                    </div>
+                </div> 
+
 
                 
 
@@ -138,7 +145,7 @@ function PrevisionFR(){
 
                 :programme.ordonnateur==="MINTP"?
 
-                    <></>
+                    <MINTP data={data} check={check} onModal={openModal} />
                 :
                     <MINT data={data} check={check} onModal={openModal} />
                 }
@@ -264,9 +271,56 @@ const MINT=({data,check,onModal})=>{
         </div>    )
 }
 
-// const MINTP=()=>{
+const MINTP=({data,check,onModal})=>{
 
-//     return(
-//         <></>
-//     )
-// }
+    return(
+        <div className="tableBox">
+            <table className="table">
+                <thead>
+                    <tr>
+                        <th>N°</th>
+                        <th>Région</th>
+                        <th>Catégorie</th>
+                        <th>Projets/troçons</th>
+                        <th>Code route</th>
+                        <th>Linéaire_route (km)</th>
+                        <th>Linéaire_OA (ml)</th>
+                        <th>Montant_TTC_projet</th>
+                        <th>Engagement</th>
+                        <th>Pretataire</th>
+                        {check &&(
+                            <th>Action</th>
+                        )}
+                    </tr>
+                </thead>
+                <tbody>
+                {
+                    data.map((i,j)=>
+                    <tr key={j}>
+                        <td>{j+1}</td>
+                        <td>{i.region}</td>
+                        <td className="min-w2">{i.categorie}</td>
+                        <td className="min-w1">{i.projet}</td>
+                        <td>{i.code_route}</td>
+                        <td>{numStr(i.lineaire_route)}</td>
+                        <td>{numStr(i.lineaire_oa)}</td>
+                        <td>{numStr(i.ttc)}</td>
+                        <td className="min-w4">{numStr(i.budget_anterieur)}</td>
+                        <td className="min-w4">{numStr(i.budget_n) }</td>
+                        <td className="min-w3">{i.prestataire}</td>
+                        {check &&(
+                            <td> 
+                                <div className="t-action">
+                                    <i className="fa-solid fa-trash-can" onClick={()=>onModal(i.id)} ></i>
+                                </div>
+                            </td>
+                        )}
+                    </tr>
+
+                )}
+                    
+                </tbody>
+            </table>
+        </div>  
+    )
+}

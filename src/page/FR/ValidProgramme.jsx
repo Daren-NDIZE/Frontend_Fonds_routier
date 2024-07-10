@@ -55,6 +55,7 @@ function ValidProgramme(){
 
     const loadPdf=async(id)=>{
 
+        setPdf(null)
         modalBox.current.setModal(false)
         modalBox1.current.setModal(true)
         try{
@@ -63,7 +64,6 @@ function ValidProgramme(){
                 
                 let blob = await res.blob()
                 const url=window.URL.createObjectURL(blob)
-                console.log(url.substring(5))
                 setPdf(url)
             }
             

@@ -38,7 +38,6 @@ function UpdatePg(){
                     if(resData.type==="erreur"){
                         navigate(-1)
                     }else{
-                        console.log(resData)
                         setProgramme(resData)
                         setNumber(NumberToLetter(resData.budget))
                     }

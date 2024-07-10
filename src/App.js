@@ -10,7 +10,7 @@ import UpdatePg from "./page/ordonnateur/updateProgramme";
 import ProgrammeMINHDU from "./page/ordonnateur/programmeMINHDU";
 import SubmitProgramme from "./page/FR/submitProgramme";
 import ProgrammeFR from "./page/FR/programmeFR";
-import ValidProgramme from "./page/FR/ValidProgramme";
+import ValidProgramme from "./page/FR/validProgramme";
 import { decode } from "./script";
 import Profil from "./page/profil";
 import SuiviProgramme from "./page/FR/suiviProgramme";
@@ -19,6 +19,10 @@ import Cloturer from "./page/FR/cloturer";
 import UserList from "./page/ADMIN/userList";
 import PrevisionFR from "./page/FR/previsionFR";
 import Prevision from "./page/ordonnateur/prevision";
+import PaidProgramme from "./page/FR/paidProgramme";
+import SuiviPayement from "./page/FR/suiviPayement";
+import ClotureDetail from "./page/FR/clotureDetails";
+import SuiviTravaux from "./page/suiviTravaux";
 
 
 function App() {
@@ -32,7 +36,6 @@ function App() {
     if(user===null){
       localStorage.clear()
       navigate("/login")
-
     }
   },[user,navigate])
 
@@ -56,16 +59,20 @@ function App() {
             <Route path="/execution-des-programme/programme-MINT/:id" element={<SuiviProgramme ordonnateur="MINT"/>}/>
             <Route path="/execution-des-programme/programme-MINTP/:id" element={<SuiviProgramme ordonnateur="MINTP"/>}/>
             <Route path="/execution-des-programme/:ordonnateur/:id/prévision" element={<PrevisionFR/>}/>
+            <Route path="/execution-des-programme/projet/:id/suivi-des-travaux" element={<SuiviTravaux/>}/>
             <Route path="/programmes/soumis/:id" element={<ProgrammeFR/>}/>
             <Route path="/synthese-programme" element={<Synthese/>}/>
             <Route path="/programmes-cloturés" element={<Cloturer/>}/>
+            <Route path="/programmes-cloturés/:ordonnateur/:id" element={<ClotureDetail/>}/>
+            <Route path="/suivi-des-payements" element={<PaidProgramme/>}/>
+            <Route path="/suivi-des-payements/:ordonnateur/:id" element={<SuiviPayement/>}/>
           </Route>
 
           <Route element={user.role==="ADMIN"?<Outlet/>:<></>}>
             <Route path="/gestion-des-utilisateurs" element={<UserList/>}/>
           </Route>
 
-          <Route element={user.role!=="FONDS_ROUTIER"?<Outlet/>:<Navigate to="/programmes/soumis"/>}>
+          <Route element={!( ["FONDS_ROUTIER","ADMIN"].includes(user.role) )?<Outlet/>:<Navigate to="/programmes/soumis"/>}>
             <Route path="/créer-programme" element={<CreatePg/>}/>
             <Route path="/programmes" element={<Programme/>}/>
             <Route path="/modifier-programme/:id" element={<UpdatePg/>}/>

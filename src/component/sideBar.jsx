@@ -32,6 +32,7 @@ function SideBar({role}){
                         <li><NavLink to="/programmes/soumis">Programmes en cours</NavLink></li>
                         <li><NavLink to="/execution-des-programme">Execution des programmes</NavLink></li>
                         <li><NavLink to="/synthese-programme">Synthèse des programmes</NavLink></li>
+                        <li><NavLink to="/suivi-des-payements">Suivi des payements</NavLink></li>
                         <li><NavLink to="/programmes-cloturés">Programmes cloturés</NavLink></li>
                     </ul>
                     :role==="ADMIN"?
@@ -39,6 +40,7 @@ function SideBar({role}){
                         <li><NavLink to="/programmes/soumis">Programmes en cours</NavLink></li>
                         <li><NavLink to="/execution-des-programme">Execution des programmes</NavLink></li>
                         <li><NavLink to="/synthese-programme">Synthèse des programmes</NavLink></li>
+                        <li><NavLink to="/suivi-des-payements">Suivi des payements</NavLink></li>
                         <li><NavLink to="/programmes-cloturés">Programmes cloturés</NavLink></li>
                         <li><NavLink to="/gestion-des-utilisateurs">Gestion des utilisateurs</NavLink></li>
                         <li><NavLink to="/paramètres">Paramètres</NavLink></li>

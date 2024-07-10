@@ -10,11 +10,11 @@ import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 
-import "table2excel"
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams, } from "react-router-dom";
 import { Fetch, fetchFormData, fetchGet } from "../../config/FetchRequest";
 import { numStr,parseTable,totalBudget } from "../../script";
+import { downLoadExcel } from "jsxtabletoexcel";
 
 function ProgrammeMINT (){
 
@@ -246,7 +246,7 @@ function ProgrammeMINT (){
                 if(resData.type==="succes"){
                     window.setTimeout(()=>{
                         navigate("/programmes")
-                    },3000)
+                    },2000)
                 }
             }
         }catch(e){
@@ -299,12 +299,10 @@ function ProgrammeMINT (){
 
     }
 
-    // const excel=()=>{
-    //     const Table2Excel = window.Table2Excel;
-    //     const table2excel = new Table2Excel();
-
-    //     table2excel.export(document.querySelector(".table"));
-    // }
+    const exportExcel=(fileName)=>{
+        
+        downLoadExcel(document.querySelector(".table"),"feuille 1",fileName)
+    }
 
     if(loader){
         return(
@@ -317,12 +315,24 @@ function ProgrammeMINT (){
         <div className="container pb-10" >
             <Notification ref={notification} />
             
-            <div className="box b-search">
-                <SearchBar/>
+            <div className="flex">
+                <div className="retour-container">
+                    <button className="retour-btn" onClick={()=>navigate(-1)}>
+                        <i className="fa-solid fa-arrow-left"></i>
+                         Retour
+                    </button>
+                </div>
+                <div className="box b-search">
+                    <SearchBar/>
+                </div>
             </div>
+
             <div className="box">
                 <div id="pg-title" className={statut.includes(programme.statut)?"":"mb-25"}>
                     <h1>{programme.intitule}</h1>
+                    <button className="download-btn" onClick={()=>exportExcel(programme.intitule)}>
+                        <i className="fa-solid fa-down-long"></i>
+                    </button>
                 </div>
 
                 {statut.includes(programme.statut) &&(
@@ -382,7 +392,7 @@ function ProgrammeMINT (){
                                     <td>{i.region}</td>
                                     <td className="min-w1">{i.mission}</td>
                                     <td className="min-w1">{i.objectif}</td>
-                                    <td>{i.allotissement}</td>
+                                    <td className="min-w12">{i.allotissement}</td>
                                     <td>{numStr(i.ttc,"")}</td>
                                     <td className="min-w4">{numStr(i.budget_anterieur)}</td>
                                     <td className="min-w4">{numStr(i.budget_n) }</td>
@@ -415,7 +425,7 @@ function ProgrammeMINT (){
                                     <td>{i.region}</td>
                                     <td className="min-w1">{i.mission}</td>
                                     <td className="min-w1">{i.objectif}</td>
-                                    <td>{i.allotissement}</td>
+                                    <td className="min-w12">{i.allotissement}</td>
                                     <td>{numStr(i.ttc,"")}</td>
                                     <td className="min-w4">{numStr(i.budget_anterieur)}</td>
                                     <td className="min-w4">{numStr(i.budget_n) }</td>
@@ -442,7 +452,7 @@ function ProgrammeMINT (){
                                 <td>{numStr(programme.prevision,0)} fcfa</td>
                                 <td>{numStr(totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
                                 <td>{numStr(programme.prevision-totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
-                                <td colSpan="8">
+                                <td colSpan="7">
                                     <Link to={`/programmes/programme-MINT/${programme.id}/prévision`} >Détails</Link>
                                 </td>
                             </tr>
@@ -494,6 +504,7 @@ function ProgrammeMINT (){
             <ModalBox ref={modal}>
                 <FormMINT title={programme.intitule} annee={programme.annee} body={state}/>
             </ModalBox>
+
             <ModalBox ref={modal2}>
                 <div className="pg-modal">
                     <p>Voulez vous vraiment supprimer ce projet?</p>
@@ -503,6 +514,7 @@ function ProgrammeMINT (){
                     </div>
                 </div>
             </ModalBox>
+            
             <ModalBox ref={modal3}>
                 <form method="post" className="flex-form" onSubmit={(e)=>setPrevision(e,programme.id)}>
                     <div>

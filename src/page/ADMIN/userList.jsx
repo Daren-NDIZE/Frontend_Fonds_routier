@@ -78,7 +78,6 @@ function UserList(){
                 if(resData.type==="succes"){
 
                     userList.current.push(data)
-                    console.log(userList.current)
                 }
             }
 
