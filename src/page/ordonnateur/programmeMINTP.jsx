@@ -1,7 +1,7 @@
 import ModalBox from "../../component/modalBox";
 import SearchBar from "../../component/searchBar";
 import { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Fetch, fetchGet } from "../../config/FetchRequest";
 import Loader from "../../component/loader";
 import Notification from "../../component/notification";
@@ -158,6 +158,7 @@ function ProgrammeMINTP (){
                     let index= data.indexOf(data.find(i=>i.id===id))
                     datas.id=id
                     data[index]=datas
+                    index= projet.current.indexOf(projet.current.find(i=>i.id===id))
                     projet.current[index]=datas
                     setData(data)
                 }
@@ -489,28 +490,29 @@ function Table1({data,programme,check,onUpdate,onDelete}){
                 <tr>
                     <th>N°</th>
                     <th>Région</th>
-                    <th>Catégorie</th>
-                    <th>Projets/troçons</th>
+                    <th className="min-w2">Catégorie</th>
+                    <th className="min-w1">Projets/troçons</th>
                     <th>Code route</th>
                     <th>Linéaire_route (km)</th>
                     <th>Linéaire_OA (ml)</th>
                     <th>Montant_TTC_projet</th>
-                    <th>Budget_antérieur</th>
-                    <th>Budget_{programme.annee}</th>
+                    <th className="min-w4">Budget antérieur</th>
+                    <th className="min-w4">Budget {programme.annee}</th>
                     {programme.statut==="VALIDER"&&(
                     <>
-                        <th>Engagement</th>
-                        <th>Reliquat</th>
+                        <th className="min-w4">Engagement</th>
+                        <th className="min-w4">Reliquat</th>
                     </> 
                     )}
-                    <th>Projection_{programme.annee+1}</th>
-                    <th>Projection_{programme.annee+2}</th>
-                    <th>Pretataire</th>
-                    <th>Observations</th>
+                    <th className="min-w4">Projection {programme.annee+1}</th>
+                    <th className="min-w4">Projection {programme.annee+2}</th>
+                    <th className="min-w3">Pretataire</th>
+                    <th className="min-w1">Observations</th>
                     {programme.statut==="VALIDER"&&(
                     <>
-                        <th>Situation</th>
-                        <th>Motifs</th>
+                        <th className="min-w4">Situation</th>
+                        <th className="min-w1">Motifs</th>
+                        <th className="min-w4">Suivi travaux</th>
                     </> 
                     )}
                     {check &&(
@@ -525,22 +527,26 @@ function Table1({data,programme,check,onUpdate,onDelete}){
                 <tr key={j}>
                     <td>{j+1}</td>
                     <td>{i.region}</td>
-                    <td className="min-w2">{i.categorie}</td>
-                    <td className="min-w1">{i.projet}</td>
+                    <td>{i.categorie}</td>
+                    <td>{i.projet}</td>
                     <td>{i.code_route}</td>
                     <td>{numStr(i.lineaire_route)}</td>
                     <td>{numStr(i.lineaire_oa)}</td>
                     <td>{numStr(i.ttc)}</td>
-                    <td className="min-w4">{numStr(i.budget_anterieur)}</td>
-                    <td className="min-w4">{numStr(i.budget_n) }</td>
-                    <td className="min-w4">{i.suivi && numStr(i.suivi.engagement)}</td>
-                    <td className="min-w4">{(i.suivi && i.suivi.engagement!==0) && numStr(i.budget_n - i.suivi.engagement)}</td>
-                    <td className="min-w4">{numStr(i.budget_n1)}</td>
-                    <td className="min-w4">{numStr(i.budget_n2)}</td>
-                    <td className="min-w3">{i.prestataire}</td>
-                    <td className="min-w1">{i.observation}</td>
-                    <td className="min-w4">{i.suivi && i.suivi.statut}</td>
-                    <td className="min-w1">{i.suivi && i.suivi.motif}</td>
+                    <td>{numStr(i.budget_anterieur)}</td>
+                    <td>{numStr(i.budget_n) }</td>
+                    <td>{i.suivi && numStr(i.suivi.engagement)}</td>
+                    <td>{(i.suivi && i.suivi.engagement!==0) && numStr(i.budget_n - i.suivi.engagement)}</td>
+                    <td>{numStr(i.budget_n1)}</td>
+                    <td>{numStr(i.budget_n2)}</td>
+                    <td>{i.prestataire}</td>
+                    <td>{i.observation}</td>
+                    <td>{i.suivi && i.suivi.statut}</td>
+                    <td>{i.suivi && i.suivi.motif}</td>
+                    <td>{(i.bordereau) && 
+                        <Link to={`/programmes/projet/${i.id}/suivi-des-travaux`}>Détails</Link>
+                        }
+                    </td> 
                 </tr>
             )
             :
@@ -548,18 +554,18 @@ function Table1({data,programme,check,onUpdate,onDelete}){
                 <tr key={j}>
                     <td>{j+1}</td>
                     <td>{i.region}</td>
-                    <td className="min-w2">{i.categorie}</td>
-                    <td className="min-w1">{i.projet}</td>
+                    <td>{i.categorie}</td>
+                    <td>{i.projet}</td>
                     <td>{i.code_route}</td>
                     <td >{numStr(i.lineaire_route)}</td>
                     <td>{numStr(i.lineaire_oa)}</td>
                     <td>{numStr(i.ttc)}</td>
-                    <td className="min-w4">{numStr(i.budget_anterieur)}</td>
-                    <td className="min-w4">{numStr(i.budget_n) }</td>
-                    <td className="min-w4">{numStr(i.budget_n1)}</td>
-                    <td className="min-w4">{numStr(i.budget_n2)}</td>
-                    <td className="min-w3">{i.prestataire}</td>
-                    <td className="min-w1">{i.observation}</td>
+                    <td>{numStr(i.budget_anterieur)}</td>
+                    <td>{numStr(i.budget_n) }</td>
+                    <td>{numStr(i.budget_n1)}</td>
+                    <td>{numStr(i.budget_n2)}</td>
+                    <td>{i.prestataire}</td>
+                    <td>{i.observation}</td>
                     {check &&(
                     <td> 
                         <div className="t-action">
@@ -585,30 +591,31 @@ function Table2({data,programme,check,onUpdate,onDelete}){
                 <tr>
                     <th>N°</th>
                     <th>Région</th>
-                    <th>Département</th>
-                    <th>Commune</th>
-                    <th>Catégorie</th>
-                    <th>Projets/troçons</th>
+                    <th className="min-w3">Département</th>
+                    <th className="min-w3">Commune</th>
+                    <th className="min-w2">Catégorie</th>
+                    <th className="min-w1">Projets/troçons</th>
                     <th>Code route</th>
                     <th>Linéaire_route (km)</th>
                     <th>Linéaire_OA (ml)</th>
                     <th>Montant_TTC_projet</th>
-                    <th>Budget_antérieur</th>
-                    <th>Budget_{programme.annee}</th>
+                    <th className="min-w4">Budget antérieur</th>
+                    <th className="min-w4">Budget {programme.annee}</th>
                     {programme.statut==="VALIDER"&&(
                     <>
-                        <th>Engagement</th>
-                        <th>Reliquat</th>
+                        <th className="min-w4">Engagement</th>
+                        <th className="min-w4">Reliquat</th>
                     </> 
                     )}
-                    <th>Projection_{programme.annee+1}</th>
-                    <th>Projection_{programme.annee+2}</th>
-                    <th>Pretataire</th>
-                    <th>Observation</th>
+                    <th className="min-w4">Projection {programme.annee+1}</th>
+                    <th className="min-w4">Projection {programme.annee+2}</th>
+                    <th className="min-w3">Pretataire</th>
+                    <th className="min-w1">Observation</th>
                     {programme.statut==="VALIDER"&&(
                     <>
-                        <th>Situation</th>
-                        <th>Motif</th>
+                        <th className="min-w4">Situation</th>
+                        <th className="min-w1">Motif</th>
+                        <th className="min-w4">Suivi travaux</th>
                     </> 
                     )}
                     {check &&(
@@ -623,24 +630,28 @@ function Table2({data,programme,check,onUpdate,onDelete}){
                 <tr key={j}>
                     <td>{j+1}</td>
                     <td>{i.region}</td>
-                    <td className="min-w3">{i.departement}</td>
-                    <td className="min-w3">{i.commune}</td>
-                    <td className="min-w2">{i.categorie}</td>
-                    <td className="min-w1">{i.projet}</td>
+                    <td>{i.departement}</td>
+                    <td>{i.commune}</td>
+                    <td>{i.categorie}</td>
+                    <td>{i.projet}</td>
                     <td>{i.code_route}</td>
                     <td >{numStr(i.lineaire_route)}</td>
                     <td>{numStr(i.lineaire_oa)}</td>
                     <td>{numStr(i.ttc)}</td>
-                    <td className="min-w4">{numStr(i.budget_anterieur)}</td>
-                    <td className="min-w4">{numStr(i.budget_n) }</td>
-                    <td className="min-w4">{i.suivi && numStr(i.suivi.engagement)}</td>
-                    <td className="min-w4">{(i.suivi && i.suivi.engagement!==0) && numStr(i.budget_n - i.suivi.engagement)}</td>
-                    <td className="min-w4">{numStr(i.budget_n1)}</td>
-                    <td className="min-w4">{numStr(i.budget_n2)}</td>
-                    <td className="min-w3">{i.prestataire}</td>
-                    <td className="min-w1">{i.observation}</td>
-                    <td className="min-w4">{i.suivi && i.suivi.statut}</td>
-                    <td className="min-w1">{i.suivi && i.suivi.motif}</td>
+                    <td>{numStr(i.budget_anterieur)}</td>
+                    <td>{numStr(i.budget_n) }</td>
+                    <td>{i.suivi && numStr(i.suivi.engagement)}</td>
+                    <td>{(i.suivi && i.suivi.engagement!==0) && numStr(i.budget_n - i.suivi.engagement)}</td>
+                    <td>{numStr(i.budget_n1)}</td>
+                    <td>{numStr(i.budget_n2)}</td>
+                    <td>{i.prestataire}</td>
+                    <td>{i.observation}</td>
+                    <td>{i.suivi && i.suivi.statut}</td>
+                    <td>{i.suivi && i.suivi.motif}</td>
+                    <td>{(i.bordereau) && 
+                        <Link to={`/programmes/projet/${i.id}/suivi-des-travaux`}>Détails</Link>
+                        }
+                    </td> 
                 </tr>
             )
             :
@@ -648,20 +659,20 @@ function Table2({data,programme,check,onUpdate,onDelete}){
                 <tr key={j}>
                     <td>{j+1}</td>
                     <td>{i.region}</td>
-                    <td className="min-w3">{i.departement}</td>
-                    <td className="min-w3">{i.commune}</td>
-                    <td className="min-w2">{i.categorie}</td>
-                    <td className="min-w1">{i.projet}</td>
+                    <td>{i.departement}</td>
+                    <td>{i.commune}</td>
+                    <td>{i.categorie}</td>
+                    <td>{i.projet}</td>
                     <td>{i.code_route}</td>
                     <td >{numStr(i.lineaire_route)}</td>
                     <td>{numStr(i.lineaire_oa)}</td>
                     <td>{numStr(i.ttc)}</td>
-                    <td className="min-w4">{numStr(i.budget_anterieur)}</td>
-                    <td className="min-w4">{numStr(i.budget_n) }</td>
-                    <td className="min-w4">{numStr(i.budget_n1)}</td>
-                    <td className="min-w4">{numStr(i.budget_n2)}</td>
-                    <td className="min-w3">{i.prestataire}</td>
-                    <td className="min-w1">{i.observation}</td>
+                    <td>{numStr(i.budget_anterieur)}</td>
+                    <td>{numStr(i.budget_n) }</td>
+                    <td>{numStr(i.budget_n1)}</td>
+                    <td>{numStr(i.budget_n2)}</td>
+                    <td>{i.prestataire}</td>
+                    <td>{i.observation}</td>
                     {check &&(
                     <td> 
                     <div className="t-action">

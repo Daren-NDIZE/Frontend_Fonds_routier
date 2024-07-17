@@ -185,6 +185,14 @@ header > div:last-child{
     flex-direction: column;
     align-items: center;
 }
+.notFound{
+    background-image: url("/public/page404.png");
+    height: calc(100vh - 80px);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    padding: 60px;
+}
 .l-top img{
     width: 80px;
 }
@@ -366,6 +374,7 @@ header > div:last-child{
     overflow: auto;
     max-height: 600px;
     margin-top: 10px;
+    min-height: 330px;
 }
 .table{
     margin-bottom: 20px;
@@ -425,6 +434,19 @@ tr.height-line{
 .t-action i:active{
     box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
     color: black;
+}
+.optionCol > div{
+    position: relative;
+}
+.optionCol i{
+    font-size: 18px;
+    color: #676b78;
+    cursor: pointer;
+    padding: 0 5px;
+    border-radius: 2px;
+}
+.optionCol .hidden-menu{
+    position: absolute;
 }
 .p-prevision{
     display: flex;
@@ -767,6 +789,9 @@ form .load-button{
 #pg-title > h1{
     padding: 0;
     flex-grow: 1;
+}
+#pg-title .check-update{
+    margin-right: 40px;
 }
 .download-btn{
     padding: 3px 8px;

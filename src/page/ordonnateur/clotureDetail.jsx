@@ -14,7 +14,7 @@ import { downLoadExcel } from "jsxtabletoexcel"
 
 
 
-function ClotureDetails(){
+function ClotureDetail(){
 
     let modalBox1=useRef()
     let projet=useRef([])
@@ -41,7 +41,7 @@ function ClotureDetails(){
                 return;
             }
             try{
-                let res = await fetchGet(`programme/${id}`)
+                let res = await fetchGet(`programmeByRole/${id}`)
                 if(res.ok){
                     let resData= await res.json()
 
@@ -259,7 +259,7 @@ function ClotureDetails(){
     )
 }
 
-export default ClotureDetails;
+export default ClotureDetail;
 
 
 const TableMINHDU=({data,programme,onLoadPdf})=>{

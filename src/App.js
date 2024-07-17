@@ -21,8 +21,11 @@ import PrevisionFR from "./page/FR/previsionFR";
 import Prevision from "./page/ordonnateur/prevision";
 import PaidProgramme from "./page/FR/paidProgramme";
 import SuiviPayement from "./page/FR/suiviPayement";
-import ClotureDetail from "./page/FR/clotureDetails";
 import SuiviTravaux from "./page/suiviTravaux";
+import ProgrammeCloture from "./page/ordonnateur/programmeCloture";
+import ClotureDetails from "./page/FR/clotureDetails";
+import ClotureDetail from "./page/ordonnateur/clotureDetail";
+import PageNotFound from "./page/pageNotFound";
 
 
 function App() {
@@ -63,7 +66,7 @@ function App() {
             <Route path="/programmes/soumis/:id" element={<ProgrammeFR/>}/>
             <Route path="/synthese-programme" element={<Synthese/>}/>
             <Route path="/programmes-cloturés" element={<Cloturer/>}/>
-            <Route path="/programmes-cloturés/:ordonnateur/:id" element={<ClotureDetail/>}/>
+            <Route path="/programmes-cloturés/:ordonnateur/:id" element={<ClotureDetails/>}/>
             <Route path="/suivi-des-payements" element={<PaidProgramme/>}/>
             <Route path="/suivi-des-payements/:ordonnateur/:id" element={<SuiviPayement/>}/>
           </Route>
@@ -77,6 +80,10 @@ function App() {
             <Route path="/programmes" element={<Programme/>}/>
             <Route path="/modifier-programme/:id" element={<UpdatePg/>}/>
             <Route path="/programmes/:ordonnateur/:id/prévision" element={<Prevision/>}/>
+            <Route path="/programmes/projet/:id/suivi-des-travaux" element={<SuiviTravaux update="true"/>}/>
+            <Route path="/programmes_cloturés" element={<ProgrammeCloture/>}/>
+            <Route path="/programmes_cloturés/:ordonnateur/:id" element={<ClotureDetail/>}/>
+
           </Route>
 
           <Route element={user.role==="MINHDU"?<Outlet/>:<></>}>
@@ -93,7 +100,7 @@ function App() {
 
           <Route path="/profil" element={<Profil header={model}/>}/>
 
-          <Route path="/*" element={<></>}/>
+          <Route path="/*" element={<PageNotFound/>}/>
 
           
           

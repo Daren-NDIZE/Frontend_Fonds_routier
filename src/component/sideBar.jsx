@@ -50,7 +50,7 @@ function SideBar({role}){
                     <ul>
                         <li><NavLink to="/créer-programme">Créer un programme</NavLink></li>
                         <li><NavLink to="/programmes">Programmes en cours</NavLink></li>
-                        <li><NavLink to="programmes-cloturés">Programmes cloturés</NavLink></li>
+                        <li><NavLink to="/programmes_cloturés">Programmes cloturés</NavLink></li>
                     </ul>
                     :
                     <></>

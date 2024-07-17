@@ -355,27 +355,28 @@ function ProgrammeMINT (){
                             <tr>
                                 <th>N°_de_lot</th>
                                 <th>Region</th>
-                                <th>Mission</th>
-                                <th>Objectifs</th>
-                                <th>Allotissement</th>
+                                <th className="min-w1">Mission</th>
+                                <th className="min-w1">Objectifs</th>
+                                <th className="min-w12">Allotissement</th>
                                 <th>Cout_total_du_projet_TTC</th>
-                                <th>Budget_antérieur</th>
-                                <th>{`Budget_${programme.annee}`}</th>
+                                <th className="min-w4">Budget_antérieur</th>
+                                <th className="min-w4">Budget {programme.annee}</th>
                                 {programme.statut==="VALIDER"&&(
                                 <>
-                                    <th>Engagement</th>
-                                    <th>Reliquat</th>
+                                    <th className="min-w4">Engagement</th>
+                                    <th className="min-w4">Reliquat</th>
                                 </> 
                                 )}
-                                <th>{`Projection_${programme.annee+1}`}</th>
-                                <th>{`Projection_${programme.annee+2}`}</th>
-                                <th>Prestataire</th>
+                                <th className="min-w4">Projection {programme.annee+1}</th>
+                                <th className="min-w4">Projection {programme.annee+2}</th>
+                                <th className="min-w3">Prestataire</th>
                                 <th>Ordonnateur</th>
-                                <th>Observations</th>
+                                <th className="min-w1">Observations</th>
                                 {programme.statut==="VALIDER"&&(
                                 <>
-                                    <th>Situation</th>
-                                    <th>Motif</th>
+                                    <th className="min-w4">Situation</th>
+                                    <th className="min-w1">Motif</th>
+                                    <th className="min-w4">Suivi travaux</th>
                                 </> 
                                 )}
                                 {check &&(
@@ -390,31 +391,35 @@ function ProgrammeMINT (){
                                 <tr key={j}>
                                     <td>{j+1}</td>
                                     <td>{i.region}</td>
-                                    <td className="min-w1">{i.mission}</td>
-                                    <td className="min-w1">{i.objectif}</td>
+                                    <td>{i.mission}</td>
+                                    <td>{i.objectif}</td>
                                     <td className="min-w12">{i.allotissement}</td>
                                     <td>{numStr(i.ttc,"")}</td>
-                                    <td className="min-w4">{numStr(i.budget_anterieur)}</td>
-                                    <td className="min-w4">{numStr(i.budget_n) }</td>
-                                    <td className="min-w4">{i.suivi && numStr(i.suivi.engagement)}</td>
-                                    <td className="min-w4">{(i.suivi && i.suivi.engagement!==0) && numStr(i.budget_n - i.suivi.engagement)}</td>
-                                    <td className="min-w4">{numStr(i.budget_n1)}</td>
-                                    <td className="min-w4">{numStr(i.budget_n2)}</td>
-                                    <td className="min-w3">{i.prestataire}</td>
+                                    <td>{numStr(i.budget_anterieur)}</td>
+                                    <td>{numStr(i.budget_n) }</td>
+                                    <td>{i.suivi && numStr(i.suivi.engagement)}</td>
+                                    <td>{(i.suivi && i.suivi.engagement!==0) && numStr(i.budget_n - i.suivi.engagement)}</td>
+                                    <td>{numStr(i.budget_n1)}</td>
+                                    <td>{numStr(i.budget_n2)}</td>
+                                    <td>{i.prestataire}</td>
                                     <td>{i.ordonnateur}</td>
-                                    <td className="min-w1">{i.observation}</td>
-                                    <td className="min-w4">
+                                    <td>{i.observation}</td>
+                                    <td>
                                     {i.suivi &&(
                                         i.suivi.statut==="Visé"?
                                         <p  onClick={()=>loadPdf(i.id)} className="deco">{i.suivi.statut}</p>    
                                         :i.suivi.statut
                                     )}
                                     </td>                                    
-                                    <td className="min-w1">
+                                    <td>
                                         {i.suivi && (
                                             parseTable(i.suivi.motif).map((k,l)=><li key={l}>{k}</li>)
                                         )}
-                                    </td>                                
+                                    </td> 
+                                    <td>{(i.bordereau) && 
+                                        <Link to={`/programmes/projet/${i.id}/suivi-des-travaux`}>Détails</Link>
+                                    }
+                                </td>                                
                                 </tr>
                             )
                         
@@ -423,17 +428,17 @@ function ProgrammeMINT (){
                                 <tr key={j}>
                                     <td>{j+1}</td>
                                     <td>{i.region}</td>
-                                    <td className="min-w1">{i.mission}</td>
-                                    <td className="min-w1">{i.objectif}</td>
-                                    <td className="min-w12">{i.allotissement}</td>
+                                    <td>{i.mission}</td>
+                                    <td>{i.objectif}</td>
+                                    <td>{i.allotissement}</td>
                                     <td>{numStr(i.ttc,"")}</td>
-                                    <td className="min-w4">{numStr(i.budget_anterieur)}</td>
-                                    <td className="min-w4">{numStr(i.budget_n) }</td>
-                                    <td className="min-w4">{numStr(i.budget_n1)}</td>
-                                    <td className="min-w4">{numStr(i.budget_n2)}</td>
-                                    <td className="min-w3">{i.prestataire}</td>
+                                    <td>{numStr(i.budget_anterieur)}</td>
+                                    <td>{numStr(i.budget_n) }</td>
+                                    <td>{numStr(i.budget_n1)}</td>
+                                    <td>{numStr(i.budget_n2)}</td>
+                                    <td>{i.prestataire}</td>
                                     <td>{i.ordonnateur}</td>
-                                    <td className="min-w1">{i.observation}</td>
+                                    <td>{i.observation}</td>
                                     {check &&(
                                     <td> 
                                         <div className="t-action">

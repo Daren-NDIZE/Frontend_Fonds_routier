@@ -112,8 +112,13 @@ function Programme(){
                 
                 if(resData.type==="succes"){
 
-                    let data=programme.filter((i)=>i.id!==id)
-                    setProgramme(data)
+                    const response= await fetchGet("getProgrammesByRole")
+
+                    if(response.ok){
+                        const dataRes= await response.json()
+                        setProgramme(dataRes);
+                    }
+ 
                 }
                 notification.current.setNotification(
                     {visible: true, type:resData.type, message: resData.message}
