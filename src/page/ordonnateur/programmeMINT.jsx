@@ -92,10 +92,7 @@ function ProgrammeMINT (){
             let res= await Fetch(`addProjetToProgrammeMINT/${id}`,"POST",datas)
             if(res.ok){
                 let resData= await res.json()
-                window.scroll({top: 0, behavior:"smooth"})
-                notification.current.setNotification(
-                    {visible: true, type:resData.type,message:resData.message}
-                )
+                
                 if(resData.type==="succes"){
                     
                     let res = await fetchGet(`programmeByRole/${id}`)
@@ -106,6 +103,10 @@ function ProgrammeMINT (){
                         setData(resData.projetList)
                     }
                 }
+                window.scroll({top: 0, behavior:"smooth"})
+                notification.current.setNotification(
+                    {visible: true, type:resData.type,message:resData.message}
+                )
             }
         }catch(e){
             console.log(e)

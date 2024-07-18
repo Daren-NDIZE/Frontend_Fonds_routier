@@ -87,7 +87,6 @@ function ClotureDetail(){
     }
 
 
-    
     const loadPdf=async(id)=>{
 
         modalBox1.current.setModal(true)

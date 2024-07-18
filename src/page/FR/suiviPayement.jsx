@@ -171,14 +171,14 @@ function SuiviPayement(){
                     if(response.ok){
                         let dataRes= await response.json()
                         
-                            setProgramme(dataRes)
-                            projet.current=dataRes.projetList.filter((i=>i.financement!=="RESERVE" && i.bordereau ))
-                            if(dataRes.ordonnateur==="MINTP"){
-                                setData(dataRes.projetList.filter(i=>(i.financement!=="RESERVE"  && i.bordereau && i.categorie!=="PROJET A GESTION COMMUNALE") ))
-                            }else{
-                                setData(dataRes.projetList.filter(i=>(i.financement!=="RESERVE" && i.bordereau ) ))
-                            }
+                        setProgramme(dataRes)
+                        projet.current=dataRes.projetList.filter((i=>i.financement!=="RESERVE" && i.bordereau ))
+                        if(dataRes.ordonnateur==="MINTP"){
+                            setData(dataRes.projetList.filter(i=>(i.financement!=="RESERVE"  && i.bordereau && i.categorie!=="PROJET A GESTION COMMUNALE") ))
+                        }else{
+                            setData(dataRes.projetList.filter(i=>(i.financement!=="RESERVE" && i.bordereau ) ))
                         }
+                    }
                     
                 }
                 window.scroll({top: 0, behavior:"smooth"})

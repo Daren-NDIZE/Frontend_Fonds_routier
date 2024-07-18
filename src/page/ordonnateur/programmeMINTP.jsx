@@ -90,10 +90,6 @@ function ProgrammeMINTP (){
             let res= await Fetch(`addProjetToProgrammeMINTP/${id}`,"POST",data)
             if(res.ok){
                 let resData= await res.json()
-                window.scroll({top: 0, behavior:"smooth"})
-                notification.current.setNotification(
-                    {visible: true, type:resData.type,message:resData.message}
-                )
 
                 if(resData.type==="succes"){
                     
@@ -108,6 +104,12 @@ function ProgrammeMINTP (){
                         }
                     }
                 }
+
+                window.scroll({top: 0, behavior:"smooth"})
+                notification.current.setNotification(
+                    {visible: true, type:resData.type,message:resData.message}
+                )
+                
             }
         }catch(e){
             console.log(e)

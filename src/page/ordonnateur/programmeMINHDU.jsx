@@ -91,10 +91,7 @@ function ProgrammeMINHDU(){
             let res= await Fetch(`addProjetToProgrammeMINHDU/${id}`,"POST",datas)
             if(res.ok){
                 let resData= await res.json()
-                window.scroll({top: 0, behavior:"smooth"})
-                notification.current.setNotification(
-                    {visible: true, type:resData.type,message:resData.message}
-                )
+                
                 if(resData.type==="succes"){
                     
                     let res = await fetchGet(`programmeByRole/${id}`)
@@ -105,6 +102,11 @@ function ProgrammeMINHDU(){
                         setData(resData.projetList.filter(i=>i.financement!=="RESERVE"))
                     }
                 }
+
+                window.scroll({top: 0, behavior:"smooth"})
+                notification.current.setNotification(
+                    {visible: true, type:resData.type,message:resData.message}
+                )
             }
         }catch(e){
             console.log(e)
