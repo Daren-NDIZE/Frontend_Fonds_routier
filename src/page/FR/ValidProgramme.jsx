@@ -135,7 +135,9 @@ function ValidProgramme(){
                 
                 )
             :
-                <></>
+                <div className="vide">
+                    Vide
+                </div>
             }
 
             <ModalBox ref={modalBox}>

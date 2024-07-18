@@ -793,6 +793,16 @@ form .load-button{
 #pg-title .check-update{
     margin-right: 40px;
 }
+.vide{
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 90px;
+    font-weight: bold;
+    letter-spacing: 40px;
+    font-family: 'FontAwesome';
+}
 .download-btn{
     padding: 3px 8px;
     font-size: 11px;

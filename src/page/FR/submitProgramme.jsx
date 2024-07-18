@@ -107,7 +107,7 @@ function SubmitProgramme(){
                 
                 )
             :
-                <></>
+                <div className="vide">VIDE</div>
             }
 
             <ModalBox ref={modalBox}>
