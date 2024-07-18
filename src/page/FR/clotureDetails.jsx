@@ -274,7 +274,7 @@ const TableMINHDU=({data,programme,onLoadPdf})=>{
                         <th>Région</th>
                         <th>Ville</th>
                         <th className="min-w1">Type de travaux</th>
-                        <th className="min-w1">Troçons</th>
+                        <th className="min-w13">Troçons / Intitulé</th>
                         <th>Linéaire_(ml)</th>
                         <th>Cout_total_du_projet_TTC</th>
                         <th className="min-w4">Budget antérieur</th>

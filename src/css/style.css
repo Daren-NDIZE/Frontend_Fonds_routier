@@ -509,6 +509,9 @@ tr.height-line{
 .min-w12{
     min-width: 320px;
 }
+.min-w13{
+    min-width: 230px;
+}
 .min-w2{
     min-width: 210px;
 }
