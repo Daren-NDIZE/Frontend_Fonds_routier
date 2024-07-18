@@ -331,7 +331,7 @@ const TableMINHDU=({data,annee})=>{
                         <th>N°</th>
                         <th>Région</th>
                         <th>Ville</th>
-                        <th className="min-w1">Type de travaux</th>
+                        <th className="min-w13">Type de travaux</th>
                         <th className="min-w1">Troçons</th>
                         <th>Linéaire_(ml)</th>
                         <th>Cout_total_du_projet_TTC</th>

@@ -108,8 +108,8 @@ const MINHDU=({data})=>{
                         <th>N°</th>
                         <th>Région</th>
                         <th>Ville</th>
-                        <th className="min-w1">Type_de_travaux</th>
-                        <th className="min-w13">Troçons / Intitulé</th>
+                        <th className="min-w13">Type_de_travaux</th>
+                        <th className="min-w1">Troçons / Intitulé</th>
                         <th>Linéaire_(ml)</th>
                         <th>Cout_total_du_projet_TTC</th>
                         <th className="min-w4">Engagement</th>
