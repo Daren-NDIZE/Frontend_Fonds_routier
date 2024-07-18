@@ -382,7 +382,7 @@ const TableMINT=({data,annee})=>{
                     <tr>
                         <th>N°_de_lot</th>
                         <th>Region</th>
-                        <th className="min-w1">Mission</th>
+                        <th className="min-w1">Activités</th>
                         <th className="min-w1">Objectifs</th>
                         <th className="min-w12">Allotissement</th>
                         <th>Cout_total_du_projet_TTC</th>

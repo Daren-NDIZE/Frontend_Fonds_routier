@@ -43,7 +43,7 @@ function Form({submit,annee}){
                     </select>
                 </div>
                 <div className="form-line">
-                    <label>Mission</label>
+                    <label>Activités</label>
                     <textarea name="mission" required></textarea>
                 </div>
                 <div className="form-line">
@@ -125,7 +125,7 @@ function UpdateForm({submit,data,annee}){
                     </select>
                     </div>
                 <div className="form-line">
-                    <label>Mission</label>
+                    <label>Activités</label>
                     <textarea name="mission" defaultValue={data.mission} required></textarea>
                 </div>
                 <div className="form-line">
