@@ -633,7 +633,7 @@ const TableMINHDU=({data,programme,onLoadPdf,onHandleClick,option})=>{
                         <>
                             <tr key={j}>
                                 <td rowSpan={i.payement.length +2}>{j+1}</td>
-                                <td rowSpan={i.payement.length +2}>{i.region}</td>
+                                <td rowSpan={i.payement.length +2}>{i.region.replaceAll("_","-")}</td>
                                 <td rowSpan={i.payement.length +2}>{i.ville}</td>
                                 <td  rowSpan={i.payement.length +2}>{i.troçon}</td>
                                 <td rowSpan={i.payement.length +2}>{numStr(i.lineaire)}</td>
@@ -735,7 +735,7 @@ const TableMINT=({data,programme,onLoadPdf,onHandleClick,option})=>{
                     <>
                         <tr key={j}>
                             <td rowSpan={i.payement.length +2}>{j+1}</td>
-                            <td rowSpan={i.payement.length +2}>{i.region}</td>
+                            <td rowSpan={i.payement.length +2}>{i.region.replaceAll("_","-")}</td>
                             <td rowSpan={i.payement.length +2}>{i.mission}</td>
                             <td rowSpan={i.payement.length +2}>{i.objectif}</td>
                             <td rowSpan={i.payement.length +2}>{i.allotissement}</td>
@@ -846,7 +846,7 @@ const TableMINTP=({data,programme,categorie,onLoadPdf,onHandleClick,option})=>{
                     <>
                         <tr rowSpan={i.payement.length +2} key={j}>
                             <td rowSpan={i.payement.length +2}>{j+1}</td>
-                            <td rowSpan={i.payement.length +2}>{i.region}</td>
+                            <td rowSpan={i.payement.length +2}>{i.region.replaceAll("_","-")}</td>
                             {categorie==="COMMUNE" &&(
                             <>
                                 <td rowSpan={i.payement.length +2}>{i.departement}</td>

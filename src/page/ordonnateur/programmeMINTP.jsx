@@ -528,7 +528,7 @@ function Table1({data,programme,check,onUpdate,onDelete}){
                 data.map((i,j)=>
                 <tr key={j}>
                     <td>{j+1}</td>
-                    <td>{i.region}</td>
+                    <td>{i.region.replaceAll("_","-")}</td>
                     <td>{i.categorie}</td>
                     <td>{i.projet}</td>
                     <td>{i.code_route}</td>
@@ -555,7 +555,7 @@ function Table1({data,programme,check,onUpdate,onDelete}){
             data.map((i,j)=>
                 <tr key={j}>
                     <td>{j+1}</td>
-                    <td>{i.region}</td>
+                    <td>{i.region.replaceAll("_","-")}</td>
                     <td>{i.categorie}</td>
                     <td>{i.projet}</td>
                     <td>{i.code_route}</td>
@@ -631,7 +631,7 @@ function Table2({data,programme,check,onUpdate,onDelete}){
                 data.map((i,j)=>
                 <tr key={j}>
                     <td>{j+1}</td>
-                    <td>{i.region}</td>
+                    <td>{i.region.replaceAll("_","-")}</td>
                     <td>{i.departement}</td>
                     <td>{i.commune}</td>
                     <td>{i.categorie}</td>
@@ -660,7 +660,7 @@ function Table2({data,programme,check,onUpdate,onDelete}){
             data.map((i,j)=>
                 <tr key={j}>
                     <td>{j+1}</td>
-                    <td>{i.region}</td>
+                    <td>{i.region.replaceAll("_","-")}</td>
                     <td>{i.departement}</td>
                     <td>{i.commune}</td>
                     <td>{i.categorie}</td>

@@ -121,7 +121,7 @@ const MINHDU=({data})=>{
                     {data.map((i,j)=>
                         <tr key={j}>
                             <td>{j+1}</td>
-                            <td>{i.region}</td>
+                            <td>{i.region.replaceAll("_","-")}</td>
                             <td>{i.ville}</td>
                             <td className="min-w1">{i.type_travaux}</td>
                             <td className="min-w1">{i.troçon}</td>
@@ -163,7 +163,7 @@ const MINT=({data})=>{
                 {data.map((i,j)=>
                         <tr key={j}>
                             <td>{j+1}</td>
-                            <td>{i.region}</td>
+                            <td>{i.region.replaceAll("_","-")}</td>
                             <td className="min-w1">{i.mission}</td>
                             <td className="min-w1">{i.objectif}</td>
                             <td>{i.allotissement}</td>

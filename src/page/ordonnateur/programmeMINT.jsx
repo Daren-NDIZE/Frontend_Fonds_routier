@@ -391,7 +391,7 @@ function ProgrammeMINT (){
                             data.map((i,j)=>
                                 <tr key={j}>
                                     <td>{j+1}</td>
-                                    <td>{i.region}</td>
+                                    <td>{i.region.replaceAll("_","-")}</td>
                                     <td>{i.mission}</td>
                                     <td>{i.objectif}</td>
                                     <td className="min-w12">{i.allotissement}</td>
@@ -428,7 +428,7 @@ function ProgrammeMINT (){
                             data.map((i,j)=>
                                 <tr key={j}>
                                     <td>{j+1}</td>
-                                    <td>{i.region}</td>
+                                    <td>{i.region.replaceAll("_","-")}</td>
                                     <td>{i.mission}</td>
                                     <td>{i.objectif}</td>
                                     <td>{i.allotissement}</td>

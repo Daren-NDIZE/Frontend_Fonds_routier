@@ -388,7 +388,7 @@ function ProgrammeMINHDU(){
                            data.map((i,j)=>
                             <tr key={j}>
                                 <td>{j+1}</td>
-                                <td>{i.region}</td>
+                                <td>{i.region.replaceAll("_","-")}</td>
                                 <td >{i.ville}</td>
                                 <td>{i.type_travaux}</td>
                                 <td>{i.troçon}</td>
@@ -425,7 +425,7 @@ function ProgrammeMINHDU(){
                         data.map((i,j)=>
                             <tr key={j}>
                                 <td>{j+1}</td>
-                                <td>{i.region}</td>
+                                <td>{i.region.replaceAll("_","-")}</td>
                                 <td >{i.ville}</td>
                                 <td>{i.type_travaux}</td>
                                 <td>{i.troçon}</td>

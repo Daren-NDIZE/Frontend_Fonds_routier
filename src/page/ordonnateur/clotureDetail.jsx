@@ -293,7 +293,7 @@ const TableMINHDU=({data,programme,onLoadPdf})=>{
                     {data.map((i,j)=>
                         <tr key={j}>
                             <td>{j+1}</td>
-                            <td>{i.region}</td>
+                            <td>{i.region.replaceAll("_","-")}</td>
                             <td >{i.ville}</td>
                             <td>{i.type_travaux}</td>
                             <td>{i.troçon}</td>
@@ -370,7 +370,7 @@ const TableMINT=({data,programme,onLoadPdf})=>{
                 {data.map((i,j)=>
                         <tr key={j}>
                             <td>{j+1}</td>
-                            <td>{i.region}</td>
+                            <td>{i.region.replaceAll("_","-")}</td>
                             <td>{i.mission}</td>
                             <td>{i.objectif}</td>
                             <td>{i.allotissement}</td>
@@ -453,7 +453,7 @@ const TableMINTP=({data,programme,categorie,onLoadPdf})=>{
                 {data.map((i,j)=>
                         <tr key={j}>
                             <td>{j+1}</td>
-                            <td>{i.region}</td>
+                            <td>{i.region.replaceAll("_","-")}</td>
                             {categorie==="COMMUNE" &&(
                             <>
                                 <td>{i.departement}</td>

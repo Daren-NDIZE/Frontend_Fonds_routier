@@ -34,10 +34,10 @@ function Form({submit,annee}){
                         <option value="OUEST">OUEST</option>
                         <option value="LITTORAL">LITTORAL</option>
                         <option value="NORD">NORD</option>
-                        <option value="NORD-OUEST">NORD-OUEST</option>
-                        <option value="SUD-OUEST">SUD-OUEST</option>
+                        <option value="NORD_OUEST">NORD-OUEST</option>
+                        <option value="SUD_OUEST">SUD-OUEST</option>
                         <option value="ADAMAOUA">ADAMAOUA</option>
-                        <option value="EXTRÊME-NORD">EXTRÊME-NORD</option>
+                        <option value="EXTRÊME_NORD">EXTRÊME-NORD</option>
                     </select>
                 </div>
                 <div className="form-line">
@@ -127,10 +127,10 @@ function UpdateForm({submit,data,annee}){
                         <option value="OUEST">OUEST</option>
                         <option value="LITTORAL">LITTORAL</option>
                         <option value="NORD">NORD</option>
-                        <option value="NORD-OUEST">NORD-OUEST</option>
-                        <option value="SUD-OUEST">SUD-OUEST</option>
+                        <option value="NORD_OUEST">NORD-OUEST</option>
+                        <option value="SUD_OUEST">SUD-OUEST</option>
                         <option value="ADAMAOUA">ADAMAOUA</option>
-                        <option value="EXTRÊME-NORD">EXTRÊME-NORD</option>
+                        <option value="EXTRÊME_NORD">EXTRÊME-NORD</option>
                     </select>
                 </div>
                 <div className="form-line">
