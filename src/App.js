@@ -10,7 +10,7 @@ import UpdatePg from "./page/ordonnateur/updateProgramme";
 import ProgrammeMINHDU from "./page/ordonnateur/programmeMINHDU";
 import SubmitProgramme from "./page/FR/submitProgramme";
 import ProgrammeFR from "./page/FR/programmeFR";
-import ValidProgramme from "./page/FR/validProgramme";
+import ValidProgramme from "./page/FR/validProgramme.jsx";
 import { decode } from "./script";
 import Profil from "./page/profil";
 import SuiviProgramme from "./page/FR/suiviProgramme";
