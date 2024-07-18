@@ -10,7 +10,7 @@ import UpdatePg from "./page/ordonnateur/updateProgramme";
 import ProgrammeMINHDU from "./page/ordonnateur/programmeMINHDU";
 import SubmitProgramme from "./page/FR/submitProgramme";
 import ProgrammeFR from "./page/FR/programmeFR";
-import ValidProgramme from "./page/FR/validProgramme";
+// import ValidProgramme from "./page/FR/validProgramme";
 import { decode } from "./script";
 import Profil from "./page/profil";
 import SuiviProgramme from "./page/FR/suiviProgramme";
@@ -57,7 +57,7 @@ function App() {
         <Routes>
           <Route element={["FONDS_ROUTIER","ADMIN"].includes(user.role)?<Outlet/>:<Navigate to="/programmes"/>}>
             <Route path="/programmes/soumis" element={<SubmitProgramme/>}/>
-            <Route path="/execution-des-programme" element={<ValidProgramme/>}/>
+            {/* <Route path="/execution-des-programme" element={<ValidProgramme/>}/> */}
             <Route path="/execution-des-programme/programme-MINHDU/:id" element={<SuiviProgramme ordonnateur="MINHDU"/>}/>
             <Route path="/execution-des-programme/programme-MINT/:id" element={<SuiviProgramme ordonnateur="MINT"/>}/>
             <Route path="/execution-des-programme/programme-MINTP/:id" element={<SuiviProgramme ordonnateur="MINTP"/>}/>
