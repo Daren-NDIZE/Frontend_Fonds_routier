@@ -208,7 +208,7 @@ function ProgrammeFR(){
             <div className="box">
                 <div className="p-prevision">
                     <div>GESTION CENTRALE</div>
-                    <div>{numStr(totalBudget(projet.current.filter(i=>i.ordonnateur==="MINT")),0)} fcfa</div>
+                    <div>{numStr(totalBudget(projet.current.filter(i=>i.ordonnateur==="MINHDU")),0)} fcfa</div>
                 </div>
                 <div className="p-prevision">
                     <div>GESTION COMMUNALE</div>

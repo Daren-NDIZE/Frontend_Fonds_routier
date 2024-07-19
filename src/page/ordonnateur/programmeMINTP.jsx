@@ -51,8 +51,8 @@ function ProgrammeMINTP (){
                         navigate(-1)
                     }else{
                         setProgramme(resData)
-                        projet.current=resData.projetList
-                        setData(resData.projetList.filter(i=>i.categorie!=="PROJET A GESTION COMMUNALE"))                  
+                        projet.current=resData.projetList.filter(i=>i.financement!=="RESERVE")
+                        setData(resData.projetList.filter(i=>(i.financement!=="RESERVE" && i.categorie!=="PROJET A GESTION COMMUNALE") ))
                     }
                 }
             }catch(e){

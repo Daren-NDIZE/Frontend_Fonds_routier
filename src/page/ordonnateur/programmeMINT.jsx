@@ -57,8 +57,8 @@ function ProgrammeMINT (){
                         navigate(-1)
                     }else{
                         setProgramme(resData)
-                        projet.current=resData.projetList
-                        setData(resData.projetList)
+                        projet.current=resData.projetList.filter(i=>i.financement!=="RESERVE")
+                        setData(resData.projetList.filter(i=>i.financement!=="RESERVE"))
                     }
                 }
             }catch(e){
