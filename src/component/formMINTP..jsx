@@ -24,7 +24,7 @@ function Form({submit,categorie,annee}){
         <form className="flex-form" onSubmit={submit}>
             <div>
                 <div className="form-line">
-                    <label>Region</label>
+                    <label>Region <span>*</span></label>
                     <select  name="region" required>
                         <option value="">- - - - - - - - - - - - - - - - - - - - -  </option>
                         <option value="CENTRE">CENTRE</option>
@@ -42,23 +42,23 @@ function Form({submit,categorie,annee}){
                 {categorie==="COMMUNE" &&(
                 <>
                     <div className="form-line">
-                        <label>Département</label>
+                        <label>Département <span>*</span></label>
                         <input type="text" name="departement" required/>
                     </div> 
                     <input type="hidden" name="categorie" value="PROJET A GESTION COMMUNALE"/>
                     <div className="form-line">
-                        <label>Commune</label>
+                        <label>Commune <span>*</span></label>
                         <input type="text" name="commune" required/>
                     </div>
                 </>
                 )}
                 <div className="form-line">
-                    <label>Projets/troçons</label>
+                    <label>Projets/troçons <span>*</span></label>
                     <textarea name="projet" required></textarea>
                 </div>
                 {categorie==="CENTRALE"&&(
                 <div className="form-line">
-                    <label>Catégorie</label>
+                    <label>Catégorie <span>*</span></label>
                     <select name="categorie" required>
                         <option value="">- - - - - - - - - - - - - - - - - - - - - </option>
                         <option value="PROJET A GESTION CENTRALE">PROJET A GESTION CENTRALE</option>
@@ -68,7 +68,7 @@ function Form({submit,categorie,annee}){
                 )}
                 
                 <div className="form-line">
-                    <label>Type de travaux</label>
+                    <label>Type de travaux <span>*</span></label>
                     <select  name="type_travaux" required>
                         <option value="">- - - - - - - - - - - - - - - - - - - - - - - </option>
                         {type.map((i,j)=><option key={j} value={i}>{i}</option>)}
@@ -93,7 +93,7 @@ function Form({submit,categorie,annee}){
             
             <div>
                 <div className="form-line">
-                    <label>Montant TTC</label>
+                    <label>Montant TTC <span>*</span></label>
                     <input type="number" name="ttc" required />
                 </div>
                 <div className="form-line">
@@ -101,7 +101,7 @@ function Form({submit,categorie,annee}){
                     <input type="number" name="budget_anterieur"/>
                 </div>
                 <div className="form-line">
-                    <label>Budget {annee}</label>
+                    <label>Budget {annee} <span>*</span></label>
                     <input type="number" name="budget_n" required/>
                 </div>
                 <div className="form-line">
@@ -135,7 +135,7 @@ function UpdateForm({submit,categorie,data,annee}){
         <form className="flex-form" onSubmit={(e)=>submit(e,data.id)}>
             <div>
                 <div className="form-line">
-                    <label>Region</label>
+                    <label>Region <span>*</span></label>
                     <select  name="region" defaultValue={data.region} required>
                         <option value="">- - - - - - - - - - - - - - - - - - - - -  </option>
                         <option value="CENTRE">CENTRE</option>
@@ -153,23 +153,23 @@ function UpdateForm({submit,categorie,data,annee}){
                 {categorie==="COMMUNE" &&(
                 <>
                     <div className="form-line">
-                        <label>Département</label>
+                        <label>Département <span>*</span></label>
                         <input type="text" name="departement" defaultValue={data.departement} required/>
                     </div> 
                     <input type="hidden" name="categorie" value="PROJET A GESTION COMMUNALE"/>
                     <div className="form-line">
-                        <label>Commune</label>
+                        <label>Commune <span>*</span></label>
                         <input type="text" name="commune" defaultValue={data.commune} required/>
                     </div>
                 </>
                 )}
                 <div className="form-line">
-                    <label>Projets/troçons</label>
+                    <label>Projets/troçons <span>*</span></label>
                     <textarea name="projet" defaultValue={data.projet} required></textarea>
                 </div>
                 {categorie==="CENTRALE"&&(
                 <div className="form-line">
-                    <label>Catégorie</label>
+                    <label>Catégorie <span>*</span></label>
                     <select name="categorie" defaultValue={data.categorie} required>
                         <option value="">- - - - - - - - - - - - - - - - - - - - - </option>
                         <option value="PROJET A GESTION CENTRALE">PROJET A GESTION CENTRALE</option>
@@ -179,7 +179,7 @@ function UpdateForm({submit,categorie,data,annee}){
                 )}
                 
                 <div className="form-line">
-                    <label>Type de travaux</label>
+                    <label>Type de travaux <span>*</span></label>
                     <select  name="type_travaux" defaultValue={data.type_travaux} required>
                         <option value="">- - - - - - - - - - - - - - - - - - - - - - - </option>
                         {type.map((i,j)=><option key={j} value={i}>{i}</option>)}
@@ -203,7 +203,7 @@ function UpdateForm({submit,categorie,data,annee}){
             
             <div>
                 <div className="form-line">
-                    <label>Montant TTC</label>
+                    <label>Montant TTC <span>*</span></label>
                     <input type="number" name="ttc" defaultValue={data.ttc} required />
                 </div>
                 <div className="form-line">
@@ -211,7 +211,7 @@ function UpdateForm({submit,categorie,data,annee}){
                     <input type="number" name="budget_anterieur" defaultValue={data.budget_anterieur}/>
                 </div>
                 <div className="form-line">
-                    <label>Budget {annee}</label>
+                    <label>Budget {annee} <span>*</span></label>
                     <input type="number" name="budget_n" defaultValue={data.budget_n} required/>
                 </div>
                 <div className="form-line">

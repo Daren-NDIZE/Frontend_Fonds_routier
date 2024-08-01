@@ -26,7 +26,7 @@ function Cloturer(){
         (async function(){
 
             try{
-                const res= await fetchGet("getValidAndCloseProgramme")
+                const res= await fetchGet("getCloseProgramme")
 
                 if(res.ok){
                     const resData= await res.json()

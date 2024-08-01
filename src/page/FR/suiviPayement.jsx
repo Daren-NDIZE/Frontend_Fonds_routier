@@ -251,31 +251,32 @@ function SuiviPayement(){
         setPageLoader(true)
         try{
             let res= await Fetch(`projet/updatePayement/${payementId}`,"PUT",data)
+
             if(res.ok){
+
                 let resData= await res.json()
 
                 if(resData.type==="succes"){
-
-                    window.scroll({top: 0, behavior:"smooth"})
-                    notification.current.setNotification(
-                        {visible: true, type:resData.type,message:resData.message}
-                    )
 
                     let response = await fetchGet(`programme/${id}`)
                     if(response.ok){
                         let dataRes= await response.json()
                         
-                            setProgramme(dataRes)
-                            projet.current=dataRes.projetList.filter((i=>i.financement!=="RESERVE" && i.bordereau ))
-                            if(dataRes.ordonnateur==="MINTP"){
-                                setData(dataRes.projetList.filter(i=>(i.financement!=="RESERVE"  && i.bordereau && i.categorie!=="PROJET A GESTION COMMUNALE") ))
-                            }else{
-                                setData(dataRes.projetList.filter(i=>(i.financement!=="RESERVE" && i.bordereau ) ))
-                            }
+                        setProgramme(dataRes)
+                        projet.current=dataRes.projetList.filter((i=>i.financement!=="RESERVE" && i.bordereau ))
+                        if(dataRes.ordonnateur==="MINTP"){
+                            setData(dataRes.projetList.filter(i=>(i.financement!=="RESERVE"  && i.bordereau && i.categorie!=="PROJET A GESTION COMMUNALE") ))
+                        }else{
+                            setData(dataRes.projetList.filter(i=>(i.financement!=="RESERVE" && i.bordereau ) ))
                         }
+                    }
                     
                 }
                 
+                window.scroll({top: 0, behavior:"smooth"})
+                notification.current.setNotification(
+                    {visible: true, type:resData.type,message:resData.message}
+                )
 
             }
         }catch(e){
@@ -399,7 +400,7 @@ function SuiviPayement(){
                     <div>{numStr(totalBudget(programme.projetList.filter(i=>i.ordonnateur==="MAIRE")),0)} fcfa</div>
                 </div>
                 <div className="p-prevision">
-                    <div>Prévision de réserve</div>
+                    <div>Provision de réserve</div>
                     <div>
                         <p>{numStr(programme.prevision,0)} fcfa
                         </p>
@@ -423,7 +424,7 @@ function SuiviPayement(){
                     <div>{numStr(totalBudget(programme.projetList.filter(i=>i.ordonnateur==="MAIRE")),0)} fcfa</div>
                 </div>
                 <div className="p-prevision">
-                    <div>Prévision de réserve</div>
+                    <div>Provision de réserve</div>
                     <div>
                         <p>{numStr(programme.prevision,0)} fcfa</p>
                     </div>
@@ -449,7 +450,7 @@ function SuiviPayement(){
                     <div>{numStr(totalBudget(programme.projetList.filter(i=>i.categorie==="PROJET A GESTION COMMUNALE")),0)} fcfa</div>
                 </div>
                 <div className="p-prevision">
-                    <div>Prévision de réserve</div>
+                    <div>Provision de réserve</div>
                     <div>
                         <p>{numStr(programme.prevision,0)} fcfa
                         </p>
@@ -470,15 +471,19 @@ function SuiviPayement(){
                             <p className="error-msg">{erreur}</p>
                         )}
                         <div className="form-line">
-                            <label>N° decompte</label>
+                            <label>N° decompte <span>*</span></label>
                             <input type="text"  name="decompte"  required/>
                         </div>
                         <div className="form-line">
-                            <label>Montant hors TVA</label>
+                            <label>N° marché <span>*</span></label>
+                            <input type="text"  name="n_marche" required/>
+                        </div>
+                        <div className="form-line">
+                            <label>Montant hors TVA <span>*</span></label>
                             <input type="number" onChange={changeMontant} ref={HTVA} name="m_HTVA"  required/>
                         </div>
                         <div className="form-line">
-                            <label>AIR</label>
+                            <label>AIR <span>*</span></label>
                             <select onChange={changeMontant} name="air" ref={AIR} required>
                                 <option value="">- - - - - - - - - - - - - - - - - - - - -</option>
                                 <option value="2.2">2,2</option>
@@ -522,15 +527,19 @@ function SuiviPayement(){
                             <p className="error-msg">{erreur}</p>
                         )}
                         <div className="form-line">
-                            <label>N° decompte</label>
+                            <label>N° decompte <span>*</span></label>
                             <input type="text"  name="decompte" defaultValue={focus.decompte} required/>
                         </div>
                         <div className="form-line">
-                            <label>Montant hors TVA</label>
+                            <label>N° marché <span>*</span></label>
+                            <input type="text"  name="n_marche" defaultValue={focus.n_marche} required/>
+                        </div>
+                        <div className="form-line">
+                            <label>Montant hors TVA <span>*</span></label>
                             <input type="number" onChange={changeMontant} ref={HTVA} name="m_HTVA" defaultValue={focus.m_HTVA} required/>
                         </div>
                         <div className="form-line">
-                            <label>AIR</label>
+                            <label>AIR <span>*</span></label>
                             <select onChange={changeMontant} name="air" ref={AIR} defaultValue={focus.air} required>
                                 <option value="">- - - - - - - - - - - - - - - - - - - - -</option>
                                 <option value="2.2">2,2</option>
@@ -546,7 +555,7 @@ function SuiviPayement(){
                     <div>
                         <div className="form-line">
                             <label>Montant TVA </label>
-                            <input type="number"  value={montant.TVA} required/>
+                            <input type="number"  value={montant.TVA} disabled required/>
                         </div>
                         <div className="form-line">
                             <label>Montant TTC </label>
@@ -617,7 +626,7 @@ const TableMINHDU=({data,programme,onLoadPdf,onHandleClick,option})=>{
                         <th>Linéaire_(ml)</th>
                         <th>Cout_total_du_projet_TTC</th>
                         <th className="min-w4">Budget_antérieur</th>
-                        <th className="min-w4">Budget ${programme.annee}</th>
+                        <th className="min-w4">Budget {programme.annee}</th>
                         <th className="min-w4">Engagement</th>
                         <th className="min-w4">Reliquat</th>
                         <th className="min-w3">Prestataire</th>
@@ -625,7 +634,7 @@ const TableMINHDU=({data,programme,onLoadPdf,onHandleClick,option})=>{
                         <th className="min-w4">Projection ${programme.annee+2}</th>
                         <th>Ordonnateurs</th>
                         <th className="min-w4">Situation</th>
-                        <th colSpan={option.check?"9":"8"} className="text-center">Suivi des payements</th>
+                        <th colSpan={option.check?"10":"9"} className="text-center">Suivi des payements</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -651,6 +660,7 @@ const TableMINHDU=({data,programme,onLoadPdf,onHandleClick,option})=>{
                                 </td>
                                 <td className="bold">Date</td>
                                 <td className="bold">N°_decompte</td>
+                                <td className="min-w4 bold">N°_marché</td>
                                 <td className="min-w4 bold">Montant HTVA</td>
                                 <td className="min-w4 bold">Montant TTC</td>
                                 <td className="min-w4 bold">Montant TVA</td>
@@ -666,6 +676,7 @@ const TableMINHDU=({data,programme,onLoadPdf,onHandleClick,option})=>{
                                 <tr className="height-line" key={l+1}>
                                     <td>{new Date(k.date).toLocaleDateString()}</td>
                                     <td>{k.decompte}</td>
+                                    <td>{k.n_marche}</td>
                                     <td>{k.m_HTVA}</td>
                                     <td>{k.m_TTC}</td>
                                     <td>{k.m_TVA}</td>
@@ -684,7 +695,7 @@ const TableMINHDU=({data,programme,onLoadPdf,onHandleClick,option})=>{
                             )}
 
                             <tr className="height-line">
-                                <td colSpan="2">Total</td>
+                                <td colSpan="3">Total</td>
                                 <td>{totalPayement(i.payement,"m_HTVA")}</td>
                                 <td>{totalPayement(i.payement,"m_TTC")}</td>
                                 <td>{totalPayement(i.payement,"m_TVA")}</td>
@@ -719,15 +730,15 @@ const TableMINT=({data,programme,onLoadPdf,onHandleClick,option})=>{
                         <th className="min-w12">Allotissement</th>
                         <th>Cout_total_du_projet_TTC</th>
                         <th className="min-w4">Budget antérieur</th>
-                        <th className="min-w4">Budget ${programme.annee}</th>
+                        <th className="min-w4">Budget {programme.annee}</th>
                         <th className="min-w4">Engagement</th>
                         <th className="min-w4">Reliquat</th>
                         <th className="min-w3">Prestataire</th>
-                        <th className="min-w4">Projection ${programme.annee+1}</th>
-                        <th className="min-w4">Projection ${programme.annee+2}</th>
+                        <th className="min-w4">Projection {programme.annee+1}</th>
+                        <th className="min-w4">Projection {programme.annee+2}</th>
                         <th>Ordonnateurs</th>
                         <th className="min-w4">situation</th>
-                        <th colSpan={option.check?"9":"8"} className="text-center">Suivi des payements</th>
+                        <th colSpan={option.check?"10":"9"} className="text-center">Suivi des payements</th>
                     </tr>
                 </thead>
                 <tbody> 
@@ -753,6 +764,7 @@ const TableMINT=({data,programme,onLoadPdf,onHandleClick,option})=>{
                             </td>
                             <td className="bold">Date</td>
                             <td className="bold">N°_decompte</td>
+                            <td className="min-w4 bold">N°_marché</td>
                             <td className="min-w4 bold">Montant HTVA</td>
                             <td className="min-w4 bold">Montant TTC</td>
                             <td className="min-w4 bold">Montant TVA</td>
@@ -768,6 +780,7 @@ const TableMINT=({data,programme,onLoadPdf,onHandleClick,option})=>{
                             <tr className="height-line" key={l+1}>
                                 <td>{new Date(k.date).toLocaleDateString()}</td>
                                 <td>{k.decompte}</td>
+                                <td>{k.n_marche}</td>
                                 <td>{k.m_HTVA}</td>
                                 <td>{k.m_TTC}</td>
                                 <td>{k.m_TVA}</td>
@@ -786,7 +799,7 @@ const TableMINT=({data,programme,onLoadPdf,onHandleClick,option})=>{
                         )}
 
                         <tr className="height-line">
-                            <td colSpan="2">Total</td>
+                            <td colSpan="3">Total</td>
                             <td>{totalPayement(i.payement,"m_HTVA")}</td>
                             <td>{totalPayement(i.payement,"m_TTC")}</td>
                             <td>{totalPayement(i.payement,"m_TVA")}</td>
@@ -831,14 +844,14 @@ const TableMINTP=({data,programme,categorie,onLoadPdf,onHandleClick,option})=>{
                     <th>Linéaire_OA (ml)</th>
                     <th>Montant_TTC_projet</th>
                     <th className="min-w4">Budget antérieur</th>
-                    <th className="min-w4">Budget ${programme.annee}</th>
+                    <th className="min-w4">Budget {programme.annee}</th>
                     <th className="min-w4">Engagement</th>
                     <th className="min-w4">Reliquat</th>
                     <th className="min-w3">Prestataire</th>
-                    <th className="min-w4">Projection ${programme.annee+1}</th>
-                    <th className="min-w4">Projection ${programme.annee+2}</th>
+                    <th className="min-w4">Projection {programme.annee+1}</th>
+                    <th className="min-w4">Projection {programme.annee+2}</th>
                     <th className="min-w4">Situation</th>
-                    <th colSpan={option.check?"9":"8"} className="text-center">Suivi des payements</th>
+                    <th colSpan={option.check?"10":"9"} className="text-center">Suivi des payements</th>
                 </tr>
             </thead>
                 <tbody> 
@@ -871,6 +884,7 @@ const TableMINTP=({data,programme,categorie,onLoadPdf,onHandleClick,option})=>{
                             </td>
                             <td className="bold">Date</td>
                             <td className="bold">N°_decompte</td>
+                            <td className="min-w4 bold">N°_marché</td>
                             <td className="min-w4 bold">Montant HTVA</td>
                             <td className="min-w4 bold">Montant TTC</td>
                             <td className="min-w4 bold">Montant TVA</td>
@@ -886,6 +900,7 @@ const TableMINTP=({data,programme,categorie,onLoadPdf,onHandleClick,option})=>{
                             <tr className="height-line" key={l+1}>
                                 <td>{new Date(k.date).toLocaleDateString()}</td>
                                 <td>{k.decompte}</td>
+                                <td>{k.n_marche}</td>
                                 <td>{k.m_HTVA}</td>
                                 <td>{k.m_TTC}</td>
                                 <td>{k.m_TVA}</td>
@@ -904,7 +919,7 @@ const TableMINTP=({data,programme,categorie,onLoadPdf,onHandleClick,option})=>{
                         )}
 
                         <tr className="height-line">
-                            <td colSpan="2">Total</td>
+                            <td colSpan="3">Total</td>
                             <td>{totalPayement(i.payement,"m_HTVA")}</td>
                             <td>{totalPayement(i.payement,"m_TTC")}</td>
                             <td>{totalPayement(i.payement,"m_TVA")}</td>

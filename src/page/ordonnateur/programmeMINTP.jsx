@@ -2,18 +2,25 @@ import ModalBox from "../../component/modalBox";
 import SearchBar from "../../component/searchBar";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Fetch, fetchGet } from "../../config/FetchRequest";
+import { Fetch, fetchFormData, fetchGet } from "../../config/FetchRequest";
 import Loader from "../../component/loader";
 import Notification from "../../component/notification";
 import PageLoader from "../../component/pageLoader";
 import FormMINTP from "../../component/formMINTP.";
 import { numStr, totalBudget } from "../../script";
 import { downLoadExcel } from "jsxtabletoexcel";
+import { Viewer } from '@react-pdf-viewer/core';
+import { Worker } from '@react-pdf-viewer/core';
+import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
+import '@react-pdf-viewer/core/lib/styles/index.css';
+import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 
 function ProgrammeMINTP (){
 
     let statut=["EN_ATTENTE_DE_SOUMISSION","CORRECTION","REJETER"]
     let categories=["PROJET A GESTION CENTRALE","PROJET A GESTION REGIONALE","PROJET A GESTION COMMUNALE"]
+
+    const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
     let [categorie,setCategorie]=useState("CENTRALE")
     let [programme,setProgramme]=useState({})
@@ -21,6 +28,8 @@ function ProgrammeMINTP (){
     let [state,setState]=useState({})
     let [check,setCheck]=useState(false)
     let [deleteId,setDeleteId]=useState()
+    let [pdf,setPdf]=useState()
+
 
     let [loader,setLoader]=useState(true)
     let[pageLoader,setPageLoader]=useState(false)
@@ -28,6 +37,7 @@ function ProgrammeMINTP (){
     let modal=useRef()
     let modal1=useRef()
     let modal2=useRef()
+    let modalBox1=useRef()
     let notification=useRef()
     let projet=useRef([])
 
@@ -46,6 +56,8 @@ function ProgrammeMINTP (){
                 let res = await fetchGet(`programmeByRole/${id}`)
                 if(res.ok){
                     let resData= await res.json()
+
+                    console.log(resData.projetList)
 
                     if(resData.type==="erreur"){
                         navigate(-1)
@@ -93,14 +105,15 @@ function ProgrammeMINTP (){
 
                 if(resData.type==="succes"){
                     
-                    let res = await fetchGet(`programmeByRole/${id}`)
-                    if(res.ok){
-                        let resData= await res.json()
-                        projet.current=resData.projetList
+                    let response = await fetchGet(`programmeByRole/${id}`)
+                    if(response.ok){
+                        let resdata= await response.json()
+
+                        projet.current=resdata.projetList.filter(i=>i.financement!=="RESERVE")
                         if(categorie==="CENTRALE"){
-                            setData(resData.projetList.filter(i=>i.categorie!=="PROJET A GESTION COMMUNALE"))                  
+                            setData(resdata.projetList.filter(i=>(i.financement!=="RESERVE" && i.categorie!=="PROJET A GESTION COMMUNALE") ))
                         }else{
-                            setData(resData.projetList.filter(i=>i.categorie==="PROJET A GESTION COMMUNALE"))                  
+                            setData(resdata.projetList.filter(i=>(i.financement!=="RESERVE" && i.categorie==="PROJET A GESTION COMMUNALE") ))
                         }
                     }
                 }
@@ -152,10 +165,7 @@ function ProgrammeMINTP (){
             let res= await Fetch(`updateProjetMINTP/${id}`,"PUT",datas)
             if(res.ok){
                 let resData= await res.json()
-                window.scroll({top: 0, behavior:"smooth"})
-                notification.current.setNotification(
-                    {visible: true, type:resData.type,message:resData.message}
-                )
+                
                 if(resData.type==="succes"){
                     let index= data.indexOf(data.find(i=>i.id===id))
                     datas.id=id
@@ -164,6 +174,11 @@ function ProgrammeMINTP (){
                     projet.current[index]=datas
                     setData(data)
                 }
+
+                window.scroll({top: 0, behavior:"smooth"})
+                notification.current.setNotification(
+                    {visible: true, type:resData.type,message:resData.message}
+                )
             }
         }catch(e){
             console.log(e)
@@ -182,15 +197,17 @@ function ProgrammeMINTP (){
             let res= await Fetch(`deleteProjet/${id}`,"DELETE")
             if(res.ok){
                 let resData= await res.json()
-                window.scroll({top: 0, behavior:"smooth"})
-                notification.current.setNotification(
-                    {visible: true, type:resData.type,message:resData.message}
-                )
+                
                 if(resData.type==="succes"){
                     data= data.filter(i=>i.id!==id)
                     projet.current=projet.current.filter(i=>i.id!==id)
                     setData(data)
                 }
+
+                window.scroll({top: 0, behavior:"smooth"})
+                notification.current.setNotification(
+                    {visible: true, type:resData.type,message:resData.message}
+                )
             }
         }catch(e){
             console.log(e)
@@ -306,9 +323,48 @@ function ProgrammeMINTP (){
         modal.current.setModal(true)
     }
 
+    const loadPdf=async(id)=>{
+
+        modalBox1.current.setModal(true)
+        try{
+            let res= await fetchFormData(`projet/getBordereau/${id}`,"GET")
+            if(res.ok){
+                
+                let blob = await res.blob()
+                const url=window.URL.createObjectURL(blob)
+                console.log(url.substring(5))
+                setPdf(url) 
+            }  
+        }catch(e){
+            console.log(e)
+        }
+
+    }
+
     const exportExcel=(fileName)=>{
         
         downLoadExcel(document.querySelector(".table"),"feuille 1",fileName)
+    }
+
+    const searchChoose=(categorie)=>{
+
+        let data
+        let key
+
+        if(categorie==="CENTRALE"){
+            data=projet.current.filter(i=>i.categorie!=="PROJET A GESTION COMMUNALE")
+            key=["region","budget_n","code_route","prestataire"]
+
+            return ({data:data, key: key})
+
+        }else{
+
+            data=projet.current.filter(i=>i.categorie==="PROJET A GESTION COMMUNALE")
+            key=["region","departement","commune","budget_n","code_route","prestataire"]
+
+            return ({data:data, key: key})
+
+        }
     }
 
 
@@ -330,7 +386,7 @@ function ProgrammeMINTP (){
                     </button>
                 </div>
                 <div className="box b-search">
-                    <SearchBar/>
+                    <SearchBar data={searchChoose(categorie).data} keys={searchChoose(categorie).key} onSetData={setData} />
                 </div>
             </div>
 
@@ -365,12 +421,141 @@ function ProgrammeMINTP (){
                 
                 <div className="tableBox">
 
-                    {categorie==="CENTRALE"?
-                        <Table1 programme={programme} data={data} check={check} onUpdate={handleClick} onDelete={deleteModal}/>
-                    :
-                        <Table2 programme={programme} data={data} check={check} onUpdate={handleClick} onDelete={deleteModal}/>
+                    <table className="table">
+                        <thead>
+                            <tr>
+                                <th>N°</th>
+                                <th>Région</th>
+                                {categorie!=="CENTRALE" &&(
+                                    <>
+                                    <th className="min-w3">Département</th>
+                                    <th className="min-w3">Commune</th>
+                                    </>
+                                )}
+                                <th className="min-w2">Catégorie</th>
+                                <th className="min-w1">Projets/troçons</th>
+                                <th>Code route</th>
+                                <th>Linéaire_route (km)</th>
+                                <th>Linéaire_OA (ml)</th>
+                                <th>Montant_TTC_projet</th>
+                                <th className="min-w4">Budget antérieur</th>
+                                <th className="min-w4">Budget {programme.annee}</th>
+                                {programme.statut==="VALIDER"&&(
+                                <>
+                                    <th className="min-w4">Engagement</th>
+                                    <th className="min-w4">Reliquat</th>
+                                </> 
+                                )}
+                                <th className="min-w4">Projection {programme.annee+1}</th>
+                                <th className="min-w4">Projection {programme.annee+2}</th>
+                                <th className="min-w3">Pretataire</th>
+                                <th className="min-w1">Observations</th>
+                                {programme.statut==="VALIDER"&&(
+                                <>
+                                    <th className="min-w4">Situation</th>
+                                    <th className="min-w1">Motifs</th>
+                                    <th className="min-w4">Suivi travaux</th>
+                                </> 
+                                )}
+                                {check &&(
+                                    <th>Action</th>
+                                )}
+                                
+                            </tr>
+                        </thead>
 
-                    }
+                        <tbody>
+                        {programme.statut==="VALIDER"?
+                            data.map((i,j)=>
+                            <tr key={j}>
+                                <td>{j+1}</td>
+                                <td>{i.region.replaceAll("_","-")}</td>
+                                {categorie!=="CENTRALE" &&(
+                                    <>
+                                    <td>{i.departement}</td>
+                                    <td>{i.commune}</td>
+                                    </>
+                                )}
+                                <td>{i.categorie}</td>
+                                <td>{i.projet}</td>
+                                <td>{i.code_route}</td>
+                                <td>{numStr(i.lineaire_route)}</td>
+                                <td>{numStr(i.lineaire_oa)}</td>
+                                <td>{numStr(i.ttc)}</td>
+                                <td>{numStr(i.budget_anterieur)}</td>
+                                <td>{numStr(i.budget_n) }</td>
+                                <td>{i.suivi && numStr(i.suivi.engagement)}</td>
+                                <td>{(i.suivi && i.suivi.engagement!==0) && numStr(i.budget_n - i.suivi.engagement,0)}</td>
+                                <td>{numStr(i.budget_n1)}</td>
+                                <td>{numStr(i.budget_n2)}</td>
+                                <td>{i.prestataire}</td>
+                                <td>{i.observation}</td>
+                                <td>
+                                {i.suivi &&(
+                                    i.bordereau?
+                                    <p  onClick={()=>loadPdf(i.id)} className="deco">{i.suivi.statut}</p>    
+                                    :i.suivi.statut
+                                )}
+                                </td>
+                                <td>{i.suivi && i.suivi.motif}</td>
+                                <td>{(i.bordereau) && 
+                                    <Link to={`/programmes/projet/${i.id}/suivi-des-travaux`}>Détails</Link>
+                                    }
+                                </td> 
+                            </tr>
+                        )
+                        :
+                        data.map((i,j)=>
+                            <tr key={j}>
+                                <td>{j+1}</td>
+                                <td>{i.region.replaceAll("_","-")}</td>
+                                {categorie!=="CENTRALE" &&(
+                                    <>
+                                    <td>{i.departement}</td>
+                                    <td>{i.commune}</td>
+                                    </>
+                                )}
+                                <td>{i.categorie}</td>
+                                <td>{i.projet}</td>
+                                <td>{i.code_route}</td>
+                                <td >{numStr(i.lineaire_route)}</td>
+                                <td>{numStr(i.lineaire_oa)}</td>
+                                <td>{numStr(i.ttc)}</td>
+                                <td>{numStr(i.budget_anterieur)}</td>
+                                <td>{numStr(i.budget_n) }</td>
+                                <td>{numStr(i.budget_n1)}</td>
+                                <td>{numStr(i.budget_n2)}</td>
+                                <td>{i.prestataire}</td>
+                                <td>{i.observation}</td>
+                                {check &&(
+                                <td> 
+                                    <div className="t-action">
+                                        <i className="fa-solid fa-pen-to-square" onClick={()=>handleClick(i.id)} ></i>
+                                        <i className="fa-solid fa-trash-can" onClick={()=>deleteModal(i.id)} ></i>
+                                    </div>
+                                </td>
+                                )}
+                            </tr>
+                        )
+                        }
+
+
+                        {programme.statut==="VALIDER" &&(
+
+                            <tr>
+                                <td colSpan={categorie==="CENTRALE"?"9":"11"} >Provision de réserve</td>
+                                <td>{numStr(programme.prevision,0)} fcfa</td>
+                                <td>{numStr(totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
+                                <td>{numStr(programme.prevision-totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
+                                <td colSpan="7">
+                                    <Link to={`/programmes/programme-MINTP/${programme.id}/prévision`} >Détails</Link>
+                                </td>
+                            </tr>
+                        )}
+                            
+                        </tbody>
+                    </table>
+
                 </div>
             </div>
 
@@ -388,7 +573,7 @@ function ProgrammeMINTP (){
                     <div>{numStr(totalBudget(projet.current.filter(i=>i.categorie==="PROJET A GESTION COMMUNALE")),0)} fcfa</div>
                 </div>
                 <div className="p-prevision">
-                    <div>Prévision de réserve</div>
+                    <div>Provision de réserve</div>
                     <div>
                         <p>{numStr(programme.prevision,0)} fcfa
                         </p>
@@ -472,6 +657,20 @@ function ProgrammeMINTP (){
                 </div>
             </ModalBox>
 
+            <div className="view-pdf">
+                <ModalBox ref={modalBox1}>
+                    <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+                        {pdf &&(
+                            <Viewer 
+                            fileUrl={pdf}
+                            plugins={[defaultLayoutPluginInstance]}
+                        />
+                        )}
+                        
+                    </Worker>
+                </ModalBox>
+            </div>
+
             {pageLoader &&(
                 <PageLoader/>
             )}
@@ -484,210 +683,3 @@ export default ProgrammeMINTP;
 
 
 
-function Table1({data,programme,check,onUpdate,onDelete}){
-
-    return(
-        <table className="table">
-            <thead>
-                <tr>
-                    <th>N°</th>
-                    <th>Région</th>
-                    <th className="min-w2">Catégorie</th>
-                    <th className="min-w1">Projets/troçons</th>
-                    <th>Code route</th>
-                    <th>Linéaire_route (km)</th>
-                    <th>Linéaire_OA (ml)</th>
-                    <th>Montant_TTC_projet</th>
-                    <th className="min-w4">Budget antérieur</th>
-                    <th className="min-w4">Budget {programme.annee}</th>
-                    {programme.statut==="VALIDER"&&(
-                    <>
-                        <th className="min-w4">Engagement</th>
-                        <th className="min-w4">Reliquat</th>
-                    </> 
-                    )}
-                    <th className="min-w4">Projection {programme.annee+1}</th>
-                    <th className="min-w4">Projection {programme.annee+2}</th>
-                    <th className="min-w3">Pretataire</th>
-                    <th className="min-w1">Observations</th>
-                    {programme.statut==="VALIDER"&&(
-                    <>
-                        <th className="min-w4">Situation</th>
-                        <th className="min-w1">Motifs</th>
-                        <th className="min-w4">Suivi travaux</th>
-                    </> 
-                    )}
-                    {check &&(
-                        <th>Action</th>
-                    )}
-                    
-                </tr>
-            </thead>
-            <tbody>
-            {programme.statut==="VALIDER"?
-                data.map((i,j)=>
-                <tr key={j}>
-                    <td>{j+1}</td>
-                    <td>{i.region.replaceAll("_","-")}</td>
-                    <td>{i.categorie}</td>
-                    <td>{i.projet}</td>
-                    <td>{i.code_route}</td>
-                    <td>{numStr(i.lineaire_route)}</td>
-                    <td>{numStr(i.lineaire_oa)}</td>
-                    <td>{numStr(i.ttc)}</td>
-                    <td>{numStr(i.budget_anterieur)}</td>
-                    <td>{numStr(i.budget_n) }</td>
-                    <td>{i.suivi && numStr(i.suivi.engagement)}</td>
-                    <td>{(i.suivi && i.suivi.engagement!==0) && numStr(i.budget_n - i.suivi.engagement)}</td>
-                    <td>{numStr(i.budget_n1)}</td>
-                    <td>{numStr(i.budget_n2)}</td>
-                    <td>{i.prestataire}</td>
-                    <td>{i.observation}</td>
-                    <td>{i.suivi && i.suivi.statut}</td>
-                    <td>{i.suivi && i.suivi.motif}</td>
-                    <td>{(i.bordereau) && 
-                        <Link to={`/programmes/projet/${i.id}/suivi-des-travaux`}>Détails</Link>
-                        }
-                    </td> 
-                </tr>
-            )
-            :
-            data.map((i,j)=>
-                <tr key={j}>
-                    <td>{j+1}</td>
-                    <td>{i.region.replaceAll("_","-")}</td>
-                    <td>{i.categorie}</td>
-                    <td>{i.projet}</td>
-                    <td>{i.code_route}</td>
-                    <td >{numStr(i.lineaire_route)}</td>
-                    <td>{numStr(i.lineaire_oa)}</td>
-                    <td>{numStr(i.ttc)}</td>
-                    <td>{numStr(i.budget_anterieur)}</td>
-                    <td>{numStr(i.budget_n) }</td>
-                    <td>{numStr(i.budget_n1)}</td>
-                    <td>{numStr(i.budget_n2)}</td>
-                    <td>{i.prestataire}</td>
-                    <td>{i.observation}</td>
-                    {check &&(
-                    <td> 
-                        <div className="t-action">
-                            <i className="fa-solid fa-pen-to-square" onClick={()=>onUpdate(i.id)} ></i>
-                            <i className="fa-solid fa-trash-can" onClick={()=>onDelete(i.id)} ></i>
-                        </div>
-                    </td>
-                    )}
-                </tr>
-            )
-            }
-                
-            </tbody>
-        </table>  
-    )
-}
-
-function Table2({data,programme,check,onUpdate,onDelete}){
-
-    return(
-        <table className="table">
-            <thead>
-                <tr>
-                    <th>N°</th>
-                    <th>Région</th>
-                    <th className="min-w3">Département</th>
-                    <th className="min-w3">Commune</th>
-                    <th className="min-w2">Catégorie</th>
-                    <th className="min-w1">Projets/troçons</th>
-                    <th>Code route</th>
-                    <th>Linéaire_route (km)</th>
-                    <th>Linéaire_OA (ml)</th>
-                    <th>Montant_TTC_projet</th>
-                    <th className="min-w4">Budget antérieur</th>
-                    <th className="min-w4">Budget {programme.annee}</th>
-                    {programme.statut==="VALIDER"&&(
-                    <>
-                        <th className="min-w4">Engagement</th>
-                        <th className="min-w4">Reliquat</th>
-                    </> 
-                    )}
-                    <th className="min-w4">Projection {programme.annee+1}</th>
-                    <th className="min-w4">Projection {programme.annee+2}</th>
-                    <th className="min-w3">Pretataire</th>
-                    <th className="min-w1">Observation</th>
-                    {programme.statut==="VALIDER"&&(
-                    <>
-                        <th className="min-w4">Situation</th>
-                        <th className="min-w1">Motif</th>
-                        <th className="min-w4">Suivi travaux</th>
-                    </> 
-                    )}
-                    {check &&(
-                        <th>Action</th>
-                    )}
-                    
-                </tr>
-            </thead>
-            <tbody>
-            {programme.statut==="VALIDER"?
-                data.map((i,j)=>
-                <tr key={j}>
-                    <td>{j+1}</td>
-                    <td>{i.region.replaceAll("_","-")}</td>
-                    <td>{i.departement}</td>
-                    <td>{i.commune}</td>
-                    <td>{i.categorie}</td>
-                    <td>{i.projet}</td>
-                    <td>{i.code_route}</td>
-                    <td >{numStr(i.lineaire_route)}</td>
-                    <td>{numStr(i.lineaire_oa)}</td>
-                    <td>{numStr(i.ttc)}</td>
-                    <td>{numStr(i.budget_anterieur)}</td>
-                    <td>{numStr(i.budget_n) }</td>
-                    <td>{i.suivi && numStr(i.suivi.engagement)}</td>
-                    <td>{(i.suivi && i.suivi.engagement!==0) && numStr(i.budget_n - i.suivi.engagement)}</td>
-                    <td>{numStr(i.budget_n1)}</td>
-                    <td>{numStr(i.budget_n2)}</td>
-                    <td>{i.prestataire}</td>
-                    <td>{i.observation}</td>
-                    <td>{i.suivi && i.suivi.statut}</td>
-                    <td>{i.suivi && i.suivi.motif}</td>
-                    <td>{(i.bordereau) && 
-                        <Link to={`/programmes/projet/${i.id}/suivi-des-travaux`}>Détails</Link>
-                        }
-                    </td> 
-                </tr>
-            )
-            :
-            data.map((i,j)=>
-                <tr key={j}>
-                    <td>{j+1}</td>
-                    <td>{i.region.replaceAll("_","-")}</td>
-                    <td>{i.departement}</td>
-                    <td>{i.commune}</td>
-                    <td>{i.categorie}</td>
-                    <td>{i.projet}</td>
-                    <td>{i.code_route}</td>
-                    <td >{numStr(i.lineaire_route)}</td>
-                    <td>{numStr(i.lineaire_oa)}</td>
-                    <td>{numStr(i.ttc)}</td>
-                    <td>{numStr(i.budget_anterieur)}</td>
-                    <td>{numStr(i.budget_n) }</td>
-                    <td>{numStr(i.budget_n1)}</td>
-                    <td>{numStr(i.budget_n2)}</td>
-                    <td>{i.prestataire}</td>
-                    <td>{i.observation}</td>
-                    {check &&(
-                    <td> 
-                    <div className="t-action">
-                        <i className="fa-solid fa-pen-to-square" onClick={()=>onUpdate(i.id)} ></i>
-                        <i className="fa-solid fa-trash-can" onClick={()=>onDelete(i.id)} ></i>
-                    </div>
-                </td>
-                    )}
-                </tr>
-            )
-            }
-                
-            </tbody>
-        </table>
-    )
-}

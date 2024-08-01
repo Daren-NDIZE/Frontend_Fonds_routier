@@ -38,6 +38,8 @@ function ProgrammeMINHDU(){
     const {id}=useParams()
     const navigate=useNavigate()
 
+    let searchKey=["region","ville","type_travaux","budget_n","prestataire","ordonnateur"]
+
     const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
     useEffect(()=>{
@@ -94,12 +96,12 @@ function ProgrammeMINHDU(){
                 
                 if(resData.type==="succes"){
                     
-                    let res = await fetchGet(`programmeByRole/${id}`)
-                    if(res.ok){
-                        let resData= await res.json()
-                        setProgramme(resData)
-                        projet.current=resData.projetList.filter(i=>i.financement!=="RESERVE")
-                        setData(resData.projetList.filter(i=>i.financement!=="RESERVE"))
+                    let response = await fetchGet(`programmeByRole/${id}`)
+                    if(response.ok){
+                        let resdata= await response.json()
+                        
+                        projet.current=resdata.projetList.filter(i=>i.financement!=="RESERVE")
+                        setData(resdata.projetList.filter(i=>i.financement!=="RESERVE"))
                     }
                 }
 
@@ -150,6 +152,9 @@ function ProgrammeMINHDU(){
                 if(resData.type==="succes"){
                     let index= data.indexOf(data.find(i=>i.id===id))
                     datas.id=id
+                    if(data[index].suivi){
+                        datas.suivi=data[index].suivi
+                    }
                     data[index]=datas
                     projet.current[index]=datas
                     setData(data)
@@ -320,7 +325,7 @@ function ProgrammeMINHDU(){
                     </button>
                 </div>
                 <div className="box b-search">
-                    <SearchBar/>
+                    <SearchBar data={projet.current} onSetData={setData} keys={searchKey}/>
                 </div>
             </div>
             
@@ -359,10 +364,10 @@ function ProgrammeMINHDU(){
                                 <th>Cout_total_du_projet_TTC</th>
                                 <th className="min-w4">Budget antérieur</th>
                                 <th className="min-w4">Budget {programme.annee}</th>
-                                {programme.statut==="VALIDER" &&(
+                                {(programme.statut==="VALIDER" || programme.type==="AJUSTER") &&(
                                 <>
                                     <th className="min-w4">Engagement</th>
-                                    <th> className="min-w4"Reliquat</th>
+                                    <th className="min-w4">Reliquat</th>
                                 </> 
                                 )}
                                 <th className="min-w4">Projection {programme.annee+1}</th>
@@ -370,7 +375,7 @@ function ProgrammeMINHDU(){
                                 <th className="min-w3">Prestataire</th>
                                 <th>Ordonnateur</th>
                                 <th className="min-w1">Observation</th>
-                                {programme.statut==="VALIDER" &&(
+                                {(programme.statut==="VALIDER" || programme.type==="AJUSTER") &&(
                                 <>
                                     <th className="min-w4">Situation</th>
                                     <th className="min-w1">Motif</th>
@@ -383,7 +388,7 @@ function ProgrammeMINHDU(){
                             </tr>
                         </thead>
                         <tbody>
-                        {programme.statut==="VALIDER"?
+                        {programme.statut==="VALIDER" || programme.type==="AJUSTER"?
 
                            data.map((i,j)=>
                             <tr key={j}>
@@ -397,7 +402,7 @@ function ProgrammeMINHDU(){
                                 <td>{numStr(i.budget_anterieur)}</td>
                                 <td>{numStr(i.budget_n) }</td>
                                 <td>{i.suivi && numStr(i.suivi.engagement)}</td>
-                                <td>{(i.suivi && i.suivi.engagement!==0) && numStr(i.budget_n - i.suivi.engagement)}</td>
+                                <td>{(i.suivi && i.suivi.engagement!==0) && numStr(i.budget_n - i.suivi.engagement,0)}</td>
                                 <td>{numStr(i.budget_n1)}</td>
                                 <td>{numStr(i.budget_n2)}</td>
                                 <td>{i.prestataire}</td>
@@ -405,7 +410,7 @@ function ProgrammeMINHDU(){
                                 <td>{i.observation}</td>
                                 <td>
                                 {i.suivi &&(
-                                    i.suivi.statut==="Visé"?
+                                    i.bordereau?
                                     <p  onClick={()=>loadPdf(i.id)} className="deco">{i.suivi.statut}</p>    
                                     :i.suivi.statut
                                 )}
@@ -418,10 +423,19 @@ function ProgrammeMINHDU(){
                                 <td>{(i.bordereau) && 
                                     <Link to={`/programmes/projet/${i.id}/suivi-des-travaux`}>Détails</Link>
                                     }
-                                </td>                          
+                                </td> 
+                                {check &&(
+                                <td> 
+                                    <div className="t-action">
+                                        <i className="fa-solid fa-pen-to-square" onClick={()=>handleClick(i.id)}></i>
+                                        <i className="fa-solid fa-trash-can" onClick={()=>deleteModal(i.id)}></i>
+                                    </div>
+                                </td>
+                                )}                         
                             </tr>
                             )
                         :
+                        
                         data.map((i,j)=>
                             <tr key={j}>
                                 <td>{j+1}</td>
@@ -453,7 +467,7 @@ function ProgrammeMINHDU(){
 
                         {programme.statut==="VALIDER" &&(
                             <tr>
-                                <td colSpan="8">Prévision de réserve</td>
+                                <td colSpan="8">Provision de réserve</td>
                                 <td>{numStr(programme.prevision,0)} fcfa</td>
                                 <td>{numStr(totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
                                 <td>{numStr(programme.prevision-totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
@@ -479,7 +493,7 @@ function ProgrammeMINHDU(){
                     <div>{numStr(totalBudget(projet.current.filter(i=>i.ordonnateur==="MAIRE")),0)} fcfa</div>
                 </div>
                 <div className="p-prevision">
-                    <div>Prévision de réserve</div>
+                    <div>Provision de réserve</div>
                     <div>
                         <p>{numStr(programme.prevision,0)} fcfa</p>
                         {statut.includes(programme.statut) &&(

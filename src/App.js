@@ -40,6 +40,7 @@ function App() {
       localStorage.clear()
       navigate("/login")
     }
+
   },[user,navigate])
 
   return (
@@ -55,15 +56,15 @@ function App() {
    
       <Model ref={model}>
         <Routes>
-          <Route element={["FONDS_ROUTIER","ADMIN"].includes(user.role)?<Outlet/>:<Navigate to="/programmes"/>}>
+          <Route element={["ACO","CO","DCO","STAGIAIRE","ADMIN"].includes(user.role)?<Outlet/>:<Navigate to="/programmes"/>}>
             <Route path="/programmes/soumis" element={<SubmitProgramme/>}/>
             <Route path="/execution-des-programme" element={<ValideProgramme/>}/>
             <Route path="/execution-des-programme/programme-MINHDU/:id" element={<SuiviProgramme ordonnateur="MINHDU"/>}/>
             <Route path="/execution-des-programme/programme-MINT/:id" element={<SuiviProgramme ordonnateur="MINT"/>}/>
             <Route path="/execution-des-programme/programme-MINTP/:id" element={<SuiviProgramme ordonnateur="MINTP"/>}/>
-            <Route path="/execution-des-programme/:ordonnateur/:id/prévision" element={<PrevisionFR/>}/>
+            <Route path="/execution-des-programme/:ordonnateur/:id/prévision" element={<PrevisionFR role={user.role}/>}/>
             <Route path="/execution-des-programme/projet/:id/suivi-des-travaux" element={<SuiviTravaux/>}/>
-            <Route path="/programmes/soumis/:id" element={<ProgrammeFR/>}/>
+            <Route path="/programmes/soumis/:id" element={<ProgrammeFR role={user.role}/>}/>
             <Route path="/synthese-programme" element={<Synthese/>}/>
             <Route path="/programmes-cloturés" element={<Cloturer/>}/>
             <Route path="/programmes-cloturés/:ordonnateur/:id" element={<ClotureDetails/>}/>
@@ -75,7 +76,7 @@ function App() {
             <Route path="/gestion-des-utilisateurs" element={<UserList/>}/>
           </Route>
 
-          <Route element={!( ["FONDS_ROUTIER","ADMIN"].includes(user.role) )?<Outlet/>:<Navigate to="/programmes/soumis"/>}>
+          <Route element={["MINHDU","MINT","MINTP"].includes(user.role) ?<Outlet/>:<Navigate to="/programmes/soumis"/>}>
             <Route path="/créer-programme" element={<CreatePg/>}/>
             <Route path="/programmes" element={<Programme/>}/>
             <Route path="/modifier-programme/:id" element={<UpdatePg/>}/>

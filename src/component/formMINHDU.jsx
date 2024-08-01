@@ -25,7 +25,7 @@ function Form({submit,annee}){
         <form className="flex-form" onSubmit={submit}>
             <div>
                 <div className="form-line">
-                    <label>Region</label>
+                    <label>Region <span>*</span></label>
                     <select  name="region" required>
                         <option value="">- - - - - - - - - - - - - - - - - - - - -  </option>
                         <option value="CENTRE">CENTRE</option>
@@ -41,11 +41,11 @@ function Form({submit,annee}){
                     </select>
                 </div>
                 <div className="form-line">
-                    <label>Ville</label>
+                    <label>Ville <span>*</span></label>
                     <input type="text" name="ville" required/>
                 </div>
                 <div className="form-line">
-                    <label>Type de travaux</label>
+                    <label>Type de travaux <span>*</span></label>
                     <select name="type_travaux" required>
                         <option value="">- - - - - - - - - - - - - - - - - - - - </option>
                         <option value="ENTRETIEN DES VOIRIES URBAINES">ENTRETIEN DES VOIRIES URBAINES</option>
@@ -53,7 +53,7 @@ function Form({submit,annee}){
                     </select>
                 </div>
                 <div className="form-line">
-                    <label>Troçons</label>
+                    <label>Troçons <span>*</span></label>
                     <textarea name="troçon" required></textarea>
                 </div>
                 <div className="form-line">
@@ -61,7 +61,7 @@ function Form({submit,annee}){
                     <input type="number" step="any" name="lineaire"/>
                 </div>
                 <div className="form-line">
-                    <label>Cout total du projet TTC</label>
+                    <label>Cout total du projet TTC <span>*</span></label>
                     <input type="number" name="ttc" min="1" required/>
                 </div>
                 <div className="form-line">
@@ -74,7 +74,7 @@ function Form({submit,annee}){
             <div>
                 
                 <div className="form-line">
-                    <label>Budget {annee}</label>
+                    <label>Budget {annee} <span>*</span></label>
                     <input type="number" min="1" name="budget_n" required />
                 </div>
                 <div className="form-line">
@@ -90,7 +90,7 @@ function Form({submit,annee}){
                     <input type="text"  name="prestataire" />
                 </div>
                 <div className="form-line">
-                    <label>Ordonnateur</label>
+                    <label>Ordonnateur <span>*</span></label>
                     <select name="ordonnateur" required>
                         <option value=""> - - - - - - - - - - - - - - - - - - - - - - -</option>
                         <option value="MINHDU">MINHDU</option>
@@ -118,7 +118,7 @@ function UpdateForm({submit,data,annee}){
             <div>
             
                 <div className="form-line">
-                    <label>Region</label>
+                    <label>Region <span>*</span></label>
                     <select  name="region" defaultValue={data.region} required>
                         <option value="">- - - - - - - - - - - - - - - - - - - - -  </option>
                         <option value="CENTRE">CENTRE</option>
@@ -134,11 +134,11 @@ function UpdateForm({submit,data,annee}){
                     </select>
                 </div>
                 <div className="form-line">
-                    <label>Ville</label>
+                    <label>Ville <span>*</span></label>
                     <input type="text" name="ville" defaultValue={data.ville} required/>
                 </div>
                 <div className="form-line">
-                    <label>Type de travaux</label>
+                    <label>Type de travaux <span>*</span></label>
                     <select name="type_travaux" defaultValue={data.type_travaux} required>
                         <option value="">- - - - - - - - - - - - - - - - - - - - </option>
                         <option value="ENTRETIEN DES VOIRIES URBAINES">ENTRETIEN DES VOIRIES URBAINES</option>
@@ -146,7 +146,7 @@ function UpdateForm({submit,data,annee}){
                     </select>
                 </div>
                 <div className="form-line">
-                    <label>Troçons</label>
+                    <label>Troçons <span>*</span></label>
                     <textarea name="troçon" defaultValue={data.troçon} required></textarea>
                 </div>
                 <div className="form-line">
@@ -154,7 +154,7 @@ function UpdateForm({submit,data,annee}){
                     <input type="number" name="lineaire" defaultValue={data.lineaire} step="any" />
                 </div>
                 <div className="form-line">
-                    <label>Cout total du projet TTC</label>
+                    <label>Cout total du projet TTC <span>*</span></label>
                     <input type="number" min="1" name="ttc" defaultValue={data.ttc} required/>
                 </div>
                 <div className="form-line">
@@ -167,11 +167,11 @@ function UpdateForm({submit,data,annee}){
 
             <div>
                 <div className="form-line">
-                    <label>Budget {annee}</label>
+                    <label>Budget {annee} <span>*</span></label>
                     <input type="number" min="0" name="budget_n" defaultValue={data.budget_n} required />
                 </div>
                 <div className="form-line">
-                    <label>Budget {annee+1}</label>
+                    <label>Budget {annee+1} </label>
                     <input type="number" min="0" name="budget_n1" defaultValue={data.budget_n1} />
                 </div>
                 <div className="form-line">
@@ -183,7 +183,7 @@ function UpdateForm({submit,data,annee}){
                     <input type="text"  name="prestataire" defaultValue={data.prestataire} />
                 </div>
                 <div className="form-line">
-                    <label>Ordonnateur</label>
+                    <label>Ordonnateur <span>*</span></label>
                     <select name="ordonnateur" defaultValue={data.ordonnateur} required>
                         <option value=""> - - - - - - - - - - - - - - - - - - - - - - -</option>
                         <option value="MINHDU">MINHDU</option>

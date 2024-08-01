@@ -288,11 +288,11 @@ function SuiviTravaux({update}){
                             <p className="error-msg">{erreur}</p>
                         )}
                         <div className="form-line">
-                            <label>Taux de consommation des dlais   (en %)</label>
+                            <label>Taux de consommation des dlais   (en %) <span>*</span></label>
                             <input type="number" step="any" max="100" name="tauxConsommation" required/>
                         </div>
                         <div className="form-line">
-                            <label>Taux d'avancement des travaux (en %)</label>
+                            <label>Taux d'avancement des travaux (en %) <span>*</span></label>
                             <input type="number" step="any" max="100" name="tauxAvancement" required/>
                         </div>
                         <div className="form-line">
@@ -307,22 +307,22 @@ function SuiviTravaux({update}){
             </ModalBox>
 
             <ModalBox ref={modal1} >
+
                 <form className="flex-form" onSubmit={updated} >
-                    
                     <div>   
                         {erreur.length!==0 &&(
                             <p className="error-msg">{erreur}</p>
                         )}
                         <div className="form-line">
-                            <label>Taux de consommation des dlais   (en %)</label>
+                            <label>Taux de consommation des dlais (en %) <span>*</span></label>
                             <input type="number" step="any" max="100" name="tauxConsommation" defaultValue={focus.tauxConsommation} required/>
                         </div>
                         <div className="form-line">
-                            <label>Taux d'avancement des travaux (en %)</label>
+                            <label>Taux d'avancement des travaux (en %) <span>*</span></label>
                             <input type="number" step="any" max="100" name="tauxAvancement" defaultValue={focus.tauxAvancement} required/>
                         </div>
                         <div className="form-line">
-                            <label>Observation</label>
+                            <label>Observation </label>
                             <textarea name="description" defaultValue={focus.description} required/>
                         </div>
                         <div className="form-line" style={{margin: "0"}}>

@@ -9,7 +9,7 @@ import { fetchFormData, fetchGet} from "../../config/FetchRequest"
 import { numStr, totalBudget } from "../../script"
 import { downLoadExcel } from "jsxtabletoexcel"
 
-function ProgrammeFR(){
+function ProgrammeFR({role}){
 
     let modal=useRef()
     let notification=useRef()
@@ -172,7 +172,7 @@ function ProgrammeFR(){
                     <button className="download-btn" onClick={()=>exportExcel(programme.intitule)}>
                         <i className="fa-solid fa-down-long"></i>
                     </button>
-                    {programme.statut==="SOUMIS" &&(
+                    {(["CO","DCO"].includes(role) && programme.statut==="SOUMIS") &&(
                     <div className="n-projet">
                         <button onClick={open} >Decision</button>
                     </div>
@@ -215,7 +215,7 @@ function ProgrammeFR(){
                     <div>{numStr(totalBudget(projet.current.filter(i=>i.ordonnateur==="MAIRE")),0)} fcfa</div>
                 </div>
                 <div className="p-prevision">
-                    <div>Prévision de réserve</div>
+                    <div>Provision de réserve</div>
                     <div>
                         <p>{numStr(programme.prevision,0)} fcfa
                         </p>
@@ -239,7 +239,7 @@ function ProgrammeFR(){
                     <div>{numStr(totalBudget(projet.current.filter(i=>i.ordonnateur==="MAIRE")),0)} fcfa</div>
                 </div>
                 <div className="p-prevision">
-                    <div>Prévision de réserve</div>
+                    <div>Provision de réserve</div>
                     <div>
                         <p>{numStr(programme.prevision,0)} fcfa
                         </p>
@@ -266,7 +266,7 @@ function ProgrammeFR(){
                     <div>{numStr(totalBudget(projet.current.filter(i=>i.categorie==="PROJET A GESTION COMMUNALE")),0)} fcfa</div>
                 </div>
                 <div className="p-prevision">
-                    <div>Prévision de réserve</div>
+                    <div>Provision de réserve</div>
                     <div>
                         <p>{numStr(programme.prevision,0)} fcfa
                         </p>
@@ -284,7 +284,7 @@ function ProgrammeFR(){
                 <form encType="multipart/form-data"  className="flex-form"  onSubmit={submit}>
                     <div>
                         <div className="form-line">
-                            <label>Décision</label>
+                            <label>Décision <span>*</span></label>
                             <select name="statut" onChange={decision} required>
                                 <option value="">- - - - - - - - - - - - - - - - - -</option>
                                 <option value="VALIDER">VALIDER</option>
@@ -298,7 +298,7 @@ function ProgrammeFR(){
                         </div>
                         {valide &&(
                             <div className="form-line">
-                                <label>Résolution signée</label>
+                                <label>Résolution signée (2MB MAX) <span>*</span></label>
                                 <input type="file" name="file"  accept=".pdf" required/>
                             </div>
                         )}

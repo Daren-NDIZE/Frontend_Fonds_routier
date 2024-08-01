@@ -45,7 +45,7 @@ function ClotureDetail(){
                 if(res.ok){
                     let resData= await res.json()
 
-                    if(resData.type==="erreur" || resData.statut!=="VALIDER" || resData.ordonnateur!==ordonnateur.substring(10)){
+                    if(resData.type==="erreur" || resData.statut!=="CLOTURER" || resData.ordonnateur!==ordonnateur.substring(10)){
                         navigate(-1)
                     }else{
                         setProgramme(resData)
@@ -175,7 +175,7 @@ function ClotureDetail(){
                     <div>{numStr(totalBudget(projet.current.filter(i=>i.ordonnateur==="MAIRE")),0)} fcfa</div>
                 </div>
                 <div className="p-prevision">
-                    <div>Prévision de réserve</div>
+                    <div>Provision de réserve</div>
                     <div>
                         <p>{numStr(programme.prevision,0)} fcfa
                         </p>
@@ -199,7 +199,7 @@ function ClotureDetail(){
                     <div>{numStr(totalBudget(projet.current.filter(i=>i.ordonnateur==="MAIRE")),0)} fcfa</div>
                 </div>
                 <div className="p-prevision">
-                    <div>Prévision de réserve</div>
+                    <div>Provision de réserve</div>
                     <div>
                         <p>{numStr(programme.prevision,0)} fcfa</p>
                     </div>
@@ -225,7 +225,7 @@ function ClotureDetail(){
                     <div>{numStr(totalBudget(projet.current.filter(i=>i.categorie==="PROJET A GESTION COMMUNALE")),0)} fcfa</div>
                 </div>
                 <div className="p-prevision">
-                    <div>Prévision de réserve</div>
+                    <div>Provision de réserve</div>
                     <div>
                         <p>{numStr(programme.prevision,0)} fcfa
                         </p>

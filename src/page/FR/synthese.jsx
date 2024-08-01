@@ -227,7 +227,7 @@ const SyntheseMINHDU=({prevision,engagement})=>{
                         <td>{(engagement[1]*100/prevision[1]).toFixed(2)}%</td>
                     </tr>
                     <tr>
-                        <td rowSpan="2">MINHDU / GESTION CENTRALE</td>
+                        <td rowSpan="2">MINHDU / GESTION COMMUNALE</td>
                         <td>COMMUNES / TRAVAUX</td>
                         <td>{numStr(prevision[2],0)}</td>
                         <td>{numStr(engagement[2],0)}</td>

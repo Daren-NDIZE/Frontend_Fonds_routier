@@ -396,6 +396,9 @@ table,tr,th,td{
 .table tr{
     height: 35px;
 }
+.table .lineFocus{
+    background: #3229af2e;
+}
 .table td,.table th{
     text-align: left;
 }
@@ -403,7 +406,7 @@ table,tr,th,td{
     padding: 6px 10px;
 }
 tbody tr:nth-child(2n+1){
-    background: #f5f6fc;
+    background: #f3f5ff;
 }
 tr.height-line{
     height: min-content;
@@ -623,6 +626,13 @@ table .text-center{
 .flex-form .form-line textarea{
     height: 70px;
     resize: none;
+}
+label span{
+    color: red;
+    font-size: 14px;
+    margin-left: 5px;
+    font-weight: bold;
+    display: inline-block;
 }
 .pageLoader{
     position: fixed;

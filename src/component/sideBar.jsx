@@ -24,10 +24,7 @@ function SideBar({role}){
                     <p>NAVIGATION</p>
                 </div>
                 <nav>
-                    {role==="ADIM"?
-
-                    <></>
-                    :role==="FONDS_ROUTIER"?
+                    {["ACO","CO","DCO","STAGIAIRE"].includes(role)?
                     <ul>
                         <li><NavLink to="/programmes/soumis">Programmes en cours</NavLink></li>
                         <li><NavLink to="/execution-des-programme">Execution des programmes</NavLink></li>
@@ -46,7 +43,7 @@ function SideBar({role}){
                         <li><NavLink to="/paramètres">Paramètres</NavLink></li>
 
                     </ul>
-                    :role==="MINT" || role==="MINTP" || role==="MINHDU"?
+                    :["MINHDU","MINTP","MINT"].includes(role)?
                     <ul>
                         <li><NavLink to="/créer-programme">Créer un programme</NavLink></li>
                         <li><NavLink to="/programmes">Programmes en cours</NavLink></li>

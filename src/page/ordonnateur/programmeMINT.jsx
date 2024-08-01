@@ -39,6 +39,9 @@ function ProgrammeMINT (){
     const {id}=useParams()
     const navigate=useNavigate()
 
+    let searchKey=["region","budget_n","prestataire","ordonnateur"]
+
+
     const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
     useEffect(()=>{
@@ -95,12 +98,12 @@ function ProgrammeMINT (){
                 
                 if(resData.type==="succes"){
                     
-                    let res = await fetchGet(`programmeByRole/${id}`)
-                    if(res.ok){
-                        let resData= await res.json()
-                        setProgramme(resData)
-                        projet.current=resData.projetList
-                        setData(resData.projetList)
+                    let response = await fetchGet(`programmeByRole/${id}`)
+                    if(response.ok){
+                        let resdata= await response.json()
+
+                        projet.current=resdata.projetList.filter(i=>i.financement!=="RESERVE")
+                        setData(resdata.projetList.filter(i=>i.financement!=="RESERVE"))
                     }
                 }
                 window.scroll({top: 0, behavior:"smooth"})
@@ -324,7 +327,7 @@ function ProgrammeMINT (){
                     </button>
                 </div>
                 <div className="box b-search">
-                    <SearchBar/>
+                    <SearchBar data={projet.current} keys={searchKey} onSetData={setData}/>
                 </div>
             </div>
 
@@ -399,7 +402,7 @@ function ProgrammeMINT (){
                                     <td>{numStr(i.budget_anterieur)}</td>
                                     <td>{numStr(i.budget_n) }</td>
                                     <td>{i.suivi && numStr(i.suivi.engagement)}</td>
-                                    <td>{(i.suivi && i.suivi.engagement!==0) && numStr(i.budget_n - i.suivi.engagement)}</td>
+                                    <td>{(i.suivi && i.suivi.engagement!==0) && numStr(i.budget_n - i.suivi.engagement,0)}</td>
                                     <td>{numStr(i.budget_n1)}</td>
                                     <td>{numStr(i.budget_n2)}</td>
                                     <td>{i.prestataire}</td>
@@ -407,7 +410,7 @@ function ProgrammeMINT (){
                                     <td>{i.observation}</td>
                                     <td>
                                     {i.suivi &&(
-                                        i.suivi.statut==="Visé"?
+                                        i.bordereau?
                                         <p  onClick={()=>loadPdf(i.id)} className="deco">{i.suivi.statut}</p>    
                                         :i.suivi.statut
                                     )}
@@ -454,7 +457,7 @@ function ProgrammeMINT (){
                         
                         {programme.statut==="VALIDER" &&(
                             <tr>
-                                <td colSpan="7">Prévision de réserve</td>
+                                <td colSpan="7">Provision de réserve</td>
                                 <td>{numStr(programme.prevision,0)} fcfa</td>
                                 <td>{numStr(totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
                                 <td>{numStr(programme.prevision-totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
@@ -481,7 +484,7 @@ function ProgrammeMINT (){
                     <div>{numStr(totalBudget(projet.current.filter(i=>i.ordonnateur==="MAIRE")),0)} fcfa</div>
                 </div>
                 <div className="p-prevision">
-                    <div>Prévision de réserve</div>
+                    <div>Provision de réserve</div>
                     <div>
                         <p>{numStr(programme.prevision,0)} fcfa</p>
                         {statut.includes(programme.statut) &&(

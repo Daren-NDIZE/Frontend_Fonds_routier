@@ -209,6 +209,21 @@ projet.forEach(i =>{
 return total
 }
 
+export function totalEngagement(projet){
+
+	let total=0
+	
+
+projet.forEach(i =>{
+
+	if(projet.suivi){
+		total=total + parseInt(i.suivi.totalEngagement) 
+	}
+});
+
+return total
+}
+
 export function totalPayement(payement, attribut){
 
 	let total=0;
@@ -245,6 +260,25 @@ export function parseTable(motif){
 	}
 
 	return table;
+}
+
+
+export function cursorLine(){
+
+	let lines=document.querySelectorAll("tbody tr")
+
+	Array.from(lines).forEach((i)=>{
+
+		i.addEventListener("dblclick",function(){
+
+			Array.from(lines).forEach((i)=>{
+				i.classList.remove("lineFocus")
+			})
+
+			i.classList.add("lineFocus")
+		})
+
+	})
 }
 
 

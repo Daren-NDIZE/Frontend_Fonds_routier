@@ -85,7 +85,7 @@ function Prevision(){
 
                 :programme.ordonnateur==="MINTP"?
 
-                    <></>
+                    <MINTP data={data} />
                 :
                     <MINT data={data} />
                 }

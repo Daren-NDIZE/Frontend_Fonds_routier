@@ -9,7 +9,7 @@ import ModalBox from "../../component/modalBox";
 import Notification from "../../component/notification";
 
 
-function PrevisionFR(){
+function PrevisionFR({role}){
 
     let [programme,setProgramme]=useState({})
     let [data,setData]=useState([])
@@ -126,18 +126,18 @@ function PrevisionFR(){
                     </button>
                 </div>
                 
-                <div className="top-element">
-                    <div className="check-update">
-                        <label htmlFor="check">Modifier</label>
-                        <input type="checkbox" id="check" onChange={change}/>
-                    </div>
-                    <div className="n-projet">
-                        <button>Nouveau</button>
-                    </div>
-                </div> 
+                { ["DCO","ADMIN"].includes(role) &&(
 
-
-                
+                    <div className="top-element">
+                        <div className="check-update">
+                            <label htmlFor="check">Modifier</label>
+                            <input type="checkbox" id="check" onChange={change}/>
+                        </div>
+                        <div className="n-projet">
+                            <button>Nouveau</button>
+                        </div>
+                    </div>
+                )}
 
                 {programme.ordonnateur==="MINHDU"?
 

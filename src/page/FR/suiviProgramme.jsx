@@ -172,6 +172,7 @@ function SuiviProgramme({ordonnateur}){
             console.log(e)
         }finally{
             setMotif([])
+            setStatut("Traitment DCO")
             setPageLoader(false)
         }
 
@@ -199,6 +200,40 @@ function SuiviProgramme({ordonnateur}){
         downLoadExcel(document.querySelector(".table"),"feuille 1","Suivi "+fileName)
     }
 
+    const searchChoose=(ordonnateur)=>{
+
+        let data
+        let key
+
+        if(ordonnateur==="MINT"){
+
+            data=projet.current
+            key=["region","budget_n","prestataire","ordonnateur"]
+
+        }else if(ordonnateur==="MINHDU"){
+
+            data=projet.current
+            key=["region","ville","type_travaux","budget_n","prestataire","ordonnateur"]
+
+        }else if(ordonnateur==="MINTP"){
+
+            if(categorie==="CENTRALE"){
+
+                data=projet.current.filter(i=>i.categorie!=="PROJET A GESTION COMMUNALE")
+                key=["region","budget_n","code_route","prestataire"]
+    
+            }else{
+    
+                data=projet.current.filter(i=>i.categorie==="PROJET A GESTION COMMUNALE")
+                key=["region","departement","commune","budget_n","code_route","prestataire"]
+        
+            }
+        }
+
+        return ({data:data, key: key})
+        
+    }
+
    
     if(loader){
         return(
@@ -218,7 +253,7 @@ function SuiviProgramme({ordonnateur}){
                     </button>
                 </div>
                 <div className="box b-search">
-                    <SearchBar/>
+                    <SearchBar data={searchChoose(ordonnateur).data} keys={searchChoose(ordonnateur).key} onSetData={setData} />
                 </div>
             </div>
 
@@ -266,7 +301,7 @@ function SuiviProgramme({ordonnateur}){
                     <div>{numStr(totalBudget(projet.current.filter(i=>i.ordonnateur==="MAIRE")),0)} fcfa</div>
                 </div>
                 <div className="p-prevision">
-                    <div>Prévision de réserve</div>
+                    <div>Provision de réserve</div>
                     <div>
                         <p>{numStr(programme.prevision,0)} fcfa
                         </p>
@@ -290,7 +325,7 @@ function SuiviProgramme({ordonnateur}){
                     <div>{numStr(totalBudget(projet.current.filter(i=>i.ordonnateur==="MAIRE")),0)} fcfa</div>
                 </div>
                 <div className="p-prevision">
-                    <div>Prévision de réserve</div>
+                    <div>Provision de réserve</div>
                     <div>
                         <p>{numStr(programme.prevision,0)} fcfa</p>
                     </div>
@@ -316,7 +351,7 @@ function SuiviProgramme({ordonnateur}){
                     <div>{numStr(totalBudget(projet.current.filter(i=>i.categorie==="PROJET A GESTION COMMUNALE")),0)} fcfa</div>
                 </div>
                 <div className="p-prevision">
-                    <div>Prévision de réserve</div>
+                    <div>Provision de réserve</div>
                     <div>
                         <p>{numStr(programme.prevision,0)} fcfa
                         </p>
@@ -337,21 +372,21 @@ function SuiviProgramme({ordonnateur}){
                             <p className="error-msg">{erreur}</p>
                         )}
                         <div className="form-line" >
-                            <label>Situation</label>
+                            <label>Situation <span>*</span></label>
                             <select name="statut" onChange={(e)=>setStatut(e.target.value)} required >
                                 <option value="Traitment DCO">Traitment DCO</option>
                                 <option value="Traitement DAF">Traitement DAF</option>
                                 <option value="En attente pour correction">En attente pour corrections</option>
-                                <option value="Rejeter">Rejter</option>
+                                <option value="Rejeté">Rejté</option>
                                 <option value="Transmis pour visa">Transmis pour visa</option>
                                 <option value="Visé">Visé</option>
                             </select>
                         </div>
 
-                        {statut==="Rejeter" || statut==="En attente pour correction"?
+                        {statut==="Rejeté" || statut==="En attente pour correction"?
                         <>
                             <div className="form-line">
-                                <label>Motifs</label>
+                                <label>Motifs <span>*</span></label>
                                 <Select options={Rejet}  placeholder="motif" onChange={setMotif} isMulti className="multi-select" />
                             </div> 
                             <div className="form-line">
@@ -367,11 +402,11 @@ function SuiviProgramme({ordonnateur}){
                         {statut==="Transmis pour visa" &&(
                             <>
                             <div className="form-line">
-                                <label>Engament</label>
+                                <label>Engagement <span>*</span></label>
                                 <input type="number" name="engagement"  min="0" required />
                             </div> 
                             <div className="form-line">
-                                <label>Prestataire</label>
+                                <label>Prestataire <span>*</span></label>
                                 <input type="text" defaultValue={data.find(i=>i.id===projetId).prestataire} name="prestataire" required/>
                             </div>
                             </>     
@@ -379,7 +414,7 @@ function SuiviProgramme({ordonnateur}){
 
                         {statut==="Visé" &&(
                             <div className="form-line">
-                                <label>Bordereau signé (MAX 2MB)</label>
+                                <label>page du contrat (2MB MAX) <span>*</span></label>
                                 <input type="file" name="file" accept=".pdf" required />
                             </div> 
                         )}
@@ -466,7 +501,7 @@ const TableMINHDU=({data,programme,onLoadPdf,onHandleClick})=>{
                             <td>{i.observation}</td>
                             <td>
                                 {i.suivi &&(
-                                    i.suivi.statut==="Visé"?
+                                    i.bordereau?
                                     <p  onClick={()=>onLoadPdf(i.id)} className="deco">{i.suivi.statut}</p>    
                                     :
                                     i.suivi.statut
@@ -487,8 +522,9 @@ const TableMINHDU=({data,programme,onLoadPdf,onHandleClick})=>{
                         </tr>
                     )
                     }
+                    
                     <tr>
-                        <td colSpan="8">Prévision de réserve</td>
+                        <td colSpan="8">Provision de réserve</td>
                         <td>{numStr(programme.prevision,0)} fcfa</td>
                         <td>{numStr(totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
                         <td>{numStr(programme.prevision-totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
@@ -551,7 +587,7 @@ const TableMINT=({data,programme,onLoadPdf,onHandleClick})=>{
                             <td>{i.observation}</td>
                             <td>
                                 {i.suivi &&(
-                                    i.suivi.statut==="Visé"?
+                                    i.i.bordereau?
                                     <p  onClick={()=>onLoadPdf(i.id)} className="deco">{i.suivi.statut}</p>    
                                     :
                                     i.suivi.statut
@@ -573,7 +609,7 @@ const TableMINT=({data,programme,onLoadPdf,onHandleClick})=>{
                     )
                     }
                     <tr>
-                        <td colSpan="7">Prévision de réserve</td>
+                        <td colSpan="7">Provision de réserve</td>
                         <td>{numStr(programme.prevision,0)} fcfa</td>
                         <td>{numStr(totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
                         <td>{numStr(programme.prevision-totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
@@ -650,7 +686,7 @@ const TableMINTP=({data,programme,categorie,onLoadPdf,onHandleClick})=>{
                             <td>{i.observation}</td>
                             <td>
                                 {i.suivi &&(
-                                    i.suivi.statut==="Visé"?
+                                    i.bordereau?
                                     <p  onClick={()=>onLoadPdf(i.id)} className="deco">{i.suivi.statut}</p>    
                                     :
                                     i.suivi.statut
@@ -672,7 +708,7 @@ const TableMINTP=({data,programme,categorie,onLoadPdf,onHandleClick})=>{
                     )
                     }
                     <tr>
-                        <td colSpan={categorie==="CENTRALE"?"9":"11"} >Prévision de réserve</td>
+                        <td colSpan={categorie==="CENTRALE"?"9":"11"} >Provision de réserve</td>
                         <td>{numStr(programme.prevision,0)} fcfa</td>
                         <td>{numStr(totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
                         <td>{numStr(programme.prevision-totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
