@@ -26,6 +26,9 @@ import ProgrammeCloture from "./page/ordonnateur/programmeCloture";
 import ClotureDetails from "./page/FR/clotureDetails";
 import ClotureDetail from "./page/ordonnateur/clotureDetail";
 import PageNotFound from "./page/pageNotFound";
+import Param from "./page/ADMIN/param";
+import Roles from "./page/ADMIN/roles";
+import Action from "./page/ADMIN/action";
 
 
 function App() {
@@ -57,7 +60,7 @@ function App() {
       <Model ref={model}>
         <Routes>
           <Route element={["ACO","CO","DCO","STAGIAIRE","ADMIN"].includes(user.role)?<Outlet/>:<Navigate to="/programmes"/>}>
-            <Route path="/programmes/soumis" element={<SubmitProgramme/>}/>
+            <Route path="/programmes/soumis" element={<SubmitProgramme role={user.role}/>}/>
             <Route path="/execution-des-programme" element={<ValideProgramme/>}/>
             <Route path="/execution-des-programme/programme-MINHDU/:id" element={<SuiviProgramme ordonnateur="MINHDU"/>}/>
             <Route path="/execution-des-programme/programme-MINT/:id" element={<SuiviProgramme ordonnateur="MINT"/>}/>
@@ -73,7 +76,10 @@ function App() {
           </Route>
 
           <Route element={user.role==="ADMIN"?<Outlet/>:<></>}>
-            <Route path="/gestion-des-utilisateurs" element={<UserList/>}/>
+            <Route path="/paramètres" element={<Param/>}/>
+            <Route path="paramètres/gestion-des-utilisateurs" element={<UserList/>}/>
+            <Route path="/paramètres/gestion-des-roles" element={<Roles/>}/>
+            <Route path="/paramètres/suivi-des-actions" element={<Action/>}/>
           </Route>
 
           <Route element={["MINHDU","MINT","MINTP"].includes(user.role) ?<Outlet/>:<Navigate to="/programmes/soumis"/>}>

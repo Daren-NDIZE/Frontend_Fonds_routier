@@ -106,6 +106,7 @@ function ProgrammeMINT (){
                         setData(resdata.projetList.filter(i=>i.financement!=="RESERVE"))
                     }
                 }
+                
                 window.scroll({top: 0, behavior:"smooth"})
                 notification.current.setNotification(
                     {visible: true, type:resData.type,message:resData.message}
@@ -146,17 +147,23 @@ function ProgrammeMINT (){
             let res= await Fetch(`updateProjetMINT/${id}`,"PUT",datas)
             if(res.ok){
                 let resData= await res.json()
+                
+                if(resData.type==="succes"){
+
+                    let index= data.indexOf(data.find(i=>i.id===id))
+                    datas.id=id
+                    if(data[index].suivi){
+                        datas.suivi=data[index].suivi
+                    }
+                    data[index]=datas
+                    index= projet.current.indexOf(projet.current.find(i=>i.id===id))
+                    projet.current[index]=datas
+                    setData(data)
+                }
                 window.scroll({top: 0, behavior:"smooth"})
                 notification.current.setNotification(
                     {visible: true, type:resData.type,message:resData.message}
                 )
-                if(resData.type==="succes"){
-                    let index= data.indexOf(data.find(i=>i.id===id))
-                    datas.id=id
-                    data[index]=datas
-                    projet.current[index]=datas
-                    setData(data)
-                }
             }
         }catch(e){
             console.log(e)
@@ -176,15 +183,17 @@ function ProgrammeMINT (){
             let res= await Fetch(`deleteProjet/${id}`,"DELETE")
             if(res.ok){
                 let resData= await res.json()
-                window.scroll({top: 0, behavior:"smooth"})
-                notification.current.setNotification(
-                    {visible: true, type:resData.type,message:resData.message}
-                )
+                
                 if(resData.type==="succes"){
                     data= data.filter(i=>i.id!==id)
                     projet.current=projet.current.filter(i=>i.id!==id)
                     setData(data)
                 }
+
+                window.scroll({top: 0, behavior:"smooth"})
+                notification.current.setNotification(
+                    {visible: true, type:resData.type,message:resData.message}
+                )
             }
         }catch(e){
             console.log(e)
@@ -214,15 +223,17 @@ function ProgrammeMINT (){
             let res= await Fetch(`updatePrevision/${id}`,"PUT",data)
             if(res.ok){
                 let resData= await res.json()
-                window.scroll({top: 0, behavior:"smooth"})
-                notification.current.setNotification(
-                    {visible: true, type:resData.type,message:resData.message}
-                )
+                
                 if(resData.type==="succes"){
 
                     programme.prevision=form.prevision.value;
                     setProgramme(programme)
                 }
+
+                window.scroll({top: 0, behavior:"smooth"})
+                notification.current.setNotification(
+                    {visible: true, type:resData.type,message:resData.message}
+                )
             }
         }catch(e){
             console.log(e)
@@ -243,15 +254,19 @@ function ProgrammeMINT (){
             let res= await Fetch(`submitProgramme/${id}`,"PUT")
             if(res.ok){
                 let resData= await res.json()
+
                 window.scroll({top: 0, behavior:"smooth"})
                 notification.current.setNotification(
                     {visible: true, type:resData.type,message:resData.message}
                 )
+                
                 if(resData.type==="succes"){
                     window.setTimeout(()=>{
                         navigate("/programmes")
                     },2000)
                 }
+
+                
             }
         }catch(e){
             console.log(e)
@@ -362,7 +377,7 @@ function ProgrammeMINT (){
                                 <th className="min-w1">Activités</th>
                                 <th className="min-w1">Objectifs</th>
                                 <th className="min-w12">Allotissement</th>
-                                <th>Cout_total_du_projet_TTC</th>
+                                <th className="min-w4">Budget total TTC</th>
                                 <th className="min-w4">Budget_antérieur</th>
                                 <th className="min-w4">Budget {programme.annee}</th>
                                 {programme.statut==="VALIDER"&&(

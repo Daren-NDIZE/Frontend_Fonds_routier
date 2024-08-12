@@ -54,7 +54,7 @@ function ProgrammeBox({data,modalBox,modalBox1,onChange,onLoad}){
                     </div>
                     <div className="b-col">
                         <div>Budget total</div>
-                        <div> {numStr(data.budget, " ") } fcfa</div>
+                        <div> {numStr(data.budget, 0) } fcfa</div>
                     </div>
                     <div className="b-col">
                         <div>statut</div>

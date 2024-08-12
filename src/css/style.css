@@ -19,6 +19,7 @@ button:active, input[type="submit"]:active{
     background: var(--marron);
     font-weight: 500;
     font-size: 15px;
+    letter-spacing: 1px;
 }
 input,select{
     outline: none;
@@ -280,7 +281,7 @@ header > div:last-child{
 .container{
     background: var(--fond_a);
     min-height: calc(100vh - 75px);
-    padding: 50px 40px ;
+    padding: 20px 40px 50px;
     max-width: calc( 100vw - 295px);
     margin: auto;
 
@@ -524,11 +525,17 @@ tr.height-line{
 .min-w4{
     min-width: 120px;
 }
+.auto-w{
+    width: auto;
+}
 .pb-10{
     padding-bottom: 10px;
 }
 .mb-25{
     margin-bottom: 20px;
+}
+.mr-10{
+    margin-right: 10px;
 }
 .flex{
     display: flex;
@@ -789,11 +796,11 @@ form .load-button{
     display: flex;
     gap: 15px;
     overflow-x: auto;
-    padding-bottom: 25px;
+    padding-bottom: 20px;
 }
 .pg-box{
     position: relative;
-    padding: 28px;
+    padding: 25px;
     padding-bottom: 5px;
 }
 #pg-title{
@@ -826,6 +833,10 @@ form .load-button{
     color: #4a92ff;
     margin-right: 10px;
     height: min-content;
+}
+.snd-step{
+    display: flex;
+    margin-right: 10px;
 }
 
 .suivi-pg .download-btn{
@@ -1071,6 +1082,10 @@ li.active{
     gap: 20px;
     margin: auto;
 }
+.a-filter{
+    flex-grow: 1;
+    margin-right: 20px;
+}
 .s-filter > div{
     display: flex;
 }
@@ -1133,4 +1148,21 @@ li.active{
 }
 .retour-btn i{
     margin-right: 5px;
+}
+.param{
+    display: flex;
+    gap: 50px;
+    padding-top: 10px;
+}
+.param .box{
+    width: 50%;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+}
+.param .box:hover{
+    border-color: #6e5214;
+    color:#6e5214;
+    background: #fff8e8;
 }

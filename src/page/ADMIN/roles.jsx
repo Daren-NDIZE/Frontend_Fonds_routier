@@ -8,38 +8,33 @@ import PageLoader from "../../component/pageLoader"
 import { useNavigate } from "react-router-dom"
 
 
-function UserList(){
+function Roles(){
 
-    let [users,setUsers]=useState([])
     let [roles,setRoles]=useState([])
+    let [roleId,setRoleId]=useState()
     let [loader,setLoader]=useState(true)
     let [erreur,setErreur]=useState("")
     let [pageLoader,setPageLoader]=useState()
+    let [check,setCheck]=useState(false)
+
+    const navigate=useNavigate()
 
     let notification=useRef()
     let modalBox=useRef()
-    let userList=useRef()
+    let modal=useRef()
 
-    const navigate=useNavigate()
 
     useEffect(()=>{
 
         (async function (){
 
             try{
-                let res = await fetchGet(`getAllUser`)
-
-                let response = await fetchGet(`role/getAllRole`)
-
+                let res = await fetchGet(`role/getAllRole`)
                 if(res.ok){
                     let resData= await res.json()
-                    setUsers(resData)
-                    userList.current=resData
-                }
-                if(response.ok){
-                    let resData= await response.json()
                     setRoles(resData)
                 }
+            
             }catch(e){
                 console.log(e)
             }finally{
@@ -50,7 +45,7 @@ function UserList(){
 
     },[])
 
-    const createUser=async (e)=>{
+    const createRole=async (e)=>{
 
         e.preventDefault()
         let form=e.target
@@ -59,36 +54,31 @@ function UserList(){
             setErreur("")
         }
     
-        if(form.nom.value==="" || form.prenom.value==="" || form.email.value==="" || form.telephone.value===""
-        || form.username.value==="" || form.roleName.value==="")
+        if(form.roleName.value==="" || form.description.value==="")
         {
             setErreur("Veuillez remplir tous les champs")
             return;
         }
-        if(form.telephone.value.length!==9 || form.telephone.value.charAt(0)!=="6")
-        {
-            setErreur("Numéro de téléphone incorrect")
-            return;
-        }
+       
         let formData =new FormData(form);
         let data=Object.fromEntries(formData)
+
         modalBox.current.setModal(false)
         setPageLoader(true)
 
         try{
-            let res= await Fetch("createUser","POST",data)
+            let res= await Fetch("role/saveRole","POST",data)
+
             if(res.ok){
 
                 let resData= await res.json()
                 
                 if(resData.type==="succes"){
 
-                    let response = await fetchGet(`getAllUser`)
-   
+                    let response = await fetchGet(`role/getAllRole`)
                     if(response.ok){
                         let dataRes= await response.json()
-                        setUsers(dataRes)
-                        userList.current=dataRes
+                        setRoles(dataRes)
                     }
                 }
 
@@ -104,6 +94,48 @@ function UserList(){
             setPageLoader(false)
         }
 
+    }
+
+    const deleteRole=async (id)=>{
+
+        setPageLoader(true)
+        modal.current.setModal(false)
+
+        try{
+            let res= await Fetch(`role/deleteRole/${id}`,"DELETE")
+
+            if(res.ok){
+
+                let resData= await res.json()
+                
+                if(resData.type==="succes"){
+
+                    setRoles(s=>s.filter(i=>i.id!==id))
+                }
+
+                window.scroll({top: 0, behavior:"smooth"})
+                notification.current.setNotification(
+                    {visible: true, type:resData.type,message:resData.message}
+                )
+            }
+
+        }catch(e){
+            console.log(e)
+        }finally{
+            setPageLoader(false)
+        }
+
+    }
+
+    const openModal=(id)=>{
+
+        setRoleId(id)
+        modal.current.setModal(true)
+    }
+    
+    const checked=(e)=>{
+
+        setCheck(e.target.checked)
     }
 
     if(loader){
@@ -132,10 +164,14 @@ function UserList(){
             <div className="box">
                 <div id="pg-title" className="suivi-pg">
                     <div>
-                        <h1>Liste des utilisateurs</h1>
+                        <h1>Liste des roles</h1>
+                    </div>
+                    <div className="check-update">
+                        <label htmlFor="check">Modifier</label>
+                        <input type="checkbox" id="check" onChange={checked}/>
                     </div>
                     <div className="n-projet" onClick={()=>modalBox.current.setModal(true)}>
-                        <button>Nouvel utilisateur</button>
+                        <button>Nouveau role</button>
                     </div>
                 </div>
                 <div className="tableBox">
@@ -143,24 +179,26 @@ function UserList(){
                         <thead>
                             <tr>
                                 <th>N°</th>
-                                <th>Nom</th>
-                                <th>Prénom</th>
-                                <th>Username</th>
-                                <th>Role</th>
-                                <th>Email</th>
-                                <th>Téléphone</th>
+                                <th className="min-w2">intitulé</th>
+                                <th>Description</th>
+                                {check &&(
+                                    <th></th>
+                                )}
                             </tr>
                         </thead>
                         <tbody>
-                            {users.map((i,j)=>
+                            {roles.map((i,j)=>
                             <tr key={j}>
                                 <td>{j+1}</td>
-                                <td>{i.nom}</td>
-                                <td>{i.prenom}</td>
-                                <td>{i.username}</td>
-                                <td>{i.role.roleName}</td>
-                                <td>{i.email}</td>
-                                <td>{i.telephone}</td>
+                                <td>{i.roleName}</td>
+                                <td>{i.description}</td>
+                                {check &&(
+                                <td>
+                                    <div className="t-action auto-w">
+                                        <i className="fa-solid fa-trash-can" onClick={()=>openModal(i.id)}></i>
+                                    </div>
+                                </td>
+                                )}
                             </tr>
                             )}
                         </tbody>
@@ -170,51 +208,39 @@ function UserList(){
 
             <ModalBox ref={modalBox} >
 
-                <form className="flex-form" onSubmit={createUser} >
+                <form className="flex-form" onSubmit={createRole} >
                     
                     <div>   
                         {erreur.length!==0 &&(
                             <p className="error-msg">{erreur}</p>
                         )}
                         <div className="form-line">
-                            <label>Nom</label>
-                            <input type="text"  name="nom" required/>
+                            <label>intitulé <span>*</span></label>
+                            <input type="text"  name="roleName" required/>
                         </div>
+                        
                         <div className="form-line">
-                            <label>Prenom</label>
-                            <input type="text" name="prenom" required/>
-                        </div>
-                        <div className="form-line">
-                            <label>Username</label>
-                            <input type="text" name="username" required/>
-                        </div>
-                    </div>
-
-                    <div>
-                        <div className="form-line">
-                            <label>Role</label>
-                            <select name="roleName" required> 
-                                <option value="">- - - - - - - - - - - - - - - - - - - - - - - </option>
-                                {roles.map((i,k)=>
-                                    <option value={i.roleName} key={k}>{i.roleName}</option>
-                                )}
-                            </select>
-                        </div>
-                        <div className="form-line">
-                            <label>Email</label>
-                            <input type="text" name="email" required/>
-                        </div>
-                        <div className="form-line">
-                            <label>Téléphone</label>
-                            <input type="number"  name="telephone" required/>
+                            <label>Description <span>*</span></label>
+                            <textarea name="description" required/>
                         </div>
                         <div className="form-line" style={{margin: "0"}}>
                             <button type="submit">Enregistrer</button>
                         </div>
+                    </div>
 
-                    </div>     
+                   
                 </form>
 
+            </ModalBox>
+
+            <ModalBox ref={modal}>
+                <div className="pg-modal">
+                    <p>Voulez vous vraiment supprimer ce role?</p>
+                    <div className="mb-content">
+                        <button className="s-btn" onClick={()=>deleteRole(roleId)}>OUI</button>
+                        <button className="b-btn" onClick={()=>modal.current.setModal(false)}>NON</button>
+                    </div>
+                </div>
             </ModalBox>
 
             {pageLoader &&(
@@ -225,4 +251,4 @@ function UserList(){
 }
 
 
-export default UserList;
+export default Roles;

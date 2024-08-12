@@ -1,21 +1,26 @@
 import { useEffect, useState,useRef } from "react";
 import SearchBar from "../../component/searchBar";
-import { fetchGet} from "../../config/FetchRequest";
+import { Fetch, fetchGet} from "../../config/FetchRequest";
 import Notification from "../../component/notification";
 import Loader from "../../component/loader";
 import { numStr } from "../../script";
 import { Link } from "react-router-dom";
 import ModalBox from "../../component/modalBox";
+import PageLoader from "../../component/pageLoader";
 
-function SubmitProgramme(){
+function SubmitProgramme({role}){
 
     let [programme,setProgramme]=useState([])
     let [detail,setDetail]=useState({})
     let [loader,setLoader]=useState(true)
+    let [erreur,setErreur]=useState("")
+    let [pageLoader,setPageLoader]=useState()
 
     let notification=useRef()
     let modalBox=useRef()
+    let modal=useRef()
 
+    let annee=new Date().getFullYear() 
 
     useEffect(()=>{
 
@@ -38,6 +43,56 @@ function SubmitProgramme(){
 
     },[])
 
+    const createReport=async(e)=>{
+
+        e.preventDefault()
+        let form=e.target
+        let ordonnateur=["MINTP","MINT","MINHDU"]
+
+        if(!form.ordonnateur){
+            return;
+        }
+        if(!ordonnateur.includes(form.ordonnateur.value)){
+
+            setErreur("veuillez remplir correctement les champs")
+        }
+        
+        let formData =new FormData(e.target);
+        let data=Object.fromEntries(formData)
+
+        setPageLoader(true)
+        modal.current.setModal(false)
+
+        try{  
+            const res= await Fetch("saveReportProgramme","POST",data)
+
+            if(res.ok){
+                let resData= await res.json()
+
+                if(resData.type ==="succes"){
+                    
+                    const response= await fetchGet("getSubmitProgramme")
+
+                    if(response.ok){
+                        const dataRes= await response.json()
+                        setProgramme(dataRes)
+                    }
+                }
+
+                notification.current.setNotification(
+                    {visible: true, type:resData.type,message:resData.message}
+                )
+
+            }
+           
+        }catch(e){
+            console.log(e)
+        }finally{
+            setPageLoader(false)
+        }
+    }
+
+
     const details=(observation,resolution)=>{
 
         setDetail({observation: observation, resolution: resolution})
@@ -45,7 +100,6 @@ function SubmitProgramme(){
 
     }
  
-    
 
     if(loader){
         return(
@@ -58,8 +112,15 @@ function SubmitProgramme(){
 
             <Notification ref={notification} />
 
-            <div className="box b-search">
-                <SearchBar/>
+            <div className="flex">
+                {["CO","DCO"].includes(role) &&(
+                <div className="retour-container">
+                    <button className="fr-btn" onClick={()=>modal.current.setModal(true)}>REPORT + </button>
+                </div>
+                )}
+                <div className="box b-search">
+                    <SearchBar/>
+                </div>
             </div>
 
             {programme.length!==0?
@@ -83,7 +144,7 @@ function SubmitProgramme(){
                         </div>
                         <div className="b-col">
                             <div>Budget total</div>
-                            <div> {numStr(i.budget, " ") } fcfa</div>
+                            <div> {numStr(i.budget, 0) } fcfa</div>
                         </div>
                         <div className="b-col">
                             <div>statut</div>
@@ -125,6 +186,35 @@ function SubmitProgramme(){
                     )}
                 </div>
             </ModalBox>
+
+            <ModalBox ref={modal}>
+                <form className="flex-form" onSubmit={createReport} >
+                    <div>
+                        {erreur.length!==0 &&(
+                            <p className="error-msg">{erreur}</p>
+                        )}
+                        <div className="form-line">
+                            <label>Programme</label>
+                            <select name="ordonnateur" required>
+                                <option value=""> - - - - - - - - - - - - - - - - - - - - - - - - </option>
+                                <option value="MINTP">{`REPORT PROGRAMME MINTP ${annee}`}</option>
+                                <option value="MINHDU">{`REPORT PROGRAMME MINHDU ${annee}`}</option>
+                                <option value="MINT">{`REPORT PROGRAMME MINT ${annee}`}</option>
+                            </select>
+                        </div>
+                        
+                        
+                        <div className="form-line" style={{margin: "0"}}>
+                            <button type="submit">Enregistrer</button>
+                        </div>  
+                    </div>
+                        
+                </form>
+            </ModalBox>
+
+            {pageLoader &&(
+                <PageLoader/>
+            )}
    
         </div>
     )

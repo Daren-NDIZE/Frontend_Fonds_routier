@@ -39,6 +39,17 @@ function SearchBar({data,keys, onSetData}){
         onSetData(newData)
     }
 
+    if(!data){
+
+        return(
+            <div className="searchbar">
+                <input type="search" placeholder="rechercher. . . ." ref={target}  />
+                <button >
+                    <i className="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </div>
+        )
+    }
     return(
         <div className="searchbar">
             <input type="search" placeholder="rechercher. . . ." ref={target} onChange={change} />

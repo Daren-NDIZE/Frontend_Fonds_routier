@@ -31,7 +31,6 @@ function ProgrammeCloture(){
                 if(res.ok){
                     const resData= await res.json()
                     setProgramme(resData)
-                    console.log(resData)
                 }
             }catch(e){
                 console.log(e)

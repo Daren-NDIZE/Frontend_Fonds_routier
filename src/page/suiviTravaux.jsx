@@ -288,7 +288,7 @@ function SuiviTravaux({update}){
                             <p className="error-msg">{erreur}</p>
                         )}
                         <div className="form-line">
-                            <label>Taux de consommation des dlais   (en %) <span>*</span></label>
+                            <label>Taux de consommation des délais   (en %) <span>*</span></label>
                             <input type="number" step="any" max="100" name="tauxConsommation" required/>
                         </div>
                         <div className="form-line">
@@ -296,7 +296,7 @@ function SuiviTravaux({update}){
                             <input type="number" step="any" max="100" name="tauxAvancement" required/>
                         </div>
                         <div className="form-line">
-                            <label>Observation</label>
+                            <label>Observation <span>*</span></label>
                             <textarea name="description" required/>
                         </div>
                         <div className="form-line" style={{margin: "0"}}>
@@ -314,7 +314,7 @@ function SuiviTravaux({update}){
                             <p className="error-msg">{erreur}</p>
                         )}
                         <div className="form-line">
-                            <label>Taux de consommation des dlais (en %) <span>*</span></label>
+                            <label>Taux de consommation des délais (en %) <span>*</span></label>
                             <input type="number" step="any" max="100" name="tauxConsommation" defaultValue={focus.tauxConsommation} required/>
                         </div>
                         <div className="form-line">
@@ -322,7 +322,7 @@ function SuiviTravaux({update}){
                             <input type="number" step="any" max="100" name="tauxAvancement" defaultValue={focus.tauxAvancement} required/>
                         </div>
                         <div className="form-line">
-                            <label>Observation </label>
+                            <label>Observation <span>*</span></label>
                             <textarea name="description" defaultValue={focus.description} required/>
                         </div>
                         <div className="form-line" style={{margin: "0"}}>

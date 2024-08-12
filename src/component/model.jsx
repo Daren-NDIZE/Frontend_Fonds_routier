@@ -6,7 +6,7 @@ import { fetchGet } from "../config/FetchRequest";
 
 const Model=forwardRef(function ({children},ref){
 
-    let [user,setUser]=useState({})
+    let [user,setUser]=useState({role:{}})
 
     useImperativeHandle(ref, ()=>({'updateUser': setUser}))
 
@@ -31,7 +31,7 @@ const Model=forwardRef(function ({children},ref){
     return(
         <>
             <div className="left-content">
-                <SideBar role={user.role}/>
+                <SideBar role={user.role.roleName}/>
             </div>
             <div className="right-content">
                 <Header user={user}/>

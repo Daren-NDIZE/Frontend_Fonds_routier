@@ -27,7 +27,7 @@ function Header({user}){
                                     {user.prenom+" "+user.nom}
                                     </Link>
                                 </p>
-                                <p>{user.role.replaceAll("_"," ")}</p>
+                                <p>{user.role.roleName.replaceAll("_"," ")}</p>
                             </div>
                         </>
                     :

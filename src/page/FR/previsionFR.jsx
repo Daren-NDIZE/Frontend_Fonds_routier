@@ -7,6 +7,9 @@ import { numStr } from "../../script";
 import PageLoader from "../../component/pageLoader";
 import ModalBox from "../../component/modalBox";
 import Notification from "../../component/notification";
+import FormMINHDU from "../../component/formMINHDU";
+import FormMINTP from "../../component/formMINTP.";
+import FormMINT from "../../component/formMINT";
 
 
 function PrevisionFR({role}){
@@ -19,6 +22,7 @@ function PrevisionFR({role}){
     let [check,setCheck]=useState(false)
 
     let modalBox=useRef()
+    let modal=useRef()
     let notification=useRef()
 
     const navigate=useNavigate()
@@ -55,6 +59,80 @@ function PrevisionFR({role}){
 
         })()
     },[id,ordonnateur,navigate])
+
+    const saveProjet=async (e)=>{
+
+        e.preventDefault()
+        let form=e.target
+
+        if(form.ville && form.ordonnateur){
+
+            if(form.region.value==="" ||form.ville.value==="" || form.troçon.value==="" ||
+                form.ttc.value==="" || form.budget_n.value==="" || form.ordonnateur.value==="" )
+            {
+            return;
+            }
+        }else if(form.mission && form.objectif){
+
+            if(form.region.value==="" ||form.mission.value==="" || form.objectif.value==="" ||
+            form.ttc.value==="" || form.budget_n.value==="" || form.ordonnateur.value==="" )
+                {
+                return;
+            }
+        }else if(form.projet && form.type_travaux){
+            let categories=["PROJET A GESTION CENTRALE","PROJET A GESTION REGIONALE","PROJET A GESTION COMMUNALE"]
+
+            if(form.projet.value==="" ||form.region.value==="" || form.type_travaux.value==="" || !categories.includes(form.categorie.value) ||
+            form.ttc.value==="" || form.budget_n.value==="" || form.observation.value==="")
+            {
+                return;
+            }
+            if(form.departement && form.departement.value==="" ){
+                return;
+            }
+            if(form.commune && form.commune.value==="" ){
+                return;
+            }
+        }
+        
+        setPageLoader(true)
+        modal.current.setModal(false)
+
+        let formData =new FormData(form);
+        let datas=Object.fromEntries(formData)
+
+
+        try{
+
+            let res= await Fetch(`addProjetToProvision${programme.ordonnateur}/${id}`,"POST",datas)
+            if(res.ok){
+                let resData= await res.json()
+                
+                if(resData.type==="succes"){
+                    
+                    let response = await fetchGet(`programme/${id}`)
+                    if(response.ok){
+                        let resdata= await response.json()
+
+                        resdata.projetList=resdata.projetList.filter(i=>i.financement==="RESERVE")
+                        setProgramme(resdata)
+                        setData(resdata.projetList)
+                    }
+                }
+
+                window.scroll({top: 0, behavior:"smooth"})
+                notification.current.setNotification(
+                    {visible: true, type:resData.type,message:resData.message}
+                )
+            }
+
+        }catch(e){
+            console.log(e)
+        }finally{
+            setPageLoader(false)
+        }
+ 
+    }
 
     const deleted= async (id)=>{
 
@@ -95,6 +173,7 @@ function PrevisionFR({role}){
         modalBox.current.setModal(true)
     }
 
+
     if(loader){
         return(
             <Loader/>
@@ -134,7 +213,7 @@ function PrevisionFR({role}){
                             <input type="checkbox" id="check" onChange={change}/>
                         </div>
                         <div className="n-projet">
-                            <button>Nouveau</button>
+                            <button onClick={()=>modal.current.setModal(true)}>Nouveau</button>
                         </div>
                     </div>
                 )}
@@ -143,7 +222,7 @@ function PrevisionFR({role}){
 
                     <MINHDU data={data} check={check} onModal={openModal} />
 
-                :programme.ordonnateur==="MINTP"?
+                :programme.ordonnateur==="MINTP"? 
 
                     <MINTP data={data} check={check} onModal={openModal} />
                 :
@@ -160,6 +239,22 @@ function PrevisionFR({role}){
                     </div>
                 </div>
             </ModalBox>
+
+            
+
+            {programme.ordonnateur==="MINHDU"?
+                <ModalBox ref={modal}>
+                    <FormMINHDU title={"Provision MINDHU 2024"} annee={2024} body={{function: saveProjet}}/>
+                </ModalBox>
+            :programme.ordonnateur==="MINTP"? 
+                <ModalBox ref={modal}>
+                    <FormMINTP title={"Provision MINDHU 2024"} annee={2024} body={{function: saveProjet}}/>
+                </ModalBox>
+            :
+                <ModalBox ref={modal}>
+                    <FormMINT title={"Provision MINDHU 2024"} annee={2024} body={{function: saveProjet}}/>
+                </ModalBox>
+            }
 
             {pageLoader &&(
                 <PageLoader/>
@@ -184,7 +279,7 @@ const MINHDU=({data,check,onModal})=>{
                         <th className="min-w13">Type_de_travaux</th>
                         <th className="min-w1">Troçons / Intitulé</th>
                         <th>Linéaire_(ml)</th>
-                        <th>Cout_total_du_projet_TTC</th>
+                        <th className="min-w4">Budget total TTC</th>
                         <th className="min-w4">Engagement</th>
                         <th>Ordonnateurs</th>
                         <th className="min-w3">Prestataires</th>
@@ -235,7 +330,7 @@ const MINT=({data,check,onModal})=>{
                         <th className="min-w1">Mission</th>
                         <th className="min-w1">Objectifs</th>
                         <th>Allotissement</th>
-                        <th>Cout_total_du_projet_TTC</th>
+                        <th className="min-w4">Buget total TTC</th>
                         <th className="min-w4">Engagement</th>
                         <th>Ordonnateurs</th>
                         <th className="min-w3">Prestataires</th> 
@@ -285,7 +380,7 @@ const MINTP=({data,check,onModal})=>{
                         <th>Code route</th>
                         <th>Linéaire_route (km)</th>
                         <th>Linéaire_OA (ml)</th>
-                        <th>Montant_TTC_projet</th>
+                        <th className="min-w4">Budget total TTC</th>
                         <th className="min-w4">Engagement</th>
                         <th className="min-w3">Pretataire</th>
                         {check &&(

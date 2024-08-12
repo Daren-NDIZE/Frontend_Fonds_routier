@@ -35,7 +35,7 @@ function UpdatePg(){
                 const res= await fetchGet(`programmeByRole/${id}`);
                 if(res.ok){
                     let resData = await res.json()
-                    if(resData.type==="erreur"){
+                    if(resData.type==="erreur" || resData.type==="REPORT"){
                         navigate(-1)
                     }else{
                         setProgramme(resData)

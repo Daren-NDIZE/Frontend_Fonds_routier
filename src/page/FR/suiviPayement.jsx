@@ -624,14 +624,14 @@ const TableMINHDU=({data,programme,onLoadPdf,onHandleClick,option})=>{
                         <th>Ville</th>
                         <th className="min-w1">Troçons / Intitulé</th>
                         <th>Linéaire_(ml)</th>
-                        <th>Cout_total_du_projet_TTC</th>
+                        <th className="min-w4">Budget total TTC</th>
                         <th className="min-w4">Budget_antérieur</th>
                         <th className="min-w4">Budget {programme.annee}</th>
                         <th className="min-w4">Engagement</th>
                         <th className="min-w4">Reliquat</th>
                         <th className="min-w3">Prestataire</th>
-                        <th className="min-w4">Projection ${programme.annee+1}</th>
-                        <th className="min-w4">Projection ${programme.annee+2}</th>
+                        <th className="min-w4">Projection {programme.annee+1}</th>
+                        <th className="min-w4">Projection {programme.annee+2}</th>
                         <th>Ordonnateurs</th>
                         <th className="min-w4">Situation</th>
                         <th colSpan={option.check?"10":"9"} className="text-center">Suivi des payements</th>
@@ -728,7 +728,7 @@ const TableMINT=({data,programme,onLoadPdf,onHandleClick,option})=>{
                         <th className="min-w1">Activités</th>
                         <th className="min-w1">Objectifs</th>
                         <th className="min-w12">Allotissement</th>
-                        <th>Cout_total_du_projet_TTC</th>
+                        <th className="min-w4">Budget total TTC</th>
                         <th className="min-w4">Budget antérieur</th>
                         <th className="min-w4">Budget {programme.annee}</th>
                         <th className="min-w4">Engagement</th>
@@ -842,7 +842,7 @@ const TableMINTP=({data,programme,categorie,onLoadPdf,onHandleClick,option})=>{
                     <th>Code route</th>
                     <th>Linéaire_route (km)</th>
                     <th>Linéaire_OA (ml)</th>
-                    <th>Montant_TTC_projet</th>
+                    <th className="min-w4">Budget total TTC</th>
                     <th className="min-w4">Budget antérieur</th>
                     <th className="min-w4">Budget {programme.annee}</th>
                     <th className="min-w4">Engagement</th>

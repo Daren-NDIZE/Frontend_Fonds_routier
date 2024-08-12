@@ -111,7 +111,7 @@ const MINHDU=({data})=>{
                         <th className="min-w13">Type_de_travaux</th>
                         <th className="min-w1">Troçons / Intitulé</th>
                         <th>Linéaire_(ml)</th>
-                        <th>Cout_total_du_projet_TTC</th>
+                        <th className="min-w4">Budget total TTC</th>
                         <th className="min-w4">Engagement</th>
                         <th>Ordonnateurs</th>
                         <th className="min-w3">Prestataires</th>
@@ -153,7 +153,7 @@ const MINT=({data})=>{
                         <th className="min-w1">Mission</th>
                         <th className="min-w1">Objectifs</th>
                         <th>Allotissement</th>
-                        <th>Cout_total_du_projet_TTC</th>
+                        <th className="min-w4">Budget total TTC</th>
                         <th className="min-w4">Engagement</th>
                         <th>Ordonnateurs</th>
                         <th className="min-w3">Prestataires</th> 
@@ -193,7 +193,7 @@ const MINTP=({data})=>{
                         <th>Code route</th>
                         <th>Linéaire_route (km)</th>
                         <th>Linéaire_OA (ml)</th>
-                        <th>Montant_TTC_projet</th>
+                        <th className="min-w4">Budget total TTC</th>
                         <th className="min-w4">Engagement</th>
                         <th className="min-w3">Pretataire</th>
                     </tr>

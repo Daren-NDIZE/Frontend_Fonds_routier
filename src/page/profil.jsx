@@ -8,7 +8,7 @@ import Notification from "../component/notification"
 
 function Profil({header}){
 
-    let [user,setUser]=useState({})
+    let [user,setUser]=useState({role:{}})
     let [loader,setLoader]=useState(true)
     let [erreur,setErreur]=useState("")
     let [pageLoader,setPageLoader]=useState()
@@ -29,6 +29,11 @@ function Profil({header}){
                 }
       
             }catch(e){
+
+                if(e instanceof SyntaxError){
+                    localStorage.clear()
+                    window.location.href="/login"
+                }
                 console.log(e)
             }finally{
                 setLoader(false)
@@ -48,8 +53,7 @@ function Profil({header}){
         let form=e.target
 
         
-        if(form.nom.value==="" || form.prenom.value==="" || form.email.value==="" || form.telephone.value===""
-        || form.username.value==="")
+        if(form.nom.value==="" || form.prenom.value==="" || form.email.value==="" || form.telephone.value==="")
         {
             setErreur("Veuillez remplir tous les champs")
             return;
@@ -76,6 +80,7 @@ function Profil({header}){
 
                 if(resData.type==="succes"){
                     data.role=user.role
+                    data.username=user.username
                     setUser(data)
                     header.current.updateUser(data)
                 }
@@ -174,7 +179,7 @@ function Profil({header}){
                     <hr/>
                     <div className="profil-line">
                         <div>Role :</div>
-                        <div>{user.role}</div>
+                        <div>{user.role.roleName}</div>
                     </div>
                 </div>
             </div>
@@ -199,10 +204,6 @@ function Profil({header}){
                         <div className="form-line">
                             <label>Prenom</label>
                             <input type="text" name="prenom" defaultValue={user.prenom} required/>
-                        </div>
-                        <div className="form-line">
-                            <label>Username</label>
-                            <input type="text" name="username" defaultValue={user.username} required/>
                         </div>
                         <div className="form-line">
                             <label>Email</label>

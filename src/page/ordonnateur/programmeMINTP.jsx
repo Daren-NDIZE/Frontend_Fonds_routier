@@ -169,10 +169,14 @@ function ProgrammeMINTP (){
                 if(resData.type==="succes"){
                     let index= data.indexOf(data.find(i=>i.id===id))
                     datas.id=id
+                    if(data[index].suivi){
+                        datas.suivi=data[index].suivi
+                    }
                     data[index]=datas
                     index= projet.current.indexOf(projet.current.find(i=>i.id===id))
                     projet.current[index]=datas
                     setData(data)
+                   
                 }
 
                 window.scroll({top: 0, behavior:"smooth"})
@@ -437,7 +441,7 @@ function ProgrammeMINTP (){
                                 <th>Code route</th>
                                 <th>Linéaire_route (km)</th>
                                 <th>Linéaire_OA (ml)</th>
-                                <th>Montant_TTC_projet</th>
+                                <th className="min-w4">Budget total TTC</th>
                                 <th className="min-w4">Budget antérieur</th>
                                 <th className="min-w4">Budget {programme.annee}</th>
                                 {programme.statut==="VALIDER"&&(

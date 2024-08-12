@@ -21,6 +21,7 @@ function ProgrammeMINHDU(){
 
     let modal=useRef()
     let modalBox1=useRef()
+    let modalBox=useRef()
     let modal2=useRef()
     let modal3=useRef()
     let notification=useRef()
@@ -144,11 +145,9 @@ function ProgrammeMINHDU(){
 
             let res= await Fetch(`updateProjetMINHDU/${id}`,"PUT",datas)
             if(res.ok){
+
                 let resData= await res.json()
-                window.scroll({top: 0, behavior:"smooth"})
-                notification.current.setNotification(
-                    {visible: true, type:resData.type,message:resData.message}
-                )
+                
                 if(resData.type==="succes"){
                     let index= data.indexOf(data.find(i=>i.id===id))
                     datas.id=id
@@ -156,10 +155,15 @@ function ProgrammeMINHDU(){
                         datas.suivi=data[index].suivi
                     }
                     data[index]=datas
+                    index= projet.current.indexOf(projet.current.find(i=>i.id===id))
                     projet.current[index]=datas
                     setData(data)
                     
                 }
+                window.scroll({top: 0, behavior:"smooth"})
+                notification.current.setNotification(
+                    {visible: true, type:resData.type,message:resData.message}
+                )
             }
         }catch(e){
             console.log(e)
@@ -187,6 +191,48 @@ function ProgrammeMINHDU(){
                     projet.current=projet.current.filter(i=>i.id!==id)
                     setData(data)
                 }
+            }
+        }catch(e){
+            console.log(e)
+        }finally{
+            setPageLoader(false)
+        }
+ 
+    }
+
+    const importFile=async (e)=>{
+
+        e.preventDefault()
+        let form=e.target
+
+        
+        setPageLoader(true)
+        modalBox.current.setModal(false)
+
+        let formData =new FormData(form);
+
+        try{
+
+            let res= await fetchFormData(`programme/importProgrammeFile/${id}`,"POST",formData)
+
+            if(res.ok){
+                let resData= await res.json()
+                
+                if(resData.type==="succes"){
+                    
+                    let response = await fetchGet(`programmeByRole/${id}`)
+                    if(response.ok){
+                        let resdata= await response.json()
+                        
+                        projet.current=resdata.projetList.filter(i=>i.financement!=="RESERVE")
+                        setData(resdata.projetList.filter(i=>i.financement!=="RESERVE"))
+                    }
+                }
+
+                window.scroll({top: 0, behavior:"smooth"})
+                notification.current.setNotification(
+                    {visible: true, type:resData.type,message:resData.message}
+                )
             }
         }catch(e){
             console.log(e)
@@ -324,6 +370,9 @@ function ProgrammeMINHDU(){
                          Retour
                     </button>
                 </div>
+                <div>
+                    
+                </div>
                 <div className="box b-search">
                     <SearchBar data={projet.current} onSetData={setData} keys={searchKey}/>
                 </div>
@@ -332,6 +381,9 @@ function ProgrammeMINHDU(){
             <div className="box">
                 <div id="pg-title" className={statut.includes(programme.statut)?"":"mb-25"}>
                     <h1>{programme.intitule}</h1>
+                    <button className="download-btn" onClick={()=>modalBox.current.setModal(true)}>
+                        <i className="fa-solid fa-up-long"></i>
+                    </button>
                     <button className="download-btn" onClick={()=>exportExcel(programme.intitule)}>
                         <i className="fa-solid fa-down-long"></i>
                     </button>
@@ -361,7 +413,7 @@ function ProgrammeMINHDU(){
                                 <th className="min-w13">Type de travaux</th>
                                 <th className="min-w1">Troçons / Intitulé</th>
                                 <th>Linéaire_(ml)</th>
-                                <th>Cout_total_du_projet_TTC</th>
+                                <th className="min-w4">Budget total TTC</th>
                                 <th className="min-w4">Budget antérieur</th>
                                 <th className="min-w4">Budget {programme.annee}</th>
                                 {(programme.statut==="VALIDER" || programme.type==="AJUSTER") &&(
@@ -522,6 +574,7 @@ function ProgrammeMINHDU(){
             <ModalBox ref={modal}>
                 <FormMINHDU title={programme.intitule} annee={programme.annee} body={state}/>
             </ModalBox>
+
             <ModalBox ref={modal2}>
                 <div className="pg-modal">
                     <p>Voulez vous vraiment supprimer ce projet?</p>
@@ -531,6 +584,7 @@ function ProgrammeMINHDU(){
                     </div>
                 </div>
             </ModalBox>
+            
             <ModalBox ref={modal3}>
                 <form method="post" className="flex-form" onSubmit={(e)=>setPrevision(e,programme.id)}>
                     <div>
@@ -543,6 +597,20 @@ function ProgrammeMINHDU(){
                         </div>
                     </div>
                         
+                </form>
+            </ModalBox>
+
+            <ModalBox ref={modalBox}>
+                <form method="post" encType="multipart/form-data" className="flex-form" onSubmit={importFile}>
+                    <div>
+                        <div className="form-line">
+                            <label>Fichier excel</label>
+                            <input type="file"  name="file" required/>
+                        </div>
+                        <div className="form-line" style={{margin: "0"}}>
+                            <button type="submit">Importer</button>
+                        </div>
+                    </div>     
                 </form>
             </ModalBox>
 

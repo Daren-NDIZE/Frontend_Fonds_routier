@@ -464,7 +464,7 @@ const TableMINHDU=({data,programme,onLoadPdf,onHandleClick})=>{
                         <th className="min-w13">Type de travaux</th>
                         <th className="min-w1">Troçons / Intitulé</th>
                         <th>Linéaire_(ml)</th>
-                        <th>Cout_total_du_projet_TTC</th>
+                        <th className="min-w4">Budget total TTC</th>
                         <th className="min-w4">Budget antérieur</th>
                         <th className="min-w4">{`Budget ${programme.annee}`}</th>
                         <th className="min-w4">Engagement</th>
@@ -551,7 +551,7 @@ const TableMINT=({data,programme,onLoadPdf,onHandleClick})=>{
                         <th className="min-w1">Activités</th>
                         <th className="min-w1">Objectifs</th>
                         <th className="min-w12">Allotissement</th>
-                        <th>Cout_total_du_projet_TTC</th>
+                        <th className="min-w4">Budget total TTC</th>
                         <th className="min-w4">Budget antérieur</th>
                         <th className="min-w4">{`Budget ${programme.annee}`}</th>
                         <th className="min-w4">Engagement</th>
@@ -644,7 +644,7 @@ const TableMINTP=({data,programme,categorie,onLoadPdf,onHandleClick})=>{
                     <th>Code route</th>
                     <th>Linéaire_route (km)</th>
                     <th>Linéaire_OA (ml)</th>
-                    <th>Montant_TTC_projet</th>
+                    <th className="min-w4">Budget total TTC</th>
                     <th className="min-w4">Budget antérieur</th>
                     <th className="min-w4">{`Budget ${programme.annee}`}</th>
                     <th className="min-w4">Engagement</th>
