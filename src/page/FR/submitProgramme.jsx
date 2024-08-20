@@ -14,11 +14,14 @@ function SubmitProgramme({role}){
     let [detail,setDetail]=useState({})
     let [loader,setLoader]=useState(true)
     let [erreur,setErreur]=useState("")
+    let [menu,setMenu]=useState(false)
+    let [ID, setID]=useState()
     let [pageLoader,setPageLoader]=useState()
 
     let notification=useRef()
     let modalBox=useRef()
     let modal=useRef()
+    let modal1=useRef()
 
     let annee=new Date().getFullYear() 
 
@@ -92,14 +95,48 @@ function SubmitProgramme({role}){
         }
     }
 
-
     const details=(observation,resolution)=>{
 
         setDetail({observation: observation, resolution: resolution})
         modalBox.current.setModal(true)
 
     }
- 
+
+    const handleClick=(id)=>{
+        setID(id)
+        modal1.current.setModal(true)
+    }
+
+    const deletedReport= async(id)=>{
+
+        try{
+
+            modal1.current.setModal(false)
+            setPageLoader(true)
+            const res= await Fetch(`deleteReportProgramme/${id}`,"DELETE")
+
+            if(res.ok){
+                let resData= await res.json()
+                
+                if(resData.type==="succes"){
+
+                    let data=programme.filter((i)=>i.id!==id)
+                    setProgramme(data)
+                }
+                notification.current.setNotification(
+                    {visible: true, type:resData.type, message: resData.message}
+                )
+
+            }
+        }catch(e){
+            console.log(e)
+        }finally{
+            setPageLoader(false)
+        }
+        
+
+    }
+
 
     if(loader){
         return(
@@ -129,6 +166,23 @@ function SubmitProgramme({role}){
                 
                 <div className="box pg-box" key={j}>
 
+                    {( i.type==="REPORT" && ["CO","DCO"].includes(role) ) &&(
+           
+                    <div className="pg-hidden" onMouseLeave={()=>setMenu(false)}>
+                        <div><i className="fa-solid fa-ellipsis" onClick={()=>setMenu(true)}></i></div>
+                        {menu &&(
+                            <div className="hidden-menu">
+                                <ul>
+                                    <li></li>
+                                    <li onClick={()=>handleClick(i.id)}>Supprimer</li>
+
+                                </ul>
+                            </div>
+                        )}
+                            
+                    </div>
+
+                    )}
                     <div className="programme-line">
                         <div className="b-col">
                             <div>Intitulé</div>
@@ -210,6 +264,16 @@ function SubmitProgramme({role}){
                     </div>
                         
                 </form>
+            </ModalBox>
+
+            <ModalBox ref={modal1}>
+                <div className="pg-modal">
+                    <p>Voulez vous vraiment supprimer ce programme?</p>
+                    <div className="mb-content">
+                        <button className="s-btn" onClick={()=>deletedReport(ID)}>OUI</button>
+                        <button className="b-btn" onClick={()=>{modal1.current.setModal(false)}}>NON</button>
+                    </div>
+                </div>
             </ModalBox>
 
             {pageLoader &&(

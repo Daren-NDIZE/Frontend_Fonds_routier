@@ -4,16 +4,21 @@ import { useState,forwardRef,useImperativeHandle} from "react"
 const Notification=forwardRef( function (props,ref){
 
     let [data,setData]=useState({visible: false, type:"" ,message:""})
+    let interval
 
     const setNotification=(data)=>{
+
+        clearTimeout(interval)
         setData(data)
-        window.setTimeout(()=>{
+        
+        interval=setTimeout(()=>{
             setData({visible: false, type:"" ,message:""})
         },5000)
     }
 
     const handleClick=()=>{
         setData({visible: false, type:"" ,message:""})
+        clearTimeout(interval)
     }
 
     useImperativeHandle(ref, ()=>({'setNotification': setNotification}))

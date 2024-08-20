@@ -29,6 +29,9 @@ import PageNotFound from "./page/pageNotFound";
 import Param from "./page/ADMIN/param";
 import Roles from "./page/ADMIN/roles";
 import Action from "./page/ADMIN/action";
+import SyntheseOrdonnateur from "./page/ordonnateur/syntheseOrdonnateur";
+import ProgrammePaid from "./page/ordonnateur/ProgrammePaid";
+import DetailsPaid from "./page/ordonnateur/DetailsPaid";
 
 
 function App() {
@@ -86,7 +89,10 @@ function App() {
             <Route path="/créer-programme" element={<CreatePg/>}/>
             <Route path="/programmes" element={<Programme/>}/>
             <Route path="/modifier-programme/:id" element={<UpdatePg/>}/>
+            <Route path="/:ordonnateur/synthese" element={<SyntheseOrdonnateur role={user.role}/>}/>
             <Route path="/programmes/:ordonnateur/:id/prévision" element={<Prevision/>}/>
+            <Route path="/suivi-payements" element={<ProgrammePaid/>}/>
+            <Route path="/suivi-payements/:ordonnateur/:id" element={<DetailsPaid/>}/>
             <Route path="/programmes/projet/:id/suivi-des-travaux" element={<SuiviTravaux update="true"/>}/>
             <Route path="/programmes_cloturés" element={<ProgrammeCloture/>}/>
             <Route path="/programmes_cloturés/:ordonnateur/:id" element={<ClotureDetail/>}/>

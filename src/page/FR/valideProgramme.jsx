@@ -117,7 +117,7 @@ function ValideProgramme(){
                             <div>statut</div>
                             <div>
                                 <div className="desc warning">
-                                    {i.statut.replaceAll("_"," ")}
+                                    {i.statut.replaceAll("ER","É")}
                                 </div>
                             </div>
                         </div>

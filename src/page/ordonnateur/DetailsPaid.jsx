@@ -2,9 +2,8 @@ import { useRef,useState,useEffect } from "react"
 import SearchBar from "../../component/searchBar"
 import Loader from "../../component/loader"
 import Notification from "../../component/notification"
-import PageLoader from "../../component/pageLoader"
 import { useNavigate, useParams } from "react-router-dom"
-import { Fetch, fetchFormData, fetchGet } from "../../config/FetchRequest"
+import { fetchFormData, fetchGet } from "../../config/FetchRequest"
 import {  numStr, totalBudget, totalPayement } from "../../script"
 import ModalBox from "../../component/modalBox"
 import { Viewer } from '@react-pdf-viewer/core';
@@ -16,30 +15,18 @@ import { downLoadExcel } from "jsxtabletoexcel"
 
 
 
-function SuiviPayement(){
+function DetailsPaid(){
 
-    let modal=useRef()
-    let modal1=useRef()
-    let modal2=useRef()
     let modalBox1=useRef()
     let notification=useRef()
     let projet=useRef([])
 
-    let AIR=useRef(null)
-    let HTVA=useRef(null)
-
     let [programme,setProgramme]=useState({})
     let [loader,setLoader]=useState(true)
-    let [erreur,setErreur]=useState("")
-    let [pageLoader,setPageLoader]=useState()
     let [data,setData]=useState([])
-    let [projetId,setProjetId]=useState()
     let [pdf,setPdf]=useState()
-    let [montant,setMontant]=useState({TVA:"", TTC:"",AIR:"",NAP:""})
     let [categorie,setCategorie]=useState("CENTRALE")
-    let [check,setCheck]=useState(false)
-    let [payementId,setPayementId]=useState()
-    let [focus,setFocus]=useState({})
+    
     
     const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
@@ -57,10 +44,11 @@ function SuiviPayement(){
                 return;
             }
             try{
-                let res = await fetchGet(`programme/${id}`)
+                let res = await fetchGet(`programmeByRole/${id}`)
                 if(res.ok){
                     let resData= await res.json()
                     if(resData.type==="erreur" || !["VALIDER","CLOTURER"].includes(resData.statut) || resData.ordonnateur!==ordonnateur.substring(10)){
+                        console.log(resData.statut)
                         navigate(-1)
                     }else{
                         setProgramme(resData)
@@ -100,191 +88,6 @@ function SuiviPayement(){
             i.classList.remove("active")
         })
         li.classList.add("active")
-    }
-
-    const changeMontant=()=>{
-
-        let air=parseFloat(AIR.current.value) 
-        let htva=parseFloat(HTVA.current.value)
-        if( air && htva ){
-            setMontant({TVA: (0.1925*htva).toFixed(2), TTC: (htva+ 0.1925*htva).toFixed(2) , AIR: (air*htva/100).toFixed(4) , NAP: htva*(1-air/100)})
-        }else{
-            setMontant({TVA:"", TTC:"",AIR:"",NAP:""})
-        }
-    }
-
-    const checked=(e)=>{
-
-        setCheck(e.target.checked)
-    }
-
-    const open=(id)=>{
-        setMontant({TVA:"", TTC:"",AIR:"",NAP:""})
-        setProjetId(id)
-        modal.current.setModal(true) 
-    }
-
-    const openModal=(projetId,payId,modal)=>{
-
-        setPayementId(payId)
-        setProjetId(projetId)
-        if(modal===modal1){
-            let datas= data.find(i=>i.id===projetId)
-            let paye=datas.payement.find(i=>i.id===payId)
-            setFocus(paye)
-            setMontant({TVA:paye.m_TVA, TTC:paye.m_TTC,AIR:paye.m_AIR,NAP:paye.nap})
-        }
-        modal.current.setModal(true)
-    }
-
-    const submit= async(e)=>{
-
-        e.preventDefault()
-        setErreur("")
-        let form=e.target
-        if(!form.air.value || !form.m_HTVA.value || !form.decompte.value ){
-            setErreur("veuillez remplir tous les champs")
-            return;
-        }
-        if( (form.air.value!=="2.2" && form.air.value!=="5.5") || isNaN(form.m_HTVA.value) ){
-            setErreur("veuillez remplir correctement les champs")
-            return;
-        }
-
-        let confirm=window.confirm("Voulez vous vraiment enregistrer ce payement?")
-        if(!confirm){
-            return;
-        }
-
-        let formData =new FormData(form);
-        let data=Object.fromEntries(formData)
-        modal.current.setModal(false)
-        setPageLoader(true)
-        try{
-            let res= await Fetch(`projet/savePayement/${projetId}`,"POST",data)
-            if(res.ok){
-                let resData= await res.json()
-
-                if(resData.type==="succes"){
-
-                    let response = await fetchGet(`programme/${id}`)
-                    if(response.ok){
-                        let dataRes= await response.json()
-                        
-                        setProgramme(dataRes)
-                        projet.current=dataRes.projetList.filter((i=>i.financement!=="RESERVE" && i.bordereau ))
-                        if(dataRes.ordonnateur==="MINTP"){
-                            setData(dataRes.projetList.filter(i=>(i.financement!=="RESERVE"  && i.bordereau && i.categorie!=="PROJET A GESTION COMMUNALE") ))
-                        }else{
-                            setData(dataRes.projetList.filter(i=>(i.financement!=="RESERVE" && i.bordereau ) ))
-                        }
-                    }
-                    
-                }
-                window.scroll({top: 0, behavior:"smooth"})
-                notification.current.setNotification(
-                    {visible: true, type:resData.type,message:resData.message}
-                )
-
-            }
-        }catch(e){
-            console.log(e)
-        }finally{
-            setPageLoader(false)
-        }
-
-    }
-
-    const deleted=async(id)=>{
-
-        setPageLoader(true)
-        modal2.current.setModal(false)
-
-        try{
-            let res= await Fetch(`projet/deletePayement/${id}`,"DELETE")
-            if(res.ok){
-
-                let resData= await res.json()
-                window.scroll({top: 0, behavior:"smooth"})
-                notification.current.setNotification(
-                    {visible: true, type:resData.type,message:resData.message}
-                )
-                if(resData.type==="succes"){
-                    let index= data.indexOf(data.find(i=>i.id===projetId))
-                    let paye=data[index].payement.filter(i=>i.id!==id)
-                    data[index].payement=paye;
-                    index= projet.current.indexOf(projet.current.find(i=>i.id===projetId))
-                    projet.current[index].payement=paye
-                    setData(data)
-                }
-            }
-        }catch(e){
-            console.log(e)
-        }finally{
-            setPageLoader(false)
-        }
-
-    }
-
-    const update= async(e)=>{
-
-        e.preventDefault()
-        setErreur("")
-        let form=e.target
-        if(!form.air.value || !form.m_HTVA.value || !form.decompte.value ){
-            setErreur("veuillez remplir tous les champs")
-            return;
-        }
-        if( (form.air.value!=="2.2" && form.air.value!=="5.5") || isNaN(form.m_HTVA.value) ){
-            setErreur("veuillez remplir correctement les champs")
-            return;
-        }
-
-        let confirm=window.confirm("Voulez vous vraiment modifier ce payement?")
-        if(!confirm){
-            return;
-        }
-
-        let formData =new FormData(form);
-        let data=Object.fromEntries(formData)
-        modal1.current.setModal(false)
-        setPageLoader(true)
-        try{
-            let res= await Fetch(`projet/updatePayement/${payementId}`,"PUT",data)
-
-            if(res.ok){
-
-                let resData= await res.json()
-
-                if(resData.type==="succes"){
-
-                    let response = await fetchGet(`programme/${id}`)
-                    if(response.ok){
-                        let dataRes= await response.json()
-                        
-                        setProgramme(dataRes)
-                        projet.current=dataRes.projetList.filter((i=>i.financement!=="RESERVE" && i.bordereau ))
-                        if(dataRes.ordonnateur==="MINTP"){
-                            setData(dataRes.projetList.filter(i=>(i.financement!=="RESERVE"  && i.bordereau && i.categorie!=="PROJET A GESTION COMMUNALE") ))
-                        }else{
-                            setData(dataRes.projetList.filter(i=>(i.financement!=="RESERVE" && i.bordereau ) ))
-                        }
-                    }
-                    
-                }
-                
-                window.scroll({top: 0, behavior:"smooth"})
-                notification.current.setNotification(
-                    {visible: true, type:resData.type,message:resData.message}
-                )
-
-            }
-        }catch(e){
-            console.log(e)
-        }finally{
-            setPageLoader(false)
-        }
-
     }
 
     const loadPdf=async(id)=>{
@@ -335,10 +138,6 @@ function SuiviPayement(){
             <div className="box">
                 <div id="pg-title" className="mb-25">
                     <h1>{programme.intitule}</h1>
-                    <div className="check-update">
-                        <label htmlFor="check">Modifier</label>
-                        <input type="checkbox" id="check" onChange={checked}/>
-                    </div>
                     <button className="download-btn"  onClick={()=>exportExcel(`${programme.ordonnateur} ${programme.annee}`)}>
                         <i className="fa-solid fa-down-long"></i>
                     </button>
@@ -361,8 +160,6 @@ function SuiviPayement(){
                      data={data} 
                      programme={programme} 
                      onLoadPdf={loadPdf} 
-                     onHandleClick={open} 
-                     option={{check: check,openModal:openModal,modal1:modal1,modal2:modal2}} 
                      />
 
                 :programme.ordonnateur==="MINT"?
@@ -370,8 +167,6 @@ function SuiviPayement(){
                     <TableMINT data={data}
                      programme={programme}
                      onLoadPdf={loadPdf} 
-                     onHandleClick={open} 
-                     option={{check: check,openModal:openModal,modal1:modal1,modal2:modal2}}
                     />
 
                 :  
@@ -380,8 +175,6 @@ function SuiviPayement(){
                      programme={programme} 
                      categorie={categorie}  
                      onLoadPdf={loadPdf} 
-                     onHandleClick={open}
-                     option={{check: check,openModal:openModal,modal1:modal1,modal2:modal2}} 
                      />
 
                 }
@@ -435,7 +228,8 @@ function SuiviPayement(){
                 </div>
             </div>
 
-            :
+            :programme.ordonnateur==="MINTP"?
+
             <div className="box">
                 <div className="p-prevision">
                     <div>GESTION CENTRALE</div>
@@ -462,129 +256,9 @@ function SuiviPayement(){
                 </div>
             </div>
 
+            :<></>
+
             }
-
-            <ModalBox ref={modal}>
-                <form className="flex-form" onSubmit={submit} >
-                    <div>
-                        {erreur.length!==0 &&(
-                            <p className="error-msg">{erreur}</p>
-                        )}
-                        <div className="form-line">
-                            <label>N° decompte <span>*</span></label>
-                            <input type="text"  name="decompte"  required/>
-                        </div>
-                        <div className="form-line">
-                            <label>N° marché <span>*</span></label>
-                            <input type="text"  name="n_marche" required/>
-                        </div>
-                        <div className="form-line">
-                            <label>Montant hors TVA <span>*</span></label>
-                            <input type="number" onChange={changeMontant} ref={HTVA} name="m_HTVA"  required/>
-                        </div>
-                        <div className="form-line">
-                            <label>AIR <span>*</span></label>
-                            <select onChange={changeMontant} name="air" ref={AIR} required>
-                                <option value="">- - - - - - - - - - - - - - - - - - - - -</option>
-                                <option value="2.2">2,2</option>
-                                <option value="5.5">5.5</option>
-                            </select>
-                        </div>
-                        <div className="form-line">
-                            <label>Observation</label>
-                            <textarea name="observation"/>
-                        </div>  
-                    </div>
-
-                    <div>
-                        <div className="form-line">
-                            <label>Montant TVA </label>
-                            <input type="number" value={montant.TVA} disabled required/>
-                        </div>
-                        <div className="form-line">
-                            <label>Montant TTC </label>
-                            <input type="number" value={montant.TTC} disabled required/>
-                        </div>
-                        <div className="form-line">
-                            <label>Montant AIR </label>
-                            <input type="number" value={montant.AIR} disabled required/>
-                        </div>
-                        <div className="form-line">
-                            <label>Net à payer</label>
-                            <input type="number" value={montant.NAP} disabled required/>
-                        </div> 
-                        <div className="form-line" style={{margin: "0"}}>
-                            <button type="submit">Enregistrer</button>
-                        </div>
-                    </div>    
-                </form>
-            </ModalBox>
-
-            <ModalBox ref={modal1}>
-                <form className="flex-form" onSubmit={update} >
-                    <div>
-                        {erreur.length!==0 &&(
-                            <p className="error-msg">{erreur}</p>
-                        )}
-                        <div className="form-line">
-                            <label>N° decompte <span>*</span></label>
-                            <input type="text"  name="decompte" defaultValue={focus.decompte} required/>
-                        </div>
-                        <div className="form-line">
-                            <label>N° marché <span>*</span></label>
-                            <input type="text"  name="n_marche" defaultValue={focus.n_marche} required/>
-                        </div>
-                        <div className="form-line">
-                            <label>Montant hors TVA <span>*</span></label>
-                            <input type="number" onChange={changeMontant} ref={HTVA} name="m_HTVA" defaultValue={focus.m_HTVA} required/>
-                        </div>
-                        <div className="form-line">
-                            <label>AIR <span>*</span></label>
-                            <select onChange={changeMontant} name="air" ref={AIR} defaultValue={focus.air} required>
-                                <option value="">- - - - - - - - - - - - - - - - - - - - -</option>
-                                <option value="2.2">2,2</option>
-                                <option value="5.5">5.5</option>
-                            </select>
-                        </div>
-                        <div className="form-line">
-                            <label>Observation</label>
-                            <textarea name="observation" defaultValue={focus.observation}/>
-                        </div>  
-                    </div>
-
-                    <div>
-                        <div className="form-line">
-                            <label>Montant TVA </label>
-                            <input type="number"  value={montant.TVA} disabled required/>
-                        </div>
-                        <div className="form-line">
-                            <label>Montant TTC </label>
-                            <input type="number" value={montant.TTC} disabled required/>
-                        </div>
-                        <div className="form-line">
-                            <label>Montant AIR </label>
-                            <input type="number" value={montant.AIR} disabled required/>
-                        </div>
-                        <div className="form-line">
-                            <label>Net à payer</label>
-                            <input type="number" value={montant.NAP}  disabled required/>
-                        </div> 
-                        <div className="form-line" style={{margin: "0"}}>
-                            <button type="submit">Enregistrer</button>
-                        </div>
-                    </div>    
-                </form>
-            </ModalBox>
-
-            <ModalBox ref={modal2}>
-                <div className="pg-modal">
-                    <p>Voulez vous vraiment supprimer ce payement?</p>
-                    <div className="mb-content">
-                        <button className="s-btn" onClick={()=>deleted(payementId)}>OUI</button>
-                        <button className="b-btn" onClick={()=>modal2.current.setModal(false)}>NON</button>
-                    </div>
-                </div>
-            </ModalBox>
 
 
             <div className="view-pdf">
@@ -601,17 +275,14 @@ function SuiviPayement(){
                 </ModalBox>
             </div>
  
-            {pageLoader &&(
-                <PageLoader/>
-            )}
         </div>
     )
 }
 
-export default SuiviPayement;
+export default DetailsPaid;
 
 
-const TableMINHDU=({data,programme,onLoadPdf,onHandleClick,option})=>{
+const TableMINHDU=({data,programme,onLoadPdf})=>{
 
     return(
 
@@ -634,7 +305,7 @@ const TableMINHDU=({data,programme,onLoadPdf,onHandleClick,option})=>{
                         <th className="min-w4">Projection {programme.annee+2}</th>
                         <th>Ordonnateurs</th>
                         <th className="min-w4">Situation</th>
-                        <th colSpan={option.check?"10":"9"} className="text-center">Suivi des payements</th>
+                        <th colSpan="9" className="text-center">Suivi des payements</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -666,10 +337,7 @@ const TableMINHDU=({data,programme,onLoadPdf,onHandleClick,option})=>{
                                 <td className="min-w4 bold">Montant TVA</td>
                                 <td className="min-w4 bold">Montant AIR</td>
                                 <td className="min-w4 bold">Net à payer</td>
-                                <td className="min-w2 bold">Observations</td> 
-                                {option.check &&
-                                <td></td>
-                                } 
+                                <td className="min-w2 bold">Observations</td>  
                             </tr>
 
                             {i.payement.map( (k,l)=>
@@ -683,14 +351,6 @@ const TableMINHDU=({data,programme,onLoadPdf,onHandleClick,option})=>{
                                     <td>{numStr(k.m_AIR)}</td>
                                     <td>{numStr(k.nap)}</td>
                                     <td>{k.observation}</td>
-                                    {option.check &&
-                                    <td>
-                                        <div className="t-action">
-                                            <i className="fa-solid fa-pen-to-square" onClick={()=>option.openModal(i.id,k.id,option.modal1)}></i>
-                                            <i className="fa-solid fa-trash-can" onClick={()=>option.openModal(i.id,k.id,option.modal2)}></i>
-                                        </div>
-                                    </td>
-                                    }
                                 </tr>
                             )}
 
@@ -702,7 +362,6 @@ const TableMINHDU=({data,programme,onLoadPdf,onHandleClick,option})=>{
                                 <td>{numStr(totalPayement(i.payement,"m_AIR") )}</td>
                                 <td>{numStr(totalPayement(i.payement,"nap") )}</td>
                                 <td>
-                                    <i className="fa-solid fa-circle-plus i-circle" onClick={()=>onHandleClick(i.id)}></i>
                                 </td>
                             </tr>
                         </>
@@ -715,7 +374,7 @@ const TableMINHDU=({data,programme,onLoadPdf,onHandleClick,option})=>{
     )
 }
 
-const TableMINT=({data,programme,onLoadPdf,onHandleClick,option})=>{
+const TableMINT=({data,programme,onLoadPdf})=>{
 
     return(
 
@@ -738,7 +397,7 @@ const TableMINT=({data,programme,onLoadPdf,onHandleClick,option})=>{
                         <th className="min-w4">Projection {programme.annee+2}</th>
                         <th>Ordonnateurs</th>
                         <th className="min-w4">situation</th>
-                        <th colSpan={option.check?"10":"9"} className="text-center">Suivi des payements</th>
+                        <th colSpan="9" className="text-center">Suivi des payements</th>
                     </tr>
                 </thead>
                 <tbody> 
@@ -771,9 +430,6 @@ const TableMINT=({data,programme,onLoadPdf,onHandleClick,option})=>{
                             <td className="min-w4 bold">Montant AIR</td>
                             <td className="min-w4 bold">Net à payer</td>
                             <td className="min-w2 bold">Observations</td>  
-                            {option.check &&
-                                <td></td>
-                            }
                         </tr>
 
                         {i.payement.map( (k,l)=>
@@ -787,14 +443,6 @@ const TableMINT=({data,programme,onLoadPdf,onHandleClick,option})=>{
                                 <td>{numStr(k.m_AIR)}</td>
                                 <td>{numStr(k.nap)}</td>
                                 <td>{k.observation}</td>
-                                {option.check &&
-                                <td>
-                                    <div className="t-action">
-                                        <i className="fa-solid fa-pen-to-square" onClick={()=>option.openModal(i.id,k.id,option.modal1)}></i>
-                                        <i className="fa-solid fa-trash-can" onClick={()=>option.openModal(i.id,k.id,option.modal2)}></i>
-                                    </div>
-                                </td>
-                                }
                             </tr>
                         )}
 
@@ -806,10 +454,8 @@ const TableMINT=({data,programme,onLoadPdf,onHandleClick,option})=>{
                             <td>{numStr(totalPayement(i.payement,"m_AIR") )}</td>
                             <td>{numStr(totalPayement(i.payement,"nap") )}</td>
                             <td>
-                                <i className="fa-solid fa-circle-plus i-circle" onClick={()=>onHandleClick(i.id)}></i>
                             </td>
-                        </tr>
-                        
+                        </tr>  
 
                     </>
                         
@@ -821,7 +467,7 @@ const TableMINT=({data,programme,onLoadPdf,onHandleClick,option})=>{
     )
 }
 
-const TableMINTP=({data,programme,categorie,onLoadPdf,onHandleClick,option})=>{
+const TableMINTP=({data,programme,categorie,onLoadPdf})=>{
 
     return(
 
@@ -851,7 +497,7 @@ const TableMINTP=({data,programme,categorie,onLoadPdf,onHandleClick,option})=>{
                     <th className="min-w4">Projection {programme.annee+1}</th>
                     <th className="min-w4">Projection {programme.annee+2}</th>
                     <th className="min-w4">Situation</th>
-                    <th colSpan={option.check?"10":"9"} className="text-center">Suivi des payements</th>
+                    <th colSpan="9" className="text-center">Suivi des payements</th>
                 </tr>
             </thead>
                 <tbody> 
@@ -891,9 +537,6 @@ const TableMINTP=({data,programme,categorie,onLoadPdf,onHandleClick,option})=>{
                             <td className="min-w4 bold">Montant AIR</td>
                             <td className="min-w4 bold">Net à payer</td>
                             <td className="min-w2 bold">Observations</td>
-                            {option.check &&
-                                <td></td>
-                            }
                         </tr>
 
                         {i.payement.map( (k,l)=>
@@ -907,14 +550,6 @@ const TableMINTP=({data,programme,categorie,onLoadPdf,onHandleClick,option})=>{
                                 <td>{numStr(k.m_AIR )}</td>
                                 <td>{numStr(k.nap )}</td>
                                 <td>{k.observation}</td>
-                                {option.check &&
-                                <td>
-                                    <div className="t-action">
-                                        <i className="fa-solid fa-pen-to-square" onClick={()=>option.openModal(i.id,k.id,option.modal1)}></i>
-                                        <i className="fa-solid fa-trash-can" onClick={()=>option.openModal(i.id,k.id,option.modal2)}></i>
-                                    </div>
-                                </td>
-                                }
                             </tr>
                         )}
 
@@ -926,7 +561,6 @@ const TableMINTP=({data,programme,categorie,onLoadPdf,onHandleClick,option})=>{
                             <td>{numStr(totalPayement(i.payement,"m_AIR") )}</td>
                             <td>{numStr(totalPayement(i.payement,"nap") )}</td>
                             <td>
-                                <i className="fa-solid fa-circle-plus i-circle" onClick={()=>onHandleClick(i.id)}></i>
                             </td>
                         </tr>
                         

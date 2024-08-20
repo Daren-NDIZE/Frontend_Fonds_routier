@@ -381,9 +381,13 @@ function ProgrammeMINHDU(){
             <div className="box">
                 <div id="pg-title" className={statut.includes(programme.statut)?"":"mb-25"}>
                     <h1>{programme.intitule}</h1>
+
+                    {programme.statut==="EN_ATTENTE_DE_SOUMISSION" &&(
                     <button className="download-btn" onClick={()=>modalBox.current.setModal(true)}>
                         <i className="fa-solid fa-up-long"></i>
                     </button>
+                    )}
+                    
                     <button className="download-btn" onClick={()=>exportExcel(programme.intitule)}>
                         <i className="fa-solid fa-down-long"></i>
                     </button>

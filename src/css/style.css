@@ -46,10 +46,11 @@ input,select{
     display: flex;
 }
 .left-content{
-    width: 275px;
+    width: 265px;
 }
 .right-content{
     flex-grow: 1;
+    width: calc( 100vw - 285px);
     background: var(--fond_a);
 }
 header{
@@ -63,6 +64,23 @@ header{
 }
 .h-logo{
     flex-grow: 1;
+}
+.bar-slide{
+    display: flex;
+    align-items: center;
+    width: max-content;
+    height: 100%;
+}
+.bar-slide i{
+    font-size: 25px;
+    color: white;
+    padding: 3px;
+    border-radius: 7px;
+    cursor: pointer;
+}
+.bar-slide i:active{
+    color: #222931;
+    border: solid 3px #222931;
 }
 header > div:last-child{
     display: flex;
@@ -109,7 +127,7 @@ header > div:last-child{
     height: 100vh;
     background-color: var(--marron);
     position: sticky;
-    width: 275px;
+    width: 265px;
     top: 0;
 }
 .s-bottom{
@@ -136,11 +154,11 @@ header > div:last-child{
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 40px 0 30px;
+    padding: 30px 0;
 }
 .s-logo img{
-    width: 95px;
-    height: 95px;
+    width: 90px;
+    height: 90px;
     margin-bottom: 7px;
 }
 .s-logo p{
@@ -160,6 +178,9 @@ header > div:last-child{
 .s-navigation nav{
     padding: 0 15px;
     margin-top: 20px;
+    overflow-y: auto;
+    max-height: calc(100vh - 305px);
+    scrollbar-color: #00000033 transparent;
 }
 .s-navigation li{
     list-style: none;
@@ -169,8 +190,9 @@ header > div:last-child{
     text-decoration: none;
     color: white;
     padding: 10px;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
     border-radius: 6px;
+    font-size: 15px;
     font-weight: 500;
 }
 .s-navigation a:hover{
@@ -178,6 +200,26 @@ header > div:last-child{
 }
 .s-navigation a.active{
     background: #222931;
+}
+.i-direction{
+    padding-right: 3px;
+    font-size: 14px;
+    transition: 0.3s;
+}
+.deroulant{
+    height: 0;
+    overflow: hidden;
+    transition: 0.3s;
+}
+.deroulant li{
+    margin-left: 20px;
+}
+.visibility i{
+    transform: rotateZ(90deg);
+}
+.visibility ~ .deroulant{
+    height: 135px;
+
 }
 .login-container{
     width: 100%;
@@ -282,9 +324,11 @@ header > div:last-child{
     background: var(--fond_a);
     min-height: calc(100vh - 75px);
     padding: 20px 40px 50px;
-    max-width: calc( 100vw - 295px);
     margin: auto;
 
+}
+.resize{
+    max-width: calc( 100vw - 20px);
 }
 .box{
     background: var(--white_b);
@@ -375,7 +419,7 @@ header > div:last-child{
     overflow: auto;
     max-height: 600px;
     margin-top: 10px;
-    min-height: 330px;
+    min-height: 370px;
 }
 .table{
     margin-bottom: 20px;
@@ -655,8 +699,8 @@ label span{
     z-index: 10;
 }
 .pageLoader .loader{
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
 }
 .loader {
     display: inline-block;

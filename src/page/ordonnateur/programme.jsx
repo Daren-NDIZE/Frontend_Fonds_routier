@@ -16,7 +16,7 @@ import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 function Programme(){
 
     let [programme,setProgramme]=useState([])
-    let[ID, setID]=useState(null)
+    let [ID, setID]=useState(null)
     let [pageLoader,setPageLoader]=useState(false)
     let [loader,setLoader]=useState(true)
     let [pdf,setPdf]=useState()
@@ -27,7 +27,6 @@ function Programme(){
     let modalBox2=useRef()
 
     const defaultLayoutPluginInstance = defaultLayoutPlugin();
-
 
     useEffect(()=>{
 
@@ -161,8 +160,7 @@ function Programme(){
                     
                     )
                 :
-                    <></>
-                }
+                    <div className="vide">VIDE</div>                }
  
             </div>
 

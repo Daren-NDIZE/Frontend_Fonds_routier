@@ -20,6 +20,7 @@ function ProgrammeMINT (){
 
     let statut=["EN_ATTENTE_DE_SOUMISSION","CORRECTION","REJETER"]
 
+    let modalBox=useRef()
     let modal=useRef()
     let modalBox1=useRef()
     let notification=useRef()
@@ -203,6 +204,48 @@ function ProgrammeMINT (){
  
     }
 
+    const importFile=async (e)=>{
+
+        e.preventDefault()
+        let form=e.target
+
+        
+        setPageLoader(true)
+        modalBox.current.setModal(false)
+
+        let formData =new FormData(form);
+
+        try{
+
+            let res= await fetchFormData(`programme/importProgrammeFile/${id}`,"POST",formData)
+
+            if(res.ok){
+                let resData= await res.json()
+                
+                if(resData.type==="succes"){
+                    
+                    let response = await fetchGet(`programmeByRole/${id}`)
+                    if(response.ok){
+                        let resdata= await response.json()
+                        
+                        projet.current=resdata.projetList.filter(i=>i.financement!=="RESERVE")
+                        setData(resdata.projetList.filter(i=>i.financement!=="RESERVE"))
+                    }
+                }
+
+                window.scroll({top: 0, behavior:"smooth"})
+                notification.current.setNotification(
+                    {visible: true, type:resData.type,message:resData.message}
+                )
+            }
+        }catch(e){
+            console.log(e)
+        }finally{
+            setPageLoader(false)
+        }
+ 
+    }
+
     const setPrevision= async(e,id)=>{
 
         e.preventDefault()
@@ -349,6 +392,11 @@ function ProgrammeMINT (){
             <div className="box">
                 <div id="pg-title" className={statut.includes(programme.statut)?"":"mb-25"}>
                     <h1>{programme.intitule}</h1>
+                    {programme.statut==="EN_ATTENTE_DE_SOUMISSION" &&(
+                    <button className="download-btn" onClick={()=>modalBox.current.setModal(true)}>
+                        <i className="fa-solid fa-up-long"></i>
+                    </button>
+                    )}
                     <button className="download-btn" onClick={()=>exportExcel(programme.intitule)}>
                         <i className="fa-solid fa-down-long"></i>
                     </button>
@@ -551,6 +599,20 @@ function ProgrammeMINT (){
                         </div>
                     </div>
                         
+                </form>
+            </ModalBox>
+
+            <ModalBox ref={modalBox}>
+                <form method="post" encType="multipart/form-data" className="flex-form" onSubmit={importFile}>
+                    <div>
+                        <div className="form-line">
+                            <label>Fichier excel</label>
+                            <input type="file"  name="file" required/>
+                        </div>
+                        <div className="form-line" style={{margin: "0"}}>
+                            <button type="submit">Importer</button>
+                        </div>
+                    </div>     
                 </form>
             </ModalBox>
 

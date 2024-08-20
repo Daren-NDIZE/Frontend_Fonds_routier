@@ -13,6 +13,13 @@ function SideBar({role}){
         }
     }
 
+    const derouler=(e)=>{
+        
+        e.preventDefault()
+        let element=e.target
+        element.classList.toggle("visibility")
+    }
+
     return(
         <div className="sideBar">
             <div className="s-logo">
@@ -45,7 +52,17 @@ function SideBar({role}){
                     :["MINHDU","MINTP","MINT"].includes(role)?
                     <ul>
                         <li><NavLink to="/créer-programme">Créer un programme</NavLink></li>
+                        <li>
+                            <NavLink to="/programmation" onClick={derouler}><i className="fa-solid fa-chevron-right i-direction"></i> Programmation </NavLink>
+                            <ul className="deroulant">
+                                <li><NavLink to="/programmation/engagement">Engagement</NavLink></li>
+                                <li><NavLink to="/programmation/suivi-travaux">Suivi des travaux</NavLink></li>  
+                                <li><NavLink to="/programmation/suivi-payements">Suivi des payements</NavLink></li>  
+                            </ul>
+                        </li>
                         <li><NavLink to="/programmes">Programmes en cours</NavLink></li>
+                        <li><NavLink to={`/programme-${role}/synthese`}>Synthèse des programmes</NavLink></li>
+                        {/* <li><NavLink to="/suivi-payements">Suivi des payements</NavLink></li> */}
                         <li><NavLink to="/programmes_cloturés">Programmes cloturés</NavLink></li>
                     </ul>
                     :

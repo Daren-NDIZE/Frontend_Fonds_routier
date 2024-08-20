@@ -1,27 +1,41 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { numStr } from "../../script"
 import { Fetch } from "../../config/FetchRequest"
 import PageLoader from "../../component/pageLoader"
 import { downLoadExcel } from "jsxtabletoexcel"
+import { useNavigate, useParams } from "react-router-dom"
 
 
-function Synthese(){
+function SyntheseOrdonnateur({role}){
 
     let date=new Date()
+    const navigate=useNavigate()
+    const {ordonnateur}=useParams()
 
-    let ordonnateur=["MINTP","MINT","MINHDU","GLOBAL"]
     let type=["BASE","ADDITIONNEL","B&A"]
+
 
     let [synthese,setSynthese]=useState({})
     let [pageLoader,setPageLoader]=useState()
+
+    useEffect(()=>{
+
+        let type=["programme-MINT","programme-MINTP","programme-MINHDU"]
+        if(!type.includes(ordonnateur)){
+            navigate(-1)
+        }
+        if(role!==ordonnateur.substring(10)){
+            navigate(-1)
+        }
+            
+    },[ordonnateur,role,navigate])
 
     const submit=async(e)=>{
 
         e.preventDefault()
         let form=e.target
 
-        if( !ordonnateur.includes(form.ordonnateur.value) || !type.includes(form.type.value) ||
-            form.annee.value==="" || parseInt(form.annee.value) > date.getFullYear()  )
+        if( !type.includes(form.type.value) || form.annee.value==="" || parseInt(form.annee.value) > date.getFullYear()  )
         {
             return;
         }
@@ -30,7 +44,7 @@ function Synthese(){
         let data=Object.fromEntries(formData)
 
         try{
-            const res= await Fetch('programme/syntheseProgramme',"POST",data)
+            const res= await Fetch('programme/syntheseOrdonnateur',"POST",data)
 
             if(res.ok){
                 const resData= await res.json()
@@ -59,12 +73,7 @@ function Synthese(){
                     <div>
                         <div className="form-line">
                             <label>Programme</label>
-                            <select name="ordonnateur">
-                                <option value="MINTP">Programme MINTP</option>
-                                <option value="MINHDU">Programme MINHDU</option>
-                                <option value="MINT">Programme MINT</option>
-                                <option value="GLOBAL">Global</option>
-                            </select>
+                            <input type="text" value={`Programme ${role}`} disabled/>
                         </div>
                         <div className="form-line">
                             <label>Catégorie</label>
@@ -105,11 +114,7 @@ function Synthese(){
                 </div>
 
 
-                {synthese.type==="GLOBAL"?
-
-                    <SyntheseGlobal prevision={synthese.prevision} engagement={synthese.engagement} />
-
-                :synthese.type==="MINTP"?
+                {synthese.type==="MINTP"?
 
                     <SyntheseMINTP prevision={synthese.prevision} engagement={synthese.engagement} />
 
@@ -123,7 +128,6 @@ function Synthese(){
                 }
 
                 
-
                 </div>
             )}
             
@@ -135,61 +139,11 @@ function Synthese(){
     )
 }
 
-export default Synthese
+export default SyntheseOrdonnateur
 
 
 
-const SyntheseGlobal=({prevision,engagement})=>{
 
-    let totalP=prevision[0]+prevision[1]+prevision[2]
-    let totalE=engagement[0]+engagement[1]+engagement[2]
-
-    return(
-        <div className="tableBox">
-            <table className="table">
-                <thead>
-                    <tr>
-                        <th>ORDONNATEUR</th>
-                        <th>PREVISION TTC</th>
-                        <th>ENGAGEMENTS</th>
-                        <th>Excédent/Insuffisance</th>
-                        <th>Taux d'engagement</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>MINTP</td>
-                        <td>{numStr(prevision[0],0)}</td>
-                        <td>{numStr(engagement[0],0)}</td>
-                        <td>{numStr(prevision[0]-engagement[0],0)}</td>
-                        <td>{(engagement[0]*100/prevision[0]).toFixed(2)}%</td>
-                    </tr>
-                    <tr>
-                        <td>MINHDU</td>
-                        <td>{numStr(prevision[1],0)}</td>
-                        <td>{numStr(engagement[1],0)}</td>
-                        <td>{numStr(prevision[1]-engagement[1],0)}</td>
-                        <td>{(engagement[1]*100/prevision[1]).toFixed(2)}%</td>
-                    </tr>
-                    <tr>
-                        <td>MINT</td>
-                        <td>{numStr(prevision[2],0)}</td>
-                        <td>{numStr(engagement[2],0)}</td>
-                        <td>{numStr(prevision[2]-engagement[2],0)}</td>
-                        <td>{(engagement[2]*100/prevision[2]).toFixed(2)}%</td>
-                    </tr>
-                    <tr>
-                        <td>TOTAL GL</td>
-                        <td>{numStr(totalP)}</td>
-                        <td>{numStr(totalE,0)}</td>
-                        <td>{numStr(totalP-totalE)}</td>
-                        <td>{(totalE*100/totalP).toFixed(2)}%</td>
-                    </tr>                    
-                </tbody>
-            </table>
-        </div>
-    )
-}
 
 const SyntheseMINHDU=({prevision,engagement})=>{
 

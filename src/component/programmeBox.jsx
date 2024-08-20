@@ -60,7 +60,7 @@ function ProgrammeBox({data,modalBox,modalBox1,onChange,onLoad}){
                         <div>statut</div>
                         <div>
                             <div className="desc warning">
-                                {data.statut.replaceAll("_"," ")}
+                                {data.statut.replaceAll("_"," ").replaceAll("ER","É")}
                             </div>
                         </div>
                     </div>

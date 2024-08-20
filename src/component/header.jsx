@@ -2,13 +2,17 @@ import { Link } from "react-router-dom";
 
 
 
-function Header({user}){
+function Header({user,onSlideBar}){
+
+    
 
     return(
         <header>
             <div className="h-logo">
-
-            </div>
+                <div className="bar-slide">
+                    <i className="fa-solid fa-bars" onClick={onSlideBar}></i>
+                </div>
+           </div>
             <div>
                 <div className="h-theme">
                     {/* <div>

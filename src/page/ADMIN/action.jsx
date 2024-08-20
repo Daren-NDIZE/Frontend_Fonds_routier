@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react"
 import SearchBar from "../../component/searchBar"
 import Loader from "../../component/loader"
-import { fetchGet } from "../../config/FetchRequest"
-import { useNavigate } from "react-router-dom"
+import { Fetch } from "../../config/FetchRequest"
+import PageLoader from "../../component/pageLoader"
+import Notification from "../../component/notification"
 
 
 function Action(){
@@ -10,11 +11,14 @@ function Action(){
     let [actions,setActions]=useState([])
     let [periode,setPeriode]=useState("")
     let [loader,setLoader]=useState(true)
+    let [pageLoader,setPageLoader]=useState(false)
 
-    const navigate=useNavigate()
 
     
-    let modal=useRef()
+    let notification=useRef()
+    let data=useRef()
+
+
 
 
     useEffect(()=>{
@@ -22,11 +26,15 @@ function Action(){
         (async function (){
 
             try{
-                let res = await fetchGet(`role/getAllRole`)
+                let res= await Fetch("action/getActionByPeriode","POST",{periode:"TODAY"})
                 if(res.ok){
+    
+                    let resData= await res.json()
                     
+                    setActions(resData)
+                    data.current=resData
                 }
-            
+    
             }catch(e){
                 console.log(e)
             }finally{
@@ -36,6 +44,48 @@ function Action(){
         })()
 
     },[])
+
+    const filter=async (e)=>{
+
+        e.preventDefault()
+        let form=e.target
+
+        // if(form.nom.value==="" || form.prenom.value==="" || form.email.value==="" || form.telephone.value===""
+        // || form.username.value==="" || form.roleName.value==="")
+        // {
+        //     setErreur("Veuillez remplir tous les champs")
+        //     return;
+        // }
+       
+        let formData =new FormData(form);
+        let data=Object.fromEntries(formData)
+        setPageLoader(true)
+
+        try{
+            let res= await Fetch("action/getActionByPeriode","POST",data)
+            if(res.ok){
+
+                let resData= await res.json()
+                
+                if(resData.type){
+
+                    window.scroll({top: 0, behavior:"smooth"})
+                    notification.current.setNotification({visible: true, type:resData.type,message:resData.message})
+                }else{
+                    setActions(resData)
+                    data.current=resData
+                }
+
+                
+            }
+
+        }catch(e){
+            console.log(e)
+        }finally{
+            setPageLoader(false)
+        }
+
+    }
 
 
     const change=(e)=>{
@@ -53,15 +103,17 @@ function Action(){
 
     return(
         <div className="container">
+            
+            <Notification ref={notification} />
 
             <div className="flex">
                 
                 <div className="box a-filter">
-                    <form className="s-filter">
+                    <form className="s-filter" onSubmit={filter}>
                         <div>
                             <div className="form-line">
                                 <label>Période</label>
-                                <select name="ordonnateur" onChange={change}>
+                                <select name="periode" onChange={change} required>
                                     <option value="TODAY">Aujourd'hui</option>
                                     <option value="WEEK">Cette semaine</option>
                                     <option value="MONTH">Ce mois</option>
@@ -72,11 +124,11 @@ function Action(){
                             <>
                                 <div className="form-line">
                                     <label>De</label>
-                                    <input type="date"  name="annee" max={new Date().toISOString().split("T")[0]} required />
+                                    <input type="date"  name="firstDate" max={new Date().toISOString().split("T")[0]} required />
                                 </div>
                                 <div className="form-line">
                                     <label>À</label>
-                                    <input type="date"  name="annee" max={new Date().toISOString().split("T")[0]} required/>
+                                    <input type="date"  name="secondDate" max={new Date().toISOString().split("T")[0]} required/>
                                 </div>
                             </> 
                         
@@ -100,7 +152,7 @@ function Action(){
                 </div>   
 
                 <div className="box b-search">
-                    <SearchBar/>
+                    <SearchBar data={data.current} onSetData={setActions} keys={["utilisateur"]}/>
                 </div>
             </div>
 
@@ -115,25 +167,31 @@ function Action(){
                         <thead>
                             <tr>
                                 <th>N°</th>
-                                <th>Utilisateur</th>
                                 <th>Date</th>
-                                <th>Heure</th>
-                                <th>Action éffectuée</th>
+                                <th>Utilisateur</th>
+                                <th>Role</th>
+                                <th>Actions éffectuées</th>
                             </tr>
                         </thead>
                         <tbody>
                             {actions.map((i,j)=>
                             <tr key={j}>
                                 <td>{j+1}</td>
-                                <td>{i.roleName}</td>
-                                <td>{i.description}</td>
+                                <td>{new Date(i.date).toLocaleDateString()}</td>
+                                <td>{i.utilisateur}</td>
+                                <td>{i.role}</td>
+                                <td>{i.description.toUpperCase()}</td>
+
                             </tr>
                             )}
                         </tbody>
                     </table>
                 </div>
             </div>
-
+            
+            {pageLoader &&(
+                <PageLoader/>
+            )}
         </div>
     )
 }
