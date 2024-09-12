@@ -181,16 +181,19 @@ function ProgrammeMINHDU(){
         try{
             let res= await Fetch(`deleteProjet/${id}`,"DELETE")
             if(res.ok){
+                
                 let resData= await res.json()
-                window.scroll({top: 0, behavior:"smooth"})
-                notification.current.setNotification(
-                    {visible: true, type:resData.type,message:resData.message}
-                )
+
                 if(resData.type==="succes"){
                     data= data.filter(i=>i.id!==id)
                     projet.current=projet.current.filter(i=>i.id!==id)
                     setData(data)
                 }
+
+                window.scroll({top: 0, behavior:"smooth"})
+                notification.current.setNotification(
+                    {visible: true, type:resData.type,message:resData.message}
+                )
             }
         }catch(e){
             console.log(e)
@@ -434,7 +437,7 @@ function ProgrammeMINHDU(){
                                 {(programme.statut==="VALIDER" || programme.type==="AJUSTER") &&(
                                 <>
                                     <th className="min-w4">Situation</th>
-                                    <th className="min-w1">Motif</th>
+                                    <th className="min-w1">Motifs eventuels</th>
                                     <th className="min-w4">Suivi travaux</th>
                                 </> 
                                 )}
@@ -453,14 +456,14 @@ function ProgrammeMINHDU(){
                                 <td >{i.ville}</td>
                                 <td>{i.type_travaux}</td>
                                 <td>{i.troçon}</td>
-                                <td>{numStr(i.lineaire)}</td>
-                                <td>{numStr(i.ttc)}</td>
-                                <td>{numStr(i.budget_anterieur)}</td>
-                                <td>{numStr(i.budget_n) }</td>
-                                <td>{i.suivi && numStr(i.suivi.engagement)}</td>
-                                <td>{(i.suivi && i.suivi.engagement!==0) && numStr(i.budget_n - i.suivi.engagement,0)}</td>
-                                <td>{numStr(i.budget_n1)}</td>
-                                <td>{numStr(i.budget_n2)}</td>
+                                <td className="end">{numStr(i.lineaire)}</td>
+                                <td className="end">{numStr(i.ttc)}</td>
+                                <td className="end">{numStr(i.budget_anterieur)}</td>
+                                <td className="end">{numStr(i.budget_n) }</td>
+                                <td className="end">{i.suivi && numStr(i.suivi.engagement)}</td>
+                                <td className="end">{(i.suivi && i.suivi.engagement!==0) && numStr(i.budget_n - i.suivi.engagement,0)}</td>
+                                <td className="end">{numStr(i.budget_n1)}</td>
+                                <td className="end">{numStr(i.budget_n2)}</td>
                                 <td>{i.prestataire}</td>
                                 <td>{i.ordonnateur}</td>
                                 <td>{i.observation}</td>
@@ -499,12 +502,12 @@ function ProgrammeMINHDU(){
                                 <td >{i.ville}</td>
                                 <td>{i.type_travaux}</td>
                                 <td>{i.troçon}</td>
-                                <td>{numStr(i.lineaire)}</td>
-                                <td>{numStr(i.ttc)}</td>
-                                <td>{numStr(i.budget_anterieur)}</td>
-                                <td>{numStr(i.budget_n) }</td>
-                                <td>{numStr(i.budget_n1)}</td>
-                                <td>{numStr(i.budget_n2)}</td>
+                                <td className="end">{numStr(i.lineaire)}</td>
+                                <td className="end">{numStr(i.ttc)}</td>
+                                <td className="end">{numStr(i.budget_anterieur)}</td>
+                                <td className="end">{numStr(i.budget_n) }</td>
+                                <td className="end">{numStr(i.budget_n1)}</td>
+                                <td className="end">{numStr(i.budget_n2)}</td>
                                 <td>{i.prestataire}</td>
                                 <td>{i.ordonnateur}</td>
                                 <td>{i.observation}</td>
@@ -524,9 +527,9 @@ function ProgrammeMINHDU(){
                         {programme.statut==="VALIDER" &&(
                             <tr>
                                 <td colSpan="8">Provision de réserve</td>
-                                <td>{numStr(programme.prevision,0)} fcfa</td>
-                                <td>{numStr(totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
-                                <td>{numStr(programme.prevision-totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
+                                <td className="end">{numStr(programme.prevision,0)}</td>
+                                <td className="end">{numStr(totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)}</td>
+                                <td className="end">{numStr(programme.prevision-totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)}</td>
                                 <td colSpan="8">
                                     <Link to={`/programmes/programme-MINHDU/${programme.id}/prévision`} >Détails</Link>
                                 </td>
@@ -609,7 +612,7 @@ function ProgrammeMINHDU(){
                     <div>
                         <div className="form-line">
                             <label>Fichier excel</label>
-                            <input type="file"  name="file" required/>
+                            <input type="file"  name="file" accept=".xlsx, .xls" required/>
                         </div>
                         <div className="form-line" style={{margin: "0"}}>
                             <button type="submit">Importer</button>

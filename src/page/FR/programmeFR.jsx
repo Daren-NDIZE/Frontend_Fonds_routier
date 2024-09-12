@@ -5,18 +5,14 @@ import Loader from "../../component/loader"
 import Notification from "../../component/notification"
 import PageLoader from "../../component/pageLoader"
 import { useNavigate, useParams } from "react-router-dom"
-import { Fetch, fetchFormData, fetchGet} from "../../config/FetchRequest"
+import { fetchFormData, fetchGet} from "../../config/FetchRequest"
 import { numStr, totalBudget } from "../../script"
 import { downLoadExcel } from "jsxtabletoexcel"
-import FormMINHDU from "../../component/formMINHDU"
-import FormMINT from "../../component/formMINT"
-import FormMINTP from "../../component/formMINTP."
+
 
 function ProgrammeFR({role}){
 
     let modal=useRef()
-    let modal1=useRef()
-    let modalBox=useRef()
     let notification=useRef()
     let projet=useRef([])
 
@@ -24,11 +20,9 @@ function ProgrammeFR({role}){
     let [valide,setValide]=useState(false)
     let [loader,setLoader]=useState(true)
     let [pageLoader,setPageLoader]=useState()
-    let [categorie,setCategorie]=useState("CENTRALE")
+    let [categorie,setCategorie]=useState()
     let [data,setData]=useState([])
-    let [state,setState]=useState({})
-    let [deleteId,setDeleteId]=useState()
-    let [check,setCheck]=useState(false)
+    
 
 
     const {id}=useParams()
@@ -52,10 +46,16 @@ function ProgrammeFR({role}){
                         navigate(-1)
                     }else{
                         setProgramme(resData)
-                        projet.current=resData.projetList
+                        projet.current=resData.projetList.filter(i=>i.financement!=="RESERVE")
+
                         if(resData.ordonnateur==="MINTP"){
-                            setData(resData.projetList.filter(i=>i.categorie!=="PROJET A GESTION COMMUNALE"))
+                            setCategorie("CENTRALE")
+                            setData(resData.projetList.filter(i=>(i.financement!=="RESERVE" && i.categorie!=="PROJET A GESTION COMMUNALE") ))
                             return;                  
+                        }else if(resData.ordonnateur==="MINT"){
+                            setData("MINT")
+                            setData(resData.projetList.filter(i=>(i.financement!=="RESERVE" && i.ordonnateur==="MINT")))
+                            return;
                         }
                         setData(resData.projetList)
                     }
@@ -108,206 +108,9 @@ function ProgrammeFR({role}){
  
     }
 
-    const saveProjet=async (e)=>{
-
-        e.preventDefault()
-        let form=e.target
-
-        if(form.ville && form.ordonnateur){
-
-            if(form.region.value==="" ||form.ville.value==="" || form.troçon.value==="" ||
-                form.ttc.value==="" || form.budget_n.value==="" || form.ordonnateur.value==="" )
-            {
-            return;
-            }
-        }else if(form.mission && form.objectif){
-
-            if(form.region.value==="" ||form.mission.value==="" || form.objectif.value==="" ||
-            form.ttc.value==="" || form.budget_n.value==="" || form.ordonnateur.value==="" )
-                {
-                return;
-            }
-        }else if(form.projet && form.type_travaux){
-            let categories=["PROJET A GESTION CENTRALE","PROJET A GESTION REGIONALE","PROJET A GESTION COMMUNALE"]
-
-            if(form.projet.value==="" ||form.region.value==="" || form.type_travaux.value==="" || !categories.includes(form.categorie.value) ||
-            form.ttc.value==="" || form.budget_n.value==="" || form.observation.value==="")
-            {
-                return;
-            }
-            if(form.departement && form.departement.value==="" ){
-                return;
-            }
-            if(form.commune && form.commune.value==="" ){
-                return;
-            }
-        }
-        
-        setPageLoader(true)
-        modalBox.current.setModal(false)
-
-        let formData =new FormData(form);
-        let datas=Object.fromEntries(formData)
-
-        try{
-
-            let res= await Fetch(`addProjetToProgramme${programme.ordonnateur}/${id}`,"POST",datas)
-            if(res.ok){
-                let resData= await res.json()
-                
-                if(resData.type==="succes"){
-                    
-                    let response = await fetchGet(`programme/${id}`)
-                    if(response.ok){
-                        let resdata= await response.json()
-                        
-                        setProgramme(resdata)
-                        projet.current=resdata.projetList
-                        if(resdata.ordonnateur==="MINTP"){
-                            setData(resdata.projetList.filter(i=>i.categorie!=="PROJET A GESTION COMMUNALE"))
-                        }else{
-                            setData(resdata.projetList)
-                        }
-                    }
-                }
-
-                window.scroll({top: 0, behavior:"smooth"})
-                notification.current.setNotification(
-                    {visible: true, type:resData.type,message:resData.message}
-                )
-            }
-
-        }catch(e){
-            console.log(e)
-        }finally{
-            setPageLoader(false)
-        }
- 
-    }
-
-    const updateProjet=async (e,id)=>{
-
-        e.preventDefault()
-        let form=e.target
-
-        if(form.ville && form.ordonnateur){
-
-            if(form.region.value==="" ||form.ville.value==="" || form.troçon.value==="" ||
-                form.ttc.value==="" || form.budget_n.value==="" || form.ordonnateur.value==="" )
-            {
-            return;
-            }
-        }else if(form.mission && form.objectif){
-
-            if(form.region.value==="" ||form.mission.value==="" || form.objectif.value==="" ||
-            form.ttc.value==="" || form.budget_n.value==="" || form.ordonnateur.value==="" )
-                {
-                return;
-            }
-        }else if(form.projet && form.type_travaux){
-            let categories=["PROJET A GESTION CENTRALE","PROJET A GESTION REGIONALE","PROJET A GESTION COMMUNALE"]
-
-            if(form.projet.value==="" ||form.region.value==="" || form.type_travaux.value==="" || !categories.includes(form.categorie.value) ||
-            form.ttc.value==="" || form.budget_n.value==="" || form.observation.value==="")
-            {
-                return;
-            }
-            if(form.departement && form.departement.value==="" ){
-                return;
-            }
-            if(form.commune && form.commune.value==="" ){
-                return;
-            }
-        }
-        
-        setPageLoader(true)
-        modalBox.current.setModal(false)
-
-        let formData =new FormData(form);
-        let datas=Object.fromEntries(formData)
-
-        try{
-
-            let res= await Fetch(`updateProjet${programme.ordonnateur}/${id}`,"PUT",datas)
-            if(res.ok){
-                let resData= await res.json()
-                
-                if(resData.type==="succes"){
-                    
-                    let index= data.indexOf(data.find(i=>i.id===id))
-                    datas.id=id
-                    data[index]=datas
-                    index= projet.current.indexOf(projet.current.find(i=>i.id===id))
-                    projet.current[index]=datas
-                    setData(data)
-                }
-
-                window.scroll({top: 0, behavior:"smooth"})
-                notification.current.setNotification(
-                    {visible: true, type:resData.type,message:resData.message}
-                )
-            }
-
-        }catch(e){
-            console.log(e)
-        }finally{
-            setPageLoader(false)
-        }
- 
-    }
-
-    const deleted= async (id)=>{
-
-        setPageLoader(true)
-        modal1.current.setModal(false)
-
-        try{
-            let res= await Fetch(`deleteReportProjet/${id}`,"DELETE")
-            if(res.ok){
-                let resData= await res.json()
-                
-                if(resData.type==="succes"){
-                    data= data.filter(i=>i.id!==id)
-                    projet.current=projet.current.filter(i=>i.id!==id)
-                    setData(data)
-                }
-                window.scroll({top: 0, behavior:"smooth"})
-                notification.current.setNotification(
-                    {visible: true, type:resData.type,message:resData.message}
-                )
-            }
-        }catch(e){
-            console.log(e)
-        }finally{
-            setPageLoader(false)
-        }
- 
-    }
-
-    const handleClick=(id)=>{ 
-
-        let projet=data.find(i=>i.id===id)
-        setState({function:updateProjet, data:projet})
-        modalBox.current.setModal(true)
-    }
-
-    const checked=(e)=>{
-        setCheck(e.target.checked)
-    }
-
-    const deleteModal=(id)=>{
-        setDeleteId(id)
-        modal1.current.setModal(true)
-    }
-
     const open=()=>{
         setValide(false)
         modal.current.setModal(true)
-    }
-
-    const openForm=()=>{
-        setState({function:saveProjet})
-        modalBox.current.setModal(true)
     }
 
     const decision=(e)=>{
@@ -341,9 +144,76 @@ function ProgrammeFR({role}){
         li.classList.add("active")
     }
 
+    const changeMINT=(e,i)=>{
+
+        let li=e.target
+
+        setCategorie(i)
+        if(i==="MINT"){
+            setData(projet.current.filter(i=>i.ordonnateur==="MINT"))
+        }else{
+            setData(projet.current.filter(i=>i.ordonnateur==="MAIRE"))
+        }
+        if(li.classList.contains("active")){
+            return;
+        }
+
+        Array.from(li.parentNode.children).forEach(i=>{
+            i.classList.remove("active")
+        })
+        li.classList.add("active")
+    }
+
     const exportExcel=(fileName)=>{
         
         downLoadExcel(document.querySelector(".table"),"feuille 1",fileName)
+    }
+
+    const searchChoose=(ordonnateur)=>{
+
+        let data
+        let key
+
+        if(ordonnateur==="MINT"){
+
+            if(categorie==="MINT"){
+
+                data=projet.current.filter(i=>i.ordonnateur==="MINT")
+                key=["region","budget_n","prestataire","ordonnateur"]
+    
+                return ({data:data, key: key})
+    
+            }else{
+    
+                data=projet.current.filter(i=>i.ordonnateur==="MAIRE")
+                key=["region","departement","commune","budget_n","prestataire","ordonnateur"]
+    
+                return ({data:data, key: key})
+    
+            }
+            
+        }else if(ordonnateur==="MINHDU"){
+
+            data=projet.current
+            key=["region","ville","type_travaux","budget_n","prestataire","ordonnateur"]
+
+        }else if(ordonnateur==="MINTP"){
+
+            if(categorie==="CENTRALE"){
+
+                data=projet.current.filter(i=>i.categorie!=="PROJET A GESTION COMMUNALE")
+                key=["region","budget_n","categorie","code_route","prestataire"]
+    
+            }else{
+    
+                data=projet.current.filter(i=>i.categorie==="PROJET A GESTION COMMUNALE")
+                key=["region","departement","commune","budget_n","code_route","prestataire"]
+        
+            }
+        }
+
+        return ({data:data, key: key})
+        
     }
     
 
@@ -365,7 +235,7 @@ function ProgrammeFR({role}){
                     </button>
                 </div>
                 <div className="box b-search">
-                    <SearchBar/>
+                <SearchBar data={searchChoose(programme.ordonnateur).data} keys={searchChoose(programme.ordonnateur).key} onSetData={setData} />
                 </div>
             </div>
             
@@ -374,18 +244,6 @@ function ProgrammeFR({role}){
                     <div>
                         <h1>{programme.intitule}</h1>
                     </div>
-                    {(["CO","DCO"].includes(role) && programme.type==="REPORT") &&(
-                        <div className="snd-step">
-                            <div className="check-update">
-                                <label htmlFor="check">Modifier</label>
-                                <input type="checkbox" id="check" onChange={checked} />
-                            </div>
-                            <div className="n-projet">
-                                <button onClick={openForm}>Nouveau projet</button>
-                            </div>
-                        </div>
-                    )}
-                    
 
                     {(["CO","DCO"].includes(role) && programme.statut==="SOUMIS") &&(
                     <div className="n-projet mr-10">
@@ -396,8 +254,9 @@ function ProgrammeFR({role}){
                     <button className="download-btn" onClick={()=>exportExcel(programme.intitule)}>
                         <i className="fa-solid fa-down-long"></i>
                     </button>
-                    
+   
                 </div>
+                
                 {programme.ordonnateur==="MINTP" &&(   
                     <div className="top-element s-change">
                         <ul>
@@ -406,18 +265,26 @@ function ProgrammeFR({role}){
                         </ul>
                     </div>
                 )}
+                {programme.ordonnateur==="MINT" &&(   
+                    <div className="top-element s-change">
+                        <ul>
+                            <li className="active" onClick={(e)=>changeMINT(e,"MINT")} >Gestion centrale</li>
+                            <li onClick={(e)=>changeMINT(e,"MAIRE")}>Gestion communale</li>
+                        </ul>
+                    </div>
+                )}
                 
                 
                 {programme.ordonnateur==="MINHDU"?
 
-                    <TableMINHDU data={data} annee={programme.annee} check={check} onHandleClick={handleClick} onForm={deleteModal}/>
+                    <TableMINHDU data={data} annee={programme.annee} />
                         
                 :programme.ordonnateur==="MINT"?
 
-                    <TableMINT data={data} annee={programme.annee} check={check} onHandleClick={handleClick} onForm={deleteModal}/>
+                    <TableMINT data={data} annee={programme.annee} categorie={categorie} />
                         
                 :
-                    <TableMINTP data={data} categorie={categorie} annee={programme.annee} check={check} onHandleClick={handleClick} onForm={deleteModal}/>
+                    <TableMINTP data={data} categorie={categorie} annee={programme.annee} />
 
                 }
                
@@ -530,34 +397,6 @@ function ProgrammeFR({role}){
                 </form>
             </ModalBox>
 
-            {programme.ordonnateur==="MINHDU"?
-    
-                <ModalBox ref={modalBox}>
-                    <FormMINHDU title={programme.intitule} annee={programme.annee} body={state}/>
-                </ModalBox>
-            :programme.ordonnateur==="MINTP"?
-
-                <ModalBox ref={modalBox}>
-                    <FormMINTP title={programme.intitule} annee={programme.annee} body={state}/>
-                </ModalBox>
-            :programme.ordonnateur==="MINT"?
-                
-                <ModalBox ref={modalBox}>
-                    <FormMINT title={programme.intitule} annee={programme.annee} body={state}/>
-                </ModalBox>
-
-            :<></>
-            }
-            <ModalBox ref={modal1}>
-                <div className="pg-modal">
-                    <p>Voulez vous vraiment supprimer ce projet?</p>
-                    <div className="mb-content">
-                        <button className="s-btn" onClick={()=>deleted(deleteId)}>OUI</button>
-                        <button className="b-btn" onClick={()=>{modal1.current.setModal(false)}}>NON</button>
-                    </div>
-                </div>
-            </ModalBox>
- 
             {pageLoader &&(
                 <PageLoader/>
             )}
@@ -568,7 +407,7 @@ function ProgrammeFR({role}){
 export default ProgrammeFR
 
 
-const TableMINHDU=({data,annee,check,onHandleClick,onForm})=>{
+const TableMINHDU=({data,annee})=>{
 
     return(
 
@@ -590,9 +429,6 @@ const TableMINHDU=({data,annee,check,onHandleClick,onForm})=>{
                         <th className="min-w3">Prestataire</th>
                         <th>Ordonnateurs</th>
                         <th className="min-w1">Observations</th>
-                        {check &&(
-                            <th>Action</th>
-                        )}
                     </tr>
                 </thead>
                 <tbody>
@@ -603,24 +439,16 @@ const TableMINHDU=({data,annee,check,onHandleClick,onForm})=>{
                             <td >{i.ville}</td>
                             <td>{i.type_travaux}</td>
                             <td>{i.troçon}</td>
-                            <td>{numStr(i.lineaire,"")}</td>
-                            <td>{numStr(i.ttc,"")}</td>
-                            <td>{numStr(i.budget_anterieur,"")}</td>
-                            <td>{numStr(i.budget_n, " ") }</td>
-                            <td>{numStr(i.budget_n1,"")}</td>
-                            <td>{numStr(i.budget_n2,"")}</td>
+                            <td className="end">{numStr(i.lineaire,"")}</td>
+                            <td className="end">{numStr(i.ttc,"")}</td>
+                            <td className="end">{numStr(i.budget_anterieur,"")}</td>
+                            <td className="end">{numStr(i.budget_n, " ") }</td>
+                            <td className="end">{numStr(i.budget_n1,"")}</td>
+                            <td className="end">{numStr(i.budget_n2,"")}</td>
                             <td>{i.prestataire}</td>
                             <td>{i.ordonnateur}</td>
                             <td>{i.observation}</td>
-                            {check &&(
-                            <td>
-                                <div className="t-action">
-                                    <i className="fa-solid fa-pen-to-square" onClick={()=>onHandleClick(i.id)}></i>
-                                    <i className="fa-solid fa-trash-can" onClick={()=>onForm(i.id)}></i>
-                                </div>
-                            </td>
                             
-                            )}
                         </tr>
                     )
                     }
@@ -630,7 +458,7 @@ const TableMINHDU=({data,annee,check,onHandleClick,onForm})=>{
     )
 }
 
-const TableMINT=({data,annee,check,onHandleClick,onForm})=>{
+const TableMINT=({data,annee,categorie})=>{
 
     return(
 
@@ -638,8 +466,14 @@ const TableMINT=({data,annee,check,onHandleClick,onForm})=>{
             <table className="table">
                 <thead>
                     <tr>
-                        <th>N°_de_lot</th>
+                        <th>N°</th>
                         <th>Region</th>
+                        {categorie==="MAIRE"&&(
+                        <>
+                        <th className="min-w3">Département</th>
+                        <th className="min-w3">Commune</th>
+                        </>
+                        )}
                         <th className="min-w1">Activités</th>
                         <th className="min-w1">Objectifs</th>
                         <th className="min-w12">Allotissement</th>
@@ -651,36 +485,31 @@ const TableMINT=({data,annee,check,onHandleClick,onForm})=>{
                         <th className="min-w3">Prestataire</th>
                         <th>Ordonnateurs</th>
                         <th className="min-w1">Observations</th> 
-                        {check &&(
-                            <th>Action</th>
-                        )}
                     </tr>
                 </thead>
                 <tbody> 
                 {data.map((i,j)=>
-                        <tr key={j}>
-                            <td>{j+1}</td>
-                            <td>{i.region.replaceAll("_","-")}</td>
-                            <td>{i.mission}</td>
-                            <td>{i.objectif}</td>
-                            <td>{i.allotissement}</td>
-                            <td>{numStr(i.ttc,"")}</td>
-                            <td>{numStr(i.budget_anterieur,"")}</td>
-                            <td>{numStr(i.budget_n, " ") }</td>
-                            <td>{numStr(i.budget_n1,"")}</td>
-                            <td>{numStr(i.budget_n2,"")}</td>
-                            <td>{i.prestataire}</td>
-                            <td>{i.ordonnateur}</td>
-                            <td>{i.observation}</td>
-                            {check &&(
-                            <td>
-                                <div className="t-action">
-                                    <i className="fa-solid fa-pen-to-square" onClick={()=>onHandleClick(i.id)}></i>
-                                    <i className="fa-solid fa-trash-can" onClick={()=>onForm(i.id)}></i>
-                                </div>
-                            </td>
-                            )}
-                        </tr>
+                    <tr key={j}>
+                        <td>{j+1}</td>
+                        <td>{i.region.replaceAll("_","-")}</td>
+                        {categorie==="MAIRE" &&(
+                        <>
+                        <td>{i.departement}</td>
+                        <td>{i.commune}</td>
+                        </>
+                        )}
+                        <td>{i.mission}</td>
+                        <td>{i.objectif}</td>
+                        <td>{i.allotissement}</td>
+                        <td className="end">{numStr(i.ttc,"")}</td>
+                        <td className="end">{numStr(i.budget_anterieur,"")}</td>
+                        <td className="end">{numStr(i.budget_n, " ") }</td>
+                        <td className="end">{numStr(i.budget_n1,"")}</td>
+                        <td className="end">{numStr(i.budget_n2,"")}</td>
+                        <td>{i.prestataire}</td>
+                        <td>{i.ordonnateur}</td>
+                        <td>{i.observation}</td>
+                    </tr>
                     )}
                     
                 </tbody>
@@ -689,7 +518,7 @@ const TableMINT=({data,annee,check,onHandleClick,onForm})=>{
     )
 }
 
-const TableMINTP=({data,categorie,annee,check,onHandleClick,onForm})=>{
+const TableMINTP=({data,categorie,annee})=>{
 
     return(
 
@@ -717,9 +546,6 @@ const TableMINTP=({data,categorie,annee,check,onHandleClick,onForm})=>{
                     <th className="min-w4">Projection {annee+2}</th>
                     <th className="min-w3">Pretataire</th>
                     <th className="min-w1">Observations</th>
-                    {check &&(
-                        <th>Action</th>
-                    )}
                 </tr>
             </thead>
             <tbody>
@@ -737,23 +563,15 @@ const TableMINTP=({data,categorie,annee,check,onHandleClick,onForm})=>{
                     <td>{i.categorie}</td>
                     <td>{i.projet}</td>
                     <td>{i.code_route}</td>
-                    <td>{numStr(i.lineaire_route)}</td>
-                    <td>{numStr(i.lineaire_oa)}</td>
-                    <td>{numStr(i.ttc)}</td>
-                    <td >{numStr(i.budget_anterieur)}</td>
-                    <td>{numStr(i.budget_n) }</td>
-                    <td>{numStr(i.budget_n1)}</td>
-                    <td>{numStr(i.budget_n2)}</td>
+                    <td className="end">{numStr(i.lineaire_route)}</td>
+                    <td className="end">{numStr(i.lineaire_oa)}</td>
+                    <td className="end">{numStr(i.ttc)}</td>
+                    <td className="end" >{numStr(i.budget_anterieur)}</td>
+                    <td className="end">{numStr(i.budget_n) }</td>
+                    <td className="end">{numStr(i.budget_n1)}</td>
+                    <td className="end">{numStr(i.budget_n2)}</td>
                     <td>{i.prestataire}</td>
-                    <td>{i.observation}</td>  
-                    {check &&(
-                    <td>
-                        <div className="t-action">
-                            <i className="fa-solid fa-pen-to-square" onClick={()=>onHandleClick(i.id)}></i>
-                            <i className="fa-solid fa-trash-can" onClick={()=>onForm(i.id)}></i>
-                        </div>
-                    </td>
-                    )}  
+                    <td>{i.observation}</td>   
                 </tr>
 
             )}

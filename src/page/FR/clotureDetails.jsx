@@ -298,15 +298,15 @@ const TableMINHDU=({data,programme,onLoadPdf})=>{
                             <td >{i.ville}</td>
                             <td>{i.type_travaux}</td>
                             <td>{i.troçon}</td>
-                            <td>{numStr(i.lineaire)}</td>
-                            <td>{numStr(i.ttc)}</td>
-                            <td>{numStr(i.budget_anterieur)}</td>
-                            <td>{numStr(i.budget_n) }</td>
-                            <td>{i.suivi && numStr(i.suivi.engagement)}</td>
-                            <td>{(i.suivi && i.suivi.engagement!==0) && numStr((i.budget_n - i.suivi.engagement),0)}</td>
+                            <td className="end">{numStr(i.lineaire)}</td>
+                            <td className="end">{numStr(i.ttc)}</td>
+                            <td className="end">{numStr(i.budget_anterieur)}</td>
+                            <td className="end">{numStr(i.budget_n) }</td>
+                            <td className="end">{i.suivi && numStr(i.suivi.engagement)}</td>
+                            <td className="end">{(i.suivi && i.suivi.engagement!==0) && numStr((i.budget_n - i.suivi.engagement),0)}</td>
                             <td>{i.prestataire}</td>
-                            <td>{numStr(i.budget_n1)}</td>
-                            <td>{numStr(i.budget_n2)}</td>
+                            <td className="end">{numStr(i.budget_n1)}</td>
+                            <td className="end">{numStr(i.budget_n2)}</td>
                             <td>{i.ordonnateur}</td>
                             <td>{i.observation}</td>
                             <td>
@@ -327,9 +327,9 @@ const TableMINHDU=({data,programme,onLoadPdf})=>{
                     }
                     <tr>
                         <td colSpan="8">Prévision de réserve</td>
-                        <td>{numStr(programme.prevision,0)} fcfa</td>
-                        <td>{numStr(totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
-                        <td>{numStr(programme.prevision - totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
+                        <td className="end">{numStr(programme.prevision,0)}</td>
+                        <td className="end">{numStr(totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)}</td>
+                        <td className="end">{numStr(programme.prevision - totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)}</td>
                         <td colSpan="7">
                             <Link to={`/execution-des-programme/programme-MINHDU/${programme.id}/prévision`} >Détails</Link>
                         </td>
@@ -375,14 +375,14 @@ const TableMINT=({data,programme,onLoadPdf})=>{
                             <td>{i.mission}</td>
                             <td>{i.objectif}</td>
                             <td>{i.allotissement}</td>
-                            <td>{numStr(i.ttc,"")}</td>
-                            <td>{numStr(i.budget_anterieur)}</td>
-                            <td>{numStr(i.budget_n) }</td>
-                            <td>{i.suivi && numStr(i.suivi.engagement)}</td>
-                            <td>{(i.suivi && i.suivi.engagement!==0) && numStr(i.budget_n - i.suivi.engagement,0)}</td>
+                            <td className="end">{numStr(i.ttc,"")}</td>
+                            <td className="end">{numStr(i.budget_anterieur)}</td>
+                            <td className="end">{numStr(i.budget_n) }</td>
+                            <td className="end">{i.suivi && numStr(i.suivi.engagement)}</td>
+                            <td className="end">{(i.suivi && i.suivi.engagement!==0) && numStr(i.budget_n - i.suivi.engagement,0)}</td>
                             <td>{i.prestataire}</td>
-                            <td>{numStr(i.budget_n1,"")}</td>
-                            <td>{numStr(i.budget_n2,"")}</td>
+                            <td className="end">{numStr(i.budget_n1,"")}</td>
+                            <td className="end">{numStr(i.budget_n2,"")}</td>
                             <td>{i.ordonnateur}</td>
                             <td>{i.observation}</td>
                             <td>
@@ -403,9 +403,9 @@ const TableMINT=({data,programme,onLoadPdf})=>{
                     }
                     <tr>
                         <td colSpan="7">Prévision de réserve</td>
-                        <td>{numStr(programme.prevision,0)} fcfa</td>
-                        <td>{numStr(totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
-                        <td>{numStr(programme.prevision-totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
+                        <td className="end">{numStr(programme.prevision,0)}</td>
+                        <td className="end">{numStr(totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)}</td>
+                        <td className="end">{numStr(programme.prevision-totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)}</td>
                         <td colSpan="7">
                             <Link to={`/execution-des-programme/programme-MINT/${programme.id}/prévision`} >Détails</Link>
                         </td>
@@ -464,16 +464,16 @@ const TableMINTP=({data,programme,categorie,onLoadPdf})=>{
                             <td>{i.categorie}</td>
                             <td>{i.projet}</td>
                             <td>{i.code_route}</td>
-                            <td>{numStr(i.lineaire_route)}</td>
-                            <td>{numStr(i.lineaire_oa)}</td>
-                            <td>{numStr(i.ttc)}</td>
-                            <td>{numStr(i.budget_anterieur)}</td>
-                            <td>{numStr(i.budget_n) }</td>
-                            <td>{i.suivi && numStr(i.suivi.engagement)}</td>
-                            <td>{(i.suivi && i.suivi.engagement!==0) && numStr(i.budget_n - i.suivi.engagement,0)}</td>
+                            <td className="end">{numStr(i.lineaire_route)}</td>
+                            <td className="end">{numStr(i.lineaire_oa)}</td>
+                            <td className="end">{numStr(i.ttc)}</td>
+                            <td className="end">{numStr(i.budget_anterieur)}</td>
+                            <td className="end">{numStr(i.budget_n) }</td>
+                            <td className="end">{i.suivi && numStr(i.suivi.engagement)}</td>
+                            <td className="end">{(i.suivi && i.suivi.engagement!==0) && numStr(i.budget_n - i.suivi.engagement,0)}</td>
                             <td>{i.prestataire}</td>
-                            <td>{numStr(i.budget_n1,"")}</td>
-                            <td>{numStr(i.budget_n2,"")}</td>
+                            <td className="end">{numStr(i.budget_n1,"")}</td>
+                            <td className="end">{numStr(i.budget_n2,"")}</td>
                             <td>{i.observation}</td>
                             <td>
                                 {i.suivi &&(
@@ -494,9 +494,9 @@ const TableMINTP=({data,programme,categorie,onLoadPdf})=>{
                     }
                     <tr>
                         <td colSpan={categorie==="CENTRALE"?"9":"11"} >Prévision de réserve</td>
-                        <td>{numStr(programme.prevision,0)} fcfa</td>
-                        <td>{numStr(totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
-                        <td>{numStr(programme.prevision-totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
+                        <td className="end">{numStr(programme.prevision,0)}</td>
+                        <td className="end">{numStr(totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)}</td>
+                        <td className="end">{numStr(programme.prevision-totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)}</td>
                         <td colSpan="6">
                             <Link to={`/execution-des-programme/programme-MINTP/${programme.id}/prévision`} >Détails</Link>
                         </td>

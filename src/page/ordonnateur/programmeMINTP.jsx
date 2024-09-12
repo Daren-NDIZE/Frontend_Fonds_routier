@@ -38,6 +38,7 @@ function ProgrammeMINTP (){
     let modal1=useRef()
     let modal2=useRef()
     let modalBox1=useRef()
+    let modalBox=useRef()
     let notification=useRef()
     let projet=useRef([])
 
@@ -56,8 +57,6 @@ function ProgrammeMINTP (){
                 let res = await fetchGet(`programmeByRole/${id}`)
                 if(res.ok){
                     let resData= await res.json()
-
-                    console.log(resData.projetList)
 
                     if(resData.type==="erreur"){
                         navigate(-1)
@@ -78,10 +77,12 @@ function ProgrammeMINTP (){
 
     const submit=async (e)=>{
 
+        let typeTravaux=["ROUTE EN TERRE","ROUTE BITUMÉE","OUVRAGE D'ART"]
+
         e.preventDefault()
         let form=e.target
 
-        if(form.projet.value==="" ||form.region.value==="" || form.type_travaux.value==="" || !categories.includes(form.categorie.value) ||
+        if(form.projet.value==="" ||form.region.value==="" || !typeTravaux.includes(form.type_travaux.value) || !categories.includes(form.categorie.value) ||
             form.ttc.value==="" || form.budget_n.value==="" || form.observation.value==="")
         {
             return;
@@ -136,6 +137,7 @@ function ProgrammeMINTP (){
 
         e.preventDefault()
         let form=e.target
+        let typeTravaux=["ROUTE EN TERRE","ROUTE BITUMÉE","OUVRAGE D'ART"]
 
         let decision=window.confirm("voulez vous vraiment modifier ce projet?")
         if(!decision){
@@ -143,7 +145,7 @@ function ProgrammeMINTP (){
             return;
         }
 
-        if(form.projet.value==="" ||form.region.value==="" || form.type_travaux.value==="" || !categories.includes(form.categorie.value) ||
+        if(form.projet.value==="" ||form.region.value==="" || !typeTravaux.includes(form.type_travaux.value) || !categories.includes(form.categorie.value) ||
             form.ttc.value==="" || form.budget_n.value==="" || form.observation.value==="")
         {
             return;
@@ -221,6 +223,50 @@ function ProgrammeMINTP (){
  
     }
 
+    const importFile=async (e)=>{
+
+        e.preventDefault()
+        let form=e.target
+
+        
+        setPageLoader(true)
+        modalBox.current.setModal(false)
+
+        let formData =new FormData(form);
+
+        try{
+
+            let res= await fetchFormData(`programme/importProgrammeFile/${id}`,"POST",formData)
+
+            if(res.ok){
+                let resData= await res.json()
+                
+                if(resData.type==="succes"){
+                    
+                    let response = await fetchGet(`programmeByRole/${id}`)
+                    if(response.ok){
+
+                        let resdata= await response.json()
+
+                        setProgramme(resdata)
+                        projet.current=resdata.projetList.filter(i=>i.financement!=="RESERVE")
+                        setData(resdata.projetList.filter(i=>(i.financement!=="RESERVE" && i.categorie!=="PROJET A GESTION COMMUNALE") ))
+                    }
+                }
+
+                window.scroll({top: 0, behavior:"smooth"})
+                notification.current.setNotification(
+                    {visible: true, type:resData.type,message:resData.message}
+                )
+            }
+        }catch(e){
+            console.log(e)
+        }finally{
+            setPageLoader(false)
+        }
+ 
+    }
+
     const submitPg=async(id)=>{
 
         let decision =window.confirm("voulez vous vraiment soumettre ce programme?")
@@ -250,7 +296,6 @@ function ProgrammeMINTP (){
 
         
     }
-
 
     const changeTable=(e,i)=>{
 
@@ -357,7 +402,7 @@ function ProgrammeMINTP (){
 
         if(categorie==="CENTRALE"){
             data=projet.current.filter(i=>i.categorie!=="PROJET A GESTION COMMUNALE")
-            key=["region","budget_n","code_route","prestataire"]
+            key=["region","budget_n","categorie","code_route","prestataire"]
 
             return ({data:data, key: key})
 
@@ -397,10 +442,18 @@ function ProgrammeMINTP (){
             <div className="box">
                 <div id="pg-title">
                     <h1>{programme.intitule}</h1>
+
+                    {programme.statut==="EN_ATTENTE_DE_SOUMISSION" &&(
+                    <button className="download-btn" onClick={()=>modalBox.current.setModal(true)}>
+                        <i className="fa-solid fa-up-long"></i>
+                    </button>
+                    )}
+
                     <button className="download-btn" onClick={()=>exportExcel(programme.intitule)} >
                         <i className="fa-solid fa-down-long"></i>
                     </button>
                 </div>
+                
                 <div className="top-element">
                     <div>
                         <ul>
@@ -444,7 +497,7 @@ function ProgrammeMINTP (){
                                 <th className="min-w4">Budget total TTC</th>
                                 <th className="min-w4">Budget antérieur</th>
                                 <th className="min-w4">Budget {programme.annee}</th>
-                                {programme.statut==="VALIDER"&&(
+                                {(programme.statut==="VALIDER" || programme.type==="AJUSTER")&&(
                                 <>
                                     <th className="min-w4">Engagement</th>
                                     <th className="min-w4">Reliquat</th>
@@ -452,12 +505,12 @@ function ProgrammeMINTP (){
                                 )}
                                 <th className="min-w4">Projection {programme.annee+1}</th>
                                 <th className="min-w4">Projection {programme.annee+2}</th>
-                                <th className="min-w3">Pretataire</th>
+                                <th className="min-w3">Prestataire</th>
                                 <th className="min-w1">Observations</th>
-                                {programme.statut==="VALIDER"&&(
+                                {(programme.statut==="VALIDER" || programme.type==="AJUSTER")&&(
                                 <>
                                     <th className="min-w4">Situation</th>
-                                    <th className="min-w1">Motifs</th>
+                                    <th className="min-w1">Motifs eventuels</th>
                                     <th className="min-w4">Suivi travaux</th>
                                 </> 
                                 )}
@@ -469,7 +522,7 @@ function ProgrammeMINTP (){
                         </thead>
 
                         <tbody>
-                        {programme.statut==="VALIDER"?
+                        {programme.statut==="VALIDER"|| programme.type==="AJUSTER"?
                             data.map((i,j)=>
                             <tr key={j}>
                                 <td>{j+1}</td>
@@ -483,15 +536,15 @@ function ProgrammeMINTP (){
                                 <td>{i.categorie}</td>
                                 <td>{i.projet}</td>
                                 <td>{i.code_route}</td>
-                                <td>{numStr(i.lineaire_route)}</td>
-                                <td>{numStr(i.lineaire_oa)}</td>
-                                <td>{numStr(i.ttc)}</td>
-                                <td>{numStr(i.budget_anterieur)}</td>
-                                <td>{numStr(i.budget_n) }</td>
-                                <td>{i.suivi && numStr(i.suivi.engagement)}</td>
-                                <td>{(i.suivi && i.suivi.engagement!==0) && numStr(i.budget_n - i.suivi.engagement,0)}</td>
-                                <td>{numStr(i.budget_n1)}</td>
-                                <td>{numStr(i.budget_n2)}</td>
+                                <td className="end">{numStr(i.lineaire_route)}</td>
+                                <td className="end">{numStr(i.lineaire_oa)}</td>
+                                <td className="end">{numStr(i.ttc)}</td>
+                                <td className="end">{numStr(i.budget_anterieur)}</td>
+                                <td className="end">{numStr(i.budget_n) }</td>
+                                <td className="end">{i.suivi && numStr(i.suivi.engagement)}</td>
+                                <td className="end">{(i.suivi && i.suivi.engagement!==0) && numStr(i.budget_n - i.suivi.engagement,0)}</td>
+                                <td className="end">{numStr(i.budget_n1)}</td>
+                                <td className="end">{numStr(i.budget_n2)}</td>
                                 <td>{i.prestataire}</td>
                                 <td>{i.observation}</td>
                                 <td>
@@ -506,6 +559,13 @@ function ProgrammeMINTP (){
                                     <Link to={`/programmes/projet/${i.id}/suivi-des-travaux`}>Détails</Link>
                                     }
                                 </td> 
+                                {check &&(
+                                <td> 
+                                    <div className="t-action">
+                                        <i className="fa-solid fa-pen-to-square" onClick={()=>handleClick(i.id)} ></i>
+                                        <i className="fa-solid fa-trash-can" onClick={()=>deleteModal(i.id)} ></i>
+                                    </div>
+                                </td>)}
                             </tr>
                         )
                         :
@@ -522,13 +582,13 @@ function ProgrammeMINTP (){
                                 <td>{i.categorie}</td>
                                 <td>{i.projet}</td>
                                 <td>{i.code_route}</td>
-                                <td >{numStr(i.lineaire_route)}</td>
-                                <td>{numStr(i.lineaire_oa)}</td>
-                                <td>{numStr(i.ttc)}</td>
-                                <td>{numStr(i.budget_anterieur)}</td>
-                                <td>{numStr(i.budget_n) }</td>
-                                <td>{numStr(i.budget_n1)}</td>
-                                <td>{numStr(i.budget_n2)}</td>
+                                <td className="end">{numStr(i.lineaire_route)}</td>
+                                <td className="end">{numStr(i.lineaire_oa)}</td>
+                                <td className="end">{numStr(i.ttc)}</td>
+                                <td className="end">{numStr(i.budget_anterieur)}</td>
+                                <td className="end">{numStr(i.budget_n) }</td>
+                                <td className="end">{numStr(i.budget_n1)}</td>
+                                <td className="end">{numStr(i.budget_n2)}</td>
                                 <td>{i.prestataire}</td>
                                 <td>{i.observation}</td>
                                 {check &&(
@@ -537,8 +597,7 @@ function ProgrammeMINTP (){
                                         <i className="fa-solid fa-pen-to-square" onClick={()=>handleClick(i.id)} ></i>
                                         <i className="fa-solid fa-trash-can" onClick={()=>deleteModal(i.id)} ></i>
                                     </div>
-                                </td>
-                                )}
+                                </td>)}
                             </tr>
                         )
                         }
@@ -548,9 +607,9 @@ function ProgrammeMINTP (){
 
                             <tr>
                                 <td colSpan={categorie==="CENTRALE"?"9":"11"} >Provision de réserve</td>
-                                <td>{numStr(programme.prevision,0)} fcfa</td>
-                                <td>{numStr(totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
-                                <td>{numStr(programme.prevision-totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
+                                <td className="end">{numStr(programme.prevision,0)}</td>
+                                <td className="end">{numStr(totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)}</td>
+                                <td className="end">{numStr(programme.prevision-totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)}</td>
                                 <td colSpan="7">
                                     <Link to={`/programmes/programme-MINTP/${programme.id}/prévision`} >Détails</Link>
                                 </td>
@@ -659,6 +718,20 @@ function ProgrammeMINTP (){
                         <button className="b-btn" onClick={()=>modal2.current.setModal(false)}>NON</button>
                     </div>
                 </div>
+            </ModalBox>
+
+            <ModalBox ref={modalBox}>
+                <form method="post" encType="multipart/form-data" className="flex-form" onSubmit={importFile}>
+                    <div>
+                        <div className="form-line">
+                            <label>Fichier excel</label>
+                            <input type="file"  name="file" accept=".xlsx, .xls" required/>
+                        </div>
+                        <div className="form-line" style={{margin: "0"}}>
+                            <button type="submit">Importer</button>
+                        </div>
+                    </div>     
+                </form>
             </ModalBox>
 
             <div className="view-pdf">

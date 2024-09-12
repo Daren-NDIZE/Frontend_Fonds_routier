@@ -18,6 +18,7 @@ import { downLoadExcel } from "jsxtabletoexcel"
 
 function SuiviPayement(){
 
+    let modalBox=useRef()
     let modal=useRef()
     let modal1=useRef()
     let modal2=useRef()
@@ -36,7 +37,7 @@ function SuiviPayement(){
     let [projetId,setProjetId]=useState()
     let [pdf,setPdf]=useState()
     let [montant,setMontant]=useState({TVA:"", TTC:"",AIR:"",NAP:""})
-    let [categorie,setCategorie]=useState("CENTRALE")
+    let [categorie,setCategorie]=useState()
     let [check,setCheck]=useState(false)
     let [payementId,setPayementId]=useState()
     let [focus,setFocus]=useState({})
@@ -66,8 +67,13 @@ function SuiviPayement(){
                         setProgramme(resData)
                         projet.current=resData.projetList.filter((i=>i.financement!=="RESERVE" && i.bordereau ))
                         if(resData.ordonnateur==="MINTP"){
+                            setCategorie("CENTRALE")
                             setData(resData.projetList.filter(i=>(i.financement!=="RESERVE"  && i.bordereau && i.categorie!=="PROJET A GESTION COMMUNALE") ))
                             return;                  
+                        }else if(resData.ordonnateur==="MINT"){
+                            setCategorie("MINT")
+                            setData(resData.projetList.filter(i=>(i.financement!=="RESERVE" && i.bordereau && i.ordonnateur==="MINT")))
+                            return;
                         }
                         setData(resData.projetList.filter(i=>(i.financement!=="RESERVE" && i.bordereau ) ))
                     }
@@ -81,61 +87,6 @@ function SuiviPayement(){
         })()
     },[id,ordonnateur,navigate])
 
-
-    const changeTable=(e,i)=>{
-
-        let li=e.target
-
-        setCategorie(i)
-        if(i==="CENTRALE"){
-            setData(projet.current.filter(i=>i.categorie!=="PROJET A GESTION COMMUNALE"))
-        }else{
-            setData(projet.current.filter(i=>i.categorie==="PROJET A GESTION COMMUNALE"))
-        }
-        if(li.classList.contains("active")){
-            return;
-        }
-
-        Array.from(li.parentNode.children).forEach(i=>{
-            i.classList.remove("active")
-        })
-        li.classList.add("active")
-    }
-
-    const changeMontant=()=>{
-
-        let air=parseFloat(AIR.current.value) 
-        let htva=parseFloat(HTVA.current.value)
-        if( air && htva ){
-            setMontant({TVA: (0.1925*htva).toFixed(2), TTC: (htva+ 0.1925*htva).toFixed(2) , AIR: (air*htva/100).toFixed(4) , NAP: htva*(1-air/100)})
-        }else{
-            setMontant({TVA:"", TTC:"",AIR:"",NAP:""})
-        }
-    }
-
-    const checked=(e)=>{
-
-        setCheck(e.target.checked)
-    }
-
-    const open=(id)=>{
-        setMontant({TVA:"", TTC:"",AIR:"",NAP:""})
-        setProjetId(id)
-        modal.current.setModal(true) 
-    }
-
-    const openModal=(projetId,payId,modal)=>{
-
-        setPayementId(payId)
-        setProjetId(projetId)
-        if(modal===modal1){
-            let datas= data.find(i=>i.id===projetId)
-            let paye=datas.payement.find(i=>i.id===payId)
-            setFocus(paye)
-            setMontant({TVA:paye.m_TVA, TTC:paye.m_TTC,AIR:paye.m_AIR,NAP:paye.nap})
-        }
-        modal.current.setModal(true)
-    }
 
     const submit= async(e)=>{
 
@@ -174,7 +125,13 @@ function SuiviPayement(){
                         setProgramme(dataRes)
                         projet.current=dataRes.projetList.filter((i=>i.financement!=="RESERVE" && i.bordereau ))
                         if(dataRes.ordonnateur==="MINTP"){
-                            setData(dataRes.projetList.filter(i=>(i.financement!=="RESERVE"  && i.bordereau && i.categorie!=="PROJET A GESTION COMMUNALE") ))
+                            categorie==="COMMUNE"?
+                            setData(dataRes.projetList.filter(i=>(i.financement!=="RESERVE" && i.bordereau && i.categorie==="PROJET A GESTION COMMUNALE") )) 
+                            : 
+                            setData(dataRes.projetList.filter(i=>(i.financement!=="RESERVE" && i.bordereau && i.categorie!=="PROJET A GESTION COMMUNALE") )) 
+                        }else if(dataRes.ordonnateur==="MINT"){
+                            setData(dataRes.projetList.filter(i=>(i.financement!=="RESERVE"  && i.bordereau && i.ordonnateur===categorie) ))
+
                         }else{
                             setData(dataRes.projetList.filter(i=>(i.financement!=="RESERVE" && i.bordereau ) ))
                         }
@@ -287,6 +244,142 @@ function SuiviPayement(){
 
     }
 
+    const importFile=async (e)=>{
+
+        e.preventDefault()
+        let form=e.target
+
+        
+        setPageLoader(true)
+        modalBox.current.setModal(false)
+
+        let formData =new FormData(form);
+
+        try{
+
+            let res= await fetchFormData(`projet/importPayement/${projetId}`,"POST",formData)
+
+            if(res.ok){
+                let resData= await res.json()
+                
+                if(resData.type==="succes"){
+                    
+                    let response = await fetchGet(`programmeByRole/${id}`)
+                    if(response.ok){
+
+                        let dataRes= await response.json()
+
+                        setProgramme(dataRes)
+                        projet.current=dataRes.projetList.filter((i=>i.financement!=="RESERVE" && i.bordereau ))
+                        if(dataRes.ordonnateur==="MINTP"){
+                            categorie==="COMMUNE"?
+                            setData(dataRes.projetList.filter(i=>(i.financement!=="RESERVE" && i.bordereau && i.categorie==="PROJET A GESTION COMMUNALE") )) 
+                            : 
+                            setData(dataRes.projetList.filter(i=>(i.financement!=="RESERVE" && i.bordereau && i.categorie!=="PROJET A GESTION COMMUNALE") )) 
+                        }else if(dataRes.ordonnateur==="MINT"){
+                            setData(dataRes.projetList.filter(i=>(i.financement!=="RESERVE"  && i.bordereau && i.ordonnateur===categorie) ))
+
+                        }else{
+                            setData(dataRes.projetList.filter(i=>(i.financement!=="RESERVE" && i.bordereau ) ))
+                        }
+                    }
+                }
+
+                window.scroll({top: 0, behavior:"smooth"})
+                notification.current.setNotification(
+                    {visible: true, type:resData.type,message:resData.message}
+                )
+            }
+        }catch(e){
+            console.log(e)
+        }finally{
+            setPageLoader(false)
+        }
+ 
+    }
+
+
+    const changeTable=(e,i)=>{
+
+        let li=e.target
+
+        setCategorie(i)
+        if(i==="CENTRALE"){
+            setData(projet.current.filter(i=>i.categorie!=="PROJET A GESTION COMMUNALE"))
+        }else{
+            setData(projet.current.filter(i=>i.categorie==="PROJET A GESTION COMMUNALE"))
+        }
+        if(li.classList.contains("active")){
+            return;
+        }
+
+        Array.from(li.parentNode.children).forEach(i=>{
+            i.classList.remove("active")
+        })
+        li.classList.add("active")
+    }
+
+    const changeMINT=(e,i)=>{
+
+        let li=e.target
+
+        setCategorie(i)
+        if(i==="MINT"){
+            setData(projet.current.filter(i=>i.ordonnateur==="MINT"))
+        }else{
+            setData(projet.current.filter(i=>i.ordonnateur==="MAIRE"))
+        }
+        if(li.classList.contains("active")){
+            return;
+        }
+
+        Array.from(li.parentNode.children).forEach(i=>{
+            i.classList.remove("active")
+        })
+        li.classList.add("active")
+    }
+
+    const changeMontant=()=>{
+
+        let air=parseFloat(AIR.current.value) 
+        let htva=parseFloat(HTVA.current.value)
+        if( air && htva ){
+            setMontant({TVA: (0.1925*htva).toFixed(2), TTC: (htva+ 0.1925*htva).toFixed(2) , AIR: (air*htva/100).toFixed(4) , NAP: (htva*(1-air/100)).toFixed(4)})
+        }else{
+            setMontant({TVA:"", TTC:"",AIR:"",NAP:""})
+        }
+    }
+
+    const checked=(e)=>{
+
+        setCheck(e.target.checked)
+    }
+
+    const open=(id)=>{
+        setMontant({TVA:"", TTC:"",AIR:"",NAP:""})
+        setProjetId(id)
+        modal.current.setModal(true) 
+    }
+
+    const openModal=(projetId,payId,modal)=>{
+
+        setPayementId(payId)
+        setProjetId(projetId)
+        if(modal===modal1){
+            let datas= data.find(i=>i.id===projetId)
+            let paye=datas.payement.find(i=>i.id===payId)
+            setFocus(paye)
+            setMontant({TVA:paye.m_TVA, TTC:paye.m_TTC,AIR:paye.m_AIR,NAP:paye.nap})
+        }
+        modal.current.setModal(true)
+    }
+
+    const openImport=()=>{
+        modal.current.setModal(false)
+        modalBox.current.setModal(true)
+    }
+
+
     const loadPdf=async(id)=>{
 
         modalBox1.current.setModal(true)
@@ -350,10 +443,16 @@ function SuiviPayement(){
                             <li onClick={(e)=>changeTable(e,"COMMUNE")}>Gestion communale</li>
                         </ul>
                     </div>
-            
                 }
+                {programme.ordonnateur==="MINT" &&(   
+                    <div className="top-element s-change">
+                        <ul>
+                            <li className="active" onClick={(e)=>changeMINT(e,"MINT")} >Gestion centrale</li>
+                            <li onClick={(e)=>changeMINT(e,"MAIRE")}>Gestion communale</li>
+                        </ul>
+                    </div>
+                )}
                 
-
                 
                 {programme.ordonnateur==="MINHDU"?
 
@@ -369,6 +468,7 @@ function SuiviPayement(){
 
                     <TableMINT data={data}
                      programme={programme}
+                     categorie={categorie}  
                      onLoadPdf={loadPdf} 
                      onHandleClick={open} 
                      option={{check: check,openModal:openModal,modal1:modal1,modal2:modal2}}
@@ -464,6 +564,20 @@ function SuiviPayement(){
 
             }
 
+            <ModalBox ref={modalBox}>
+                <form method="post" encType="multipart/form-data" className="flex-form" onSubmit={importFile} >
+                    <div>
+                        <div className="form-line">
+                            <label>Fichier excel</label>
+                            <input type="file"  name="file" accept=".xlsx, .xls" required/>
+                        </div>
+                        <div className="form-line" style={{margin: "0"}}>
+                            <button type="submit">Importer</button>
+                        </div>
+                    </div>     
+                </form>
+            </ModalBox>
+
             <ModalBox ref={modal}>
                 <form className="flex-form" onSubmit={submit} >
                     <div>
@@ -515,6 +629,9 @@ function SuiviPayement(){
                         </div> 
                         <div className="form-line" style={{margin: "0"}}>
                             <button type="submit">Enregistrer</button>
+                        </div>
+                        <div className="p-im">
+                            <p onClick={openImport}>importer</p>
                         </div>
                     </div>    
                 </form>
@@ -645,15 +762,15 @@ const TableMINHDU=({data,programme,onLoadPdf,onHandleClick,option})=>{
                                 <td rowSpan={i.payement.length +2}>{i.region.replaceAll("_","-")}</td>
                                 <td rowSpan={i.payement.length +2}>{i.ville}</td>
                                 <td  rowSpan={i.payement.length +2}>{i.troçon}</td>
-                                <td rowSpan={i.payement.length +2}>{numStr(i.lineaire)}</td>
-                                <td rowSpan={i.payement.length +2}>{numStr(i.ttc)}</td>
-                                <td rowSpan={i.payement.length +2}>{numStr(i.budget_anterieur)}</td>
-                                <td rowSpan={i.payement.length +2}>{numStr(i.budget_n) }</td>
-                                <td rowSpan={i.payement.length +2}>{i.suivi && numStr(i.suivi.engagement)}</td>
-                                <td rowSpan={i.payement.length +2}>{(i.suivi && i.suivi.engagement!==0) && numStr((i.budget_n - i.suivi.engagement),0)}</td>
+                                <td rowSpan={i.payement.length +2} className="end">{numStr(i.lineaire)}</td>
+                                <td rowSpan={i.payement.length +2} className="end">{numStr(i.ttc)}</td>
+                                <td rowSpan={i.payement.length +2} className="end">{numStr(i.budget_anterieur)}</td>
+                                <td rowSpan={i.payement.length +2} className="end">{numStr(i.budget_n) }</td>
+                                <td rowSpan={i.payement.length +2} className="end">{i.suivi && numStr(i.suivi.engagement)}</td>
+                                <td rowSpan={i.payement.length +2} className="end">{(i.suivi && i.suivi.engagement!==0) && numStr((i.budget_n - i.suivi.engagement),0)}</td>
                                 <td rowSpan={i.payement.length +2}>{i.prestataire}</td>
-                                <td rowSpan={i.payement.length +2}>{numStr(i.budget_n1)}</td>
-                                <td rowSpan={i.payement.length +2}>{numStr(i.budget_n2)}</td>
+                                <td rowSpan={i.payement.length +2} className="end">{numStr(i.budget_n1)}</td>
+                                <td rowSpan={i.payement.length +2} className="end">{numStr(i.budget_n2)}</td>
                                 <td rowSpan={i.payement.length +2}>{i.ordonnateur}</td>
                                 <td rowSpan={i.payement.length +2}>  
                                     <p  onClick={()=>onLoadPdf(i.id)} className="deco">{i.suivi.statut}</p>       
@@ -677,11 +794,11 @@ const TableMINHDU=({data,programme,onLoadPdf,onHandleClick,option})=>{
                                     <td>{new Date(k.date).toLocaleDateString()}</td>
                                     <td>{k.decompte}</td>
                                     <td>{k.n_marche}</td>
-                                    <td>{numStr(k.m_HTVA)}</td>
-                                    <td>{numStr(k.m_TTC)}</td>
-                                    <td>{numStr(k.m_TVA)}</td>
-                                    <td>{numStr(k.m_AIR)}</td>
-                                    <td>{numStr(k.nap)}</td>
+                                    <td className="end">{numStr(k.m_HTVA)}</td>
+                                    <td className="end">{numStr(k.m_TTC)}</td>
+                                    <td className="end">{numStr(k.m_TVA)}</td>
+                                    <td className="end">{numStr(k.m_AIR)}</td>
+                                    <td className="end">{numStr(k.nap)}</td>
                                     <td>{k.observation}</td>
                                     {option.check &&
                                     <td>
@@ -696,11 +813,11 @@ const TableMINHDU=({data,programme,onLoadPdf,onHandleClick,option})=>{
 
                             <tr className="height-line">
                                 <td colSpan="3">Total</td>
-                                <td>{numStr(totalPayement(i.payement,"m_HTVA") )}</td>
-                                <td>{numStr(totalPayement(i.payement,"m_TTC") )}</td>
-                                <td>{numStr(totalPayement(i.payement,"m_TVA") )}</td>
-                                <td>{numStr(totalPayement(i.payement,"m_AIR") )}</td>
-                                <td>{numStr(totalPayement(i.payement,"nap") )}</td>
+                                <td className="end">{numStr(totalPayement(i.payement,"m_HTVA") )}</td>
+                                <td className="end">{numStr(totalPayement(i.payement,"m_TTC") )}</td>
+                                <td className="end">{numStr(totalPayement(i.payement,"m_TVA") )}</td>
+                                <td className="end">{numStr(totalPayement(i.payement,"m_AIR") )}</td>
+                                <td className="end">{numStr(totalPayement(i.payement,"nap") )}</td>
                                 <td>
                                     <i className="fa-solid fa-circle-plus i-circle" onClick={()=>onHandleClick(i.id)}></i>
                                 </td>
@@ -715,7 +832,7 @@ const TableMINHDU=({data,programme,onLoadPdf,onHandleClick,option})=>{
     )
 }
 
-const TableMINT=({data,programme,onLoadPdf,onHandleClick,option})=>{
+const TableMINT=({data,programme,categorie,onLoadPdf,onHandleClick,option})=>{
 
     return(
 
@@ -723,8 +840,14 @@ const TableMINT=({data,programme,onLoadPdf,onHandleClick,option})=>{
             <table className="table">
                 <thead>
                     <tr>
-                        <th>N°_de_lot</th>
+                        <th>N°</th>
                         <th>Region</th>
+                        {categorie==="MAIRE" &&(
+                        <>
+                            <th className="min-w3">Département</th>
+                            <th className="min-w3">Commune</th>
+                        </>
+                        )}
                         <th className="min-w1">Activités</th>
                         <th className="min-w1">Objectifs</th>
                         <th className="min-w12">Allotissement</th>
@@ -747,17 +870,23 @@ const TableMINT=({data,programme,onLoadPdf,onHandleClick,option})=>{
                         <tr key={j}>
                             <td rowSpan={i.payement.length +2}>{j+1}</td>
                             <td rowSpan={i.payement.length +2}>{i.region.replaceAll("_","-")}</td>
+                            {categorie==="MAIRE"&&(
+                            <>
+                                <td rowSpan={i.payement.length +2}>{i.departement}</td>
+                                <td rowSpan={i.payement.length +2}>{i.commune}</td>
+                            </>  
+                            )}
                             <td rowSpan={i.payement.length +2}>{i.mission}</td>
                             <td rowSpan={i.payement.length +2}>{i.objectif}</td>
                             <td rowSpan={i.payement.length +2}>{i.allotissement}</td>
-                            <td rowSpan={i.payement.length +2}>{numStr(i.ttc,"")}</td>
-                            <td rowSpan={i.payement.length +2}>{numStr(i.budget_anterieur)}</td>
-                            <td rowSpan={i.payement.length +2}>{numStr(i.budget_n) }</td>
-                            <td rowSpan={i.payement.length +2}>{i.suivi && numStr(i.suivi.engagement)}</td>
-                            <td rowSpan={i.payement.length +2}>{(i.suivi && i.suivi.engagement!==0) && numStr(i.budget_n - i.suivi.engagement,0)}</td>
+                            <td rowSpan={i.payement.length +2} className="end">{numStr(i.ttc,"")}</td>
+                            <td rowSpan={i.payement.length +2} className="end">{numStr(i.budget_anterieur)}</td>
+                            <td rowSpan={i.payement.length +2} className="end">{numStr(i.budget_n) }</td>
+                            <td rowSpan={i.payement.length +2} className="end">{i.suivi && numStr(i.suivi.engagement)}</td>
+                            <td rowSpan={i.payement.length +2} className="end">{(i.suivi && i.suivi.engagement!==0) && numStr(i.budget_n - i.suivi.engagement,0)}</td>
                             <td rowSpan={i.payement.length +2}>{i.prestataire}</td>
-                            <td rowSpan={i.payement.length +2}>{numStr(i.budget_n1,"")}</td>
-                            <td rowSpan={i.payement.length +2}>{numStr(i.budget_n2,"")}</td>
+                            <td rowSpan={i.payement.length +2} className="end">{numStr(i.budget_n1,"")}</td>
+                            <td rowSpan={i.payement.length +2} className="end">{numStr(i.budget_n2,"")}</td>
                             <td rowSpan={i.payement.length +2}>{i.ordonnateur}</td>
                             <td rowSpan={i.payement.length +2}>
                                 <p onClick={()=>onLoadPdf(i.id)} className="deco">{i.suivi.statut}</p>    
@@ -781,11 +910,11 @@ const TableMINT=({data,programme,onLoadPdf,onHandleClick,option})=>{
                                 <td>{new Date(k.date).toLocaleDateString()}</td>
                                 <td>{k.decompte}</td>
                                 <td>{k.n_marche}</td>
-                                <td>{numStr(k.m_HTVA)}</td>
-                                <td>{numStr(k.m_TTC)}</td>
-                                <td>{numStr(k.m_TVA)}</td>
-                                <td>{numStr(k.m_AIR)}</td>
-                                <td>{numStr(k.nap)}</td>
+                                <td className="end">{numStr(k.m_HTVA)}</td>
+                                <td className="end">{numStr(k.m_TTC)}</td>
+                                <td className="end">{numStr(k.m_TVA)}</td>
+                                <td className="end">{numStr(k.m_AIR)}</td>
+                                <td className="end">{numStr(k.nap)}</td>
                                 <td>{k.observation}</td>
                                 {option.check &&
                                 <td>
@@ -800,11 +929,11 @@ const TableMINT=({data,programme,onLoadPdf,onHandleClick,option})=>{
 
                         <tr className="height-line">
                             <td colSpan="3">Total</td>
-                            <td>{numStr(totalPayement(i.payement,"m_HTVA") )}</td>
-                            <td>{numStr(totalPayement(i.payement,"m_TTC") )}</td>
-                            <td>{numStr(totalPayement(i.payement,"m_TVA") )}</td>
-                            <td>{numStr(totalPayement(i.payement,"m_AIR") )}</td>
-                            <td>{numStr(totalPayement(i.payement,"nap") )}</td>
+                            <td className="end">{numStr(totalPayement(i.payement,"m_HTVA") )}</td>
+                            <td className="end">{numStr(totalPayement(i.payement,"m_TTC") )}</td>
+                            <td className="end">{numStr(totalPayement(i.payement,"m_TVA") )}</td>
+                            <td className="end">{numStr(totalPayement(i.payement,"m_AIR") )}</td>
+                            <td className="end">{numStr(totalPayement(i.payement,"nap") )}</td>
                             <td>
                                 <i className="fa-solid fa-circle-plus i-circle" onClick={()=>onHandleClick(i.id)}></i>
                             </td>
@@ -869,16 +998,16 @@ const TableMINTP=({data,programme,categorie,onLoadPdf,onHandleClick,option})=>{
                             <td rowSpan={i.payement.length +2}>{i.categorie}</td>
                             <td rowSpan={i.payement.length +2}>{i.projet}</td>
                             <td rowSpan={i.payement.length +2}>{i.code_route}</td>
-                            <td rowSpan={i.payement.length +2}>{numStr(i.lineaire_route)}</td>
-                            <td rowSpan={i.payement.length +2}>{numStr(i.lineaire_oa)}</td>
-                            <td rowSpan={i.payement.length +2}>{numStr(i.ttc)}</td>
-                            <td rowSpan={i.payement.length +2}>{numStr(i.budget_anterieur)}</td>
-                            <td rowSpan={i.payement.length +2}>{numStr(i.budget_n) }</td>
-                            <td rowSpan={i.payement.length +2}>{i.suivi && numStr(i.suivi.engagement)}</td>
-                            <td rowSpan={i.payement.length +2}>{(i.suivi && i.suivi.engagement!==0) && numStr(i.budget_n - i.suivi.engagement,0)}</td>
+                            <td rowSpan={i.payement.length +2} className="end">{numStr(i.lineaire_route)}</td>
+                            <td rowSpan={i.payement.length +2} className="end">{numStr(i.lineaire_oa)}</td>
+                            <td rowSpan={i.payement.length +2} className="end">{numStr(i.ttc)}</td>
+                            <td rowSpan={i.payement.length +2} className="end">{numStr(i.budget_anterieur)}</td>
+                            <td rowSpan={i.payement.length +2} className="end">{numStr(i.budget_n) }</td>
+                            <td rowSpan={i.payement.length +2} className="end">{i.suivi && numStr(i.suivi.engagement)}</td>
+                            <td rowSpan={i.payement.length +2} className="end">{(i.suivi && i.suivi.engagement!==0) && numStr(i.budget_n - i.suivi.engagement,0)}</td>
                             <td rowSpan={i.payement.length +2}>{i.prestataire}</td>
-                            <td rowSpan={i.payement.length +2}>{numStr(i.budget_n1,"")}</td>
-                            <td rowSpan={i.payement.length +2}>{numStr(i.budget_n2,"")}</td>
+                            <td rowSpan={i.payement.length +2} className="end">{numStr(i.budget_n1,"")}</td>
+                            <td rowSpan={i.payement.length +2} className="end">{numStr(i.budget_n2,"")}</td>
                             <td rowSpan={i.payement.length +2}>
                                 <p  onClick={()=>onLoadPdf(i.id)} className="deco">{i.suivi.statut}</p>    
                             </td>
@@ -901,11 +1030,11 @@ const TableMINTP=({data,programme,categorie,onLoadPdf,onHandleClick,option})=>{
                                 <td>{new Date(k.date).toLocaleDateString()}</td>
                                 <td>{k.decompte}</td>
                                 <td>{k.n_marche}</td>
-                                <td>{numStr(k.m_HTVA )}</td>
-                                <td>{numStr(k.m_TTC )}</td>
-                                <td>{numStr(k.m_TVA )}</td>
-                                <td>{numStr(k.m_AIR )}</td>
-                                <td>{numStr(k.nap )}</td>
+                                <td className="end">{numStr(k.m_HTVA )}</td>
+                                <td className="end">{numStr(k.m_TTC )}</td>
+                                <td className="end">{numStr(k.m_TVA )}</td>
+                                <td className="end">{numStr(k.m_AIR )}</td>
+                                <td className="end">{numStr(k.nap )}</td>
                                 <td>{k.observation}</td>
                                 {option.check &&
                                 <td>
@@ -920,11 +1049,11 @@ const TableMINTP=({data,programme,categorie,onLoadPdf,onHandleClick,option})=>{
 
                         <tr className="height-line">
                             <td colSpan="3">Total</td>
-                            <td>{numStr(totalPayement(i.payement,"m_HTVA") )}</td>
-                            <td>{numStr(totalPayement(i.payement,"m_TTC") )}</td>
-                            <td>{numStr(totalPayement(i.payement,"m_TVA") )}</td>
-                            <td>{numStr(totalPayement(i.payement,"m_AIR") )}</td>
-                            <td>{numStr(totalPayement(i.payement,"nap") )}</td>
+                            <td className="end">{numStr(totalPayement(i.payement,"m_HTVA") )}</td>
+                            <td className="end">{numStr(totalPayement(i.payement,"m_TTC") )}</td>
+                            <td className="end">{numStr(totalPayement(i.payement,"m_TVA") )}</td>
+                            <td className="end">{numStr(totalPayement(i.payement,"m_AIR") )}</td>
+                            <td className="end">{numStr(totalPayement(i.payement,"nap") )}</td>
                             <td>
                                 <i className="fa-solid fa-circle-plus i-circle" onClick={()=>onHandleClick(i.id)}></i>
                             </td>

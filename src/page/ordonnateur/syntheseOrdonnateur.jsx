@@ -12,7 +12,7 @@ function SyntheseOrdonnateur({role}){
     const navigate=useNavigate()
     const {ordonnateur}=useParams()
 
-    let type=["BASE","ADDITIONNEL","B&A"]
+    let type=["BASE","ADDITIONNEL","REPORT","B&A"]
 
 
     let [synthese,setSynthese]=useState({})
@@ -80,6 +80,7 @@ function SyntheseOrdonnateur({role}){
                             <select name="type">
                                 <option value="BASE">Base</option>
                                 <option value="ADDITIONNEL">Additionnel</option>
+                                <option value="REPORT">Report</option>
                                 <option value="B&A">Base & additionnel</option>
                             </select>
                         </div>
@@ -116,14 +117,14 @@ function SyntheseOrdonnateur({role}){
 
                 {synthese.type==="MINTP"?
 
-                    <SyntheseMINTP prevision={synthese.prevision} engagement={synthese.engagement} />
+                    <SyntheseMINTP prevision={synthese.prevision} engagement={synthese.engagement} lineaire={synthese.lineaire} />
 
                 :synthese.type==="MINT"?
 
-                    <SyntheseMINT prevision={synthese.prevision} engagement={synthese.engagement} />
+                    <SyntheseMINT prevision={synthese.prevision} engagement={synthese.engagement} lineaire={synthese.lineaire} />
                 
                 :
-                    <SyntheseMINHDU prevision={synthese.prevision} engagement={synthese.engagement} />
+                    <SyntheseMINHDU prevision={synthese.prevision} engagement={synthese.engagement} lineaire={synthese.lineaire}/>
 
                 }
 
@@ -145,7 +146,7 @@ export default SyntheseOrdonnateur
 
 
 
-const SyntheseMINHDU=({prevision,engagement})=>{
+const SyntheseMINHDU=({prevision,engagement,lineaire})=>{
 
     let totalP=prevision[0]+prevision[1]+prevision[2]+prevision[3]
     let totalE=engagement[0]+engagement[1]+engagement[2]+engagement[3]
@@ -167,47 +168,64 @@ const SyntheseMINHDU=({prevision,engagement})=>{
                     <tr>
                         <td rowSpan="2">MINHDU / GESTION CENTRALE</td>
                         <td>EVU</td>
-                        <td>{numStr(prevision[0],0)}</td>
-                        <td>{numStr(engagement[0],0)}</td>
-                        <td>{numStr(prevision[0]-engagement[0],0)}</td>
-                        <td>{(engagement[0]*100/prevision[0]).toFixed(2)}%</td>
+                        <td className="end">{numStr(prevision[0],0)}</td>
+                        <td className="end">{numStr(engagement[0],0)}</td>
+                        <td className="end">{numStr(prevision[0]-engagement[0],0)}</td>
+                        <td className="end">{(engagement[0]*100/prevision[0]).toFixed(2)}%</td>
                     </tr>
                     <tr>
                         <td>ECT</td>
-                        <td>{numStr(prevision[1],0)}</td>
-                        <td>{numStr(engagement[1],0)}</td>
-                        <td>{numStr(prevision[1]-engagement[1],0)}</td>
-                        <td>{(engagement[1]*100/prevision[1]).toFixed(2)}%</td>
+                        <td className="end">{numStr(prevision[1],0)}</td>
+                        <td className="end">{numStr(engagement[1],0)}</td>
+                        <td className="end">{numStr(prevision[1]-engagement[1],0)}</td>
+                        <td className="end">{(engagement[1]*100/prevision[1]).toFixed(2)}%</td>
                     </tr>
                     <tr>
                         <td rowSpan="2">MINHDU / GESTION COMMUNALE</td>
                         <td>COMMUNES / TRAVAUX</td>
-                        <td>{numStr(prevision[2],0)}</td>
-                        <td>{numStr(engagement[2],0)}</td>
-                        <td>{numStr(prevision[2]-engagement[2],0)}</td>
-                        <td>{(engagement[2]*100/prevision[2]).toFixed(2)}%</td>
+                        <td className="end">{numStr(prevision[2],0)}</td>
+                        <td className="end">{numStr(engagement[2],0)}</td>
+                        <td className="end">{numStr(prevision[2]-engagement[2],0)}</td>
+                        <td className="end">{(engagement[2]*100/prevision[2]).toFixed(2)}%</td>
                     </tr>
                     <tr>
                         <td>COMMUNES / CONTROLE</td>
-                        <td>{numStr(prevision[3],0)}</td>
-                        <td>{numStr(engagement[3],0)}</td>
-                        <td>{numStr(prevision[3]-engagement[3],0)}</td>
-                        <td>{(engagement[3]*100/prevision[3]).toFixed(2)}%</td>
+                        <td className="end">{numStr(prevision[3],0)}</td>
+                        <td className="end">{numStr(engagement[3],0)}</td>
+                        <td className="end">{numStr(prevision[3]-engagement[3],0)}</td>
+                        <td className="end">{(engagement[3]*100/prevision[3]).toFixed(2)}%</td>
                     </tr>
                     <tr>
                         <td colSpan="2">TOTAL</td>
-                        <td>{numStr(totalP)}</td>
-                        <td>{numStr(totalE,0)}</td>
-                        <td>{numStr(totalP-totalE)}</td>
-                        <td>{(totalE*100/totalP).toFixed(2)}%</td>
+                        <td className="end">{numStr(totalP)}</td>
+                        <td className="end">{numStr(totalE,0)}</td>
+                        <td className="end">{numStr(totalP-totalE)}</td>
+                        <td className="end">{(totalE*100/totalP).toFixed(2)}%</td>
                     </tr>                    
+                </tbody>
+            </table>
+
+            <table className="table">
+                <thead>
+                    <tr>
+                        <th>Ordonnateur</th>
+                        <th>Total Lineaire programmé (ML)</th>
+                        <th>Total Lineaire financé (ML)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>MINHDU / EVU</td>
+                        <td className="end">{numStr(lineaire[0],0)} ML </td>
+                        <td className="end">{numStr(lineaire[1],0)} ML</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
     )
 }
 
-const SyntheseMINTP=({prevision,engagement})=>{
+const SyntheseMINTP=({prevision,engagement,lineaire})=>{
 
     let totalP=prevision[0]+prevision[1]+prevision[2]
     let totalE=engagement[0]+engagement[1]+engagement[2]
@@ -229,33 +247,61 @@ const SyntheseMINTP=({prevision,engagement})=>{
                     <tr>
                         <td rowSpan="3">MINTP</td>
                         <td>PROJETS A GESTION CENTRALE</td>
-                        <td>{numStr(prevision[0],0)}</td>
-                        <td>{numStr(engagement[0],0)}</td>
-                        <td>{numStr(prevision[0]-engagement[0],0)}</td>
-                        <td>{(engagement[0]*100/prevision[0]).toFixed(2)}%</td>
+                        <td className="end">{numStr(prevision[0],0)}</td>
+                        <td className="end">{numStr(engagement[0],0)}</td>
+                        <td className="end">{numStr(prevision[0]-engagement[0],0)}</td>
+                        <td className="end">{(engagement[0]*100/prevision[0]).toFixed(2)}%</td>
                     </tr>
                     <tr>
                         <td>PROJETS A GESTION REGIONALE</td>
-                        <td>{numStr(prevision[1],0)}</td>
-                        <td>{numStr(engagement[1],0)}</td>
-                        <td>{numStr(prevision[1]-engagement[1],0)}</td>
-                        <td>{(engagement[1]*100/prevision[1]).toFixed(2)}%</td>
+                        <td className="end">{numStr(prevision[1],0)}</td>
+                        <td className="end">{numStr(engagement[1],0)}</td>
+                        <td className="end">{numStr(prevision[1]-engagement[1],0)}</td>
+                        <td className="end">{(engagement[1]*100/prevision[1]).toFixed(2)}%</td>
                     </tr>
                     <tr>
                         <td>PROJETS A GESTION COMMUNALE</td>
-                        <td>{numStr(prevision[2],0)}</td>
-                        <td>{numStr(engagement[2],0)}</td>
-                        <td>{numStr(prevision[2]-engagement[2],0)}</td>
-                        <td>{(engagement[2]*100/prevision[2]).toFixed(2)}%</td>
+                        <td className="end">{numStr(prevision[2],0)}</td>
+                        <td className="end">{numStr(engagement[2],0)}</td>
+                        <td className="end">{numStr(prevision[2]-engagement[2],0)}</td>
+                        <td className="end">{(engagement[2]*100/prevision[2]).toFixed(2)}%</td>
                     </tr>
                     <tr>
                         <td colSpan="2">TOTAL</td>
-                        <td>{numStr(totalP)}</td>
-                        <td>{numStr(totalE,0)}</td>
-                        <td>{numStr(totalP-totalE)}</td>
-                        <td>{(totalE*100/totalP).toFixed(2)}%</td>
+                        <td className="end">{numStr(totalP)}</td>
+                        <td className="end">{numStr(totalE,0)}</td>
+                        <td className="end">{numStr(totalP-totalE)}</td>
+                        <td className="end">{(totalE*100/totalP).toFixed(2)}%</td>
                     </tr>                    
                 </tbody>
+            </table>
+
+            <table className="table">
+                <thead>
+                    <tr>
+                        <th>Type de Travaux</th>
+                        <th>Total Lineaire programmé</th>
+                        <th>Total Lineaire financé</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>ROUTE BITUMEE (KM)</td>
+                        <td className="end">{numStr(lineaire[0],0)} KM</td>
+                        <td className="end">{numStr(lineaire[1],0)} KM</td>
+                    </tr>
+                    <tr>
+                        <td>ROUTE EN TERRE (KM)</td>
+                        <td className="end">{numStr(lineaire[2],0)} KM</td>
+                        <td className="end">{numStr(lineaire[3],0)} KM</td>
+                    </tr>
+                    <tr>
+                        <td>OUVRAGE D'ART (ML)</td>
+                        <td className="end">{numStr(lineaire[4],0)} ML</td>
+                        <td className="end">{numStr(lineaire[5],0)} ML</td>
+                    </tr>
+                </tbody>
+
             </table>
         </div>
     )
@@ -284,25 +330,25 @@ const SyntheseMINT=({prevision,engagement})=>{
                         <td >MINT GESTION CENTRALE</td>
                         <td rowSpan="2">PSR</td>
                         <td>Prévention et Sécurité Routières</td>
-                        <td>{numStr(prevision[0],0)}</td>
-                        <td>{numStr(engagement[0],0)}</td>
-                        <td>{numStr(prevision[0]-engagement[0],0)}</td>
-                        <td>{(engagement[0]*100/prevision[0]).toFixed(2)}%</td>
+                        <td className="end">{numStr(prevision[0],0)}</td>
+                        <td className="end">{numStr(engagement[0],0)}</td>
+                        <td className="end">{numStr(prevision[0]-engagement[0],0)}</td>
+                        <td className="end">{(engagement[0]*100/prevision[0]).toFixed(2)}%</td>
                     </tr>
                     <tr>
                         <td>MINT GESTION COMMUNALE</td>
                         <td>PSR des communes</td>
-                        <td>{numStr(prevision[1],0)}</td>
-                        <td>{numStr(engagement[1],0)}</td>
-                        <td>{numStr(prevision[1]-engagement[1],0)}</td>
-                        <td>{(engagement[1]*100/prevision[1]).toFixed(2)}%</td>
+                        <td className="end">{numStr(prevision[1],0)}</td>
+                        <td className="end">{numStr(engagement[1],0)}</td>
+                        <td className="end">{numStr(prevision[1]-engagement[1],0)}</td>
+                        <td className="end">{(engagement[1]*100/prevision[1]).toFixed(2)}%</td>
                     </tr>
                     <tr>
                         <td colSpan="3">TOTAL</td>
-                        <td>{numStr(totalP)}</td>
-                        <td>{numStr(totalE,0)}</td>
-                        <td>{numStr(totalP-totalE)}</td>
-                        <td>{(totalE*100/totalP).toFixed(2)}%</td>
+                        <td className="end">{numStr(totalP)}</td>
+                        <td className="end">{numStr(totalE,0)}</td>
+                        <td className="end">{numStr(totalP-totalE)}</td>
+                        <td className="end">{(totalE*100/totalP).toFixed(2)}%</td>
                     </tr>                   
                 </tbody>
             </table>

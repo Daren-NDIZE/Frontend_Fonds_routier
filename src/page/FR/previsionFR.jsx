@@ -81,8 +81,9 @@ function PrevisionFR({role}){
             }
         }else if(form.projet && form.type_travaux){
             let categories=["PROJET A GESTION CENTRALE","PROJET A GESTION REGIONALE","PROJET A GESTION COMMUNALE"]
+            let typeTravaux=["ROUTE EN TERRE","ROUTE BITUMÉE","OUVRAGE D'ART"]
 
-            if(form.projet.value==="" ||form.region.value==="" || form.type_travaux.value==="" || !categories.includes(form.categorie.value) ||
+            if(form.projet.value==="" ||form.region.value==="" || !typeTravaux.includes(form.type_travaux.value) || !categories.includes(form.categorie.value) ||
             form.ttc.value==="" || form.budget_n.value==="" || form.observation.value==="")
             {
                 return;
@@ -140,7 +141,7 @@ function PrevisionFR({role}){
         modalBox.current.setModal(false)
 
         try{
-            let res= await Fetch(`deletePrevisionProjet/${id}`,"DELETE")
+            let res= await Fetch(`deleteProvisionProjet/${id}`,"DELETE")
             if(res.ok){
                 let resData= await res.json()
 
@@ -248,11 +249,11 @@ function PrevisionFR({role}){
                 </ModalBox>
             :programme.ordonnateur==="MINTP"? 
                 <ModalBox ref={modal}>
-                    <FormMINTP title={"Provision MINDHU 2024"} annee={2024} body={{function: saveProjet}}/>
+                    <FormMINTP title={"Provision MINTP 2024"} annee={2024} body={{function: saveProjet}}/>
                 </ModalBox>
             :
                 <ModalBox ref={modal}>
-                    <FormMINT title={"Provision MINDHU 2024"} annee={2024} body={{function: saveProjet}}/>
+                    <FormMINT title={"Provision MINT 2024"} annee={2024} body={{function: saveProjet}}/>
                 </ModalBox>
             }
 
@@ -296,9 +297,9 @@ const MINHDU=({data,check,onModal})=>{
                             <td>{i.ville}</td>
                             <td>{i.type_travaux}</td>
                             <td>{i.troçon}</td>
-                            <td>{numStr(i.lineaire)}</td>
-                            <td>{numStr(i.ttc)} fcfa</td>
-                            <td>{numStr(i.budget_n)} fcfa</td>
+                            <td className="end">{numStr(i.lineaire)}</td>
+                            <td className="end">{numStr(i.ttc)} fcfa</td>
+                            <td className="end">{numStr(i.budget_n)} fcfa</td>
                             <td>{i.ordonnateur}</td>
                             <td>{i.prestataire}</td>
                             {check &&(
@@ -347,8 +348,8 @@ const MINT=({data,check,onModal})=>{
                             <td>{i.mission}</td>
                             <td>{i.objectif}</td>
                             <td>{i.allotissement}</td>
-                            <td>{numStr(i.ttc)} fcfa</td>
-                            <td>{numStr(i.budget_n)} fcfa</td>
+                            <td className="end">{numStr(i.ttc)} fcfa</td>
+                            <td className="end">{numStr(i.budget_n)} fcfa</td>
                             <td>{i.ordonnateur}</td>
                             <td>{i.prestataire}</td>
                             {check &&(
@@ -397,10 +398,10 @@ const MINTP=({data,check,onModal})=>{
                         <td>{i.categorie}</td>
                         <td>{i.projet}</td>
                         <td>{i.code_route}</td>
-                        <td>{numStr(i.lineaire_route)}</td>
-                        <td>{numStr(i.lineaire_oa)}</td>
-                        <td>{numStr(i.ttc)}</td>
-                        <td>{numStr(i.budget_n) }</td>
+                        <td className="end">{numStr(i.lineaire_route)}</td>
+                        <td className="end">{numStr(i.lineaire_oa)}</td>
+                        <td className="end">{numStr(i.ttc)}</td>
+                        <td className="end">{numStr(i.budget_n) }</td>
                         <td>{i.prestataire}</td>
                         {check &&(
                             <td> 

@@ -125,9 +125,9 @@ const MINHDU=({data})=>{
                             <td>{i.ville}</td>
                             <td>{i.type_travaux}</td>
                             <td>{i.troçon}</td>
-                            <td>{numStr(i.lineaire)}</td>
-                            <td>{numStr(i.ttc)} fcfa</td>
-                            <td>{numStr(i.budget_n)} fcfa</td>
+                            <td className="end">{numStr(i.lineaire)}</td>
+                            <td className="end">{numStr(i.ttc)} fcfa</td>
+                            <td className="end">{numStr(i.budget_n)} fcfa</td>
                             <td>{i.ordonnateur}</td>
                             <td>{i.prestataire}</td>
                             
@@ -167,8 +167,8 @@ const MINT=({data})=>{
                             <td>{i.mission}</td>
                             <td>{i.objectif}</td>
                             <td>{i.allotissement}</td>
-                            <td>{numStr(i.ttc)} fcfa</td>
-                            <td>{numStr(i.budget_n)} fcfa</td>
+                            <td className="end">{numStr(i.ttc)} fcfa</td>
+                            <td className="end">{numStr(i.budget_n)} fcfa</td>
                             <td>{i.ordonnateur}</td>
                             <td>{i.prestataire}</td>
                         </tr>
@@ -207,10 +207,10 @@ const MINTP=({data})=>{
                         <td>{i.categorie}</td>
                         <td>{i.projet}</td>
                         <td>{i.code_route}</td>
-                        <td>{numStr(i.lineaire_route)}</td>
-                        <td>{numStr(i.lineaire_oa)}</td>
-                        <td>{numStr(i.ttc)}</td>
-                        <td>{numStr(i.budget_n) }</td>
+                        <td className="end">{numStr(i.lineaire_route)}</td>
+                        <td className="end">{numStr(i.lineaire_oa)}</td>
+                        <td className="end">{numStr(i.ttc)}</td>
+                        <td className="end">{numStr(i.budget_n) }</td>
                         <td>{i.prestataire}</td>
                     </tr>
 

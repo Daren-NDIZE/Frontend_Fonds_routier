@@ -170,27 +170,28 @@ export function NumberToLetter( nombre ){
 
 export function numStr(a, b) {
 
-	if(a===null || a===undefined){
-		return ""
-	}
 	if((a===0 || a==="0") && b===0){
 		return 0
 	}
-	if(a===0 || a==="0"){
+
+	if(a===0 || a==="0" || a===null || a===undefined){
 		return ""
 	}
-	a = '' + a;
-	b = ' ';
-	var c = '',
-		d = 0;
-	while (a.match(/^0[0-9]/)) {
-	  a = a.substr(1);
-	}
-	for (var i = a.length-1; i >= 0; i--) {
-	  c = (d !== 0 && d % 3 === 0) ? a[i] + b + c : a[i] + c;
-	  d++;
-	}
-	return c;
+		
+	a=Number(a).toLocaleString("fr-FR").replace(/\s/g,"  ")
+	
+	// a = '' + a;
+	// b = ' ';
+	// var c = '',
+	// 	d = 0;
+	// while (a.match(/^0[0-9]/)) {
+	//   a = a.substr(1);
+	// }
+	// for (var i = a.length-1; i >= 0; i--) {
+	//   c = (d !== 0 && d % 3 === 0) ? a[i] + b + c : a[i] + c;
+	//   d++;
+	// }
+	return a;
   }
 
 export function totalBudget(projet,prevision){

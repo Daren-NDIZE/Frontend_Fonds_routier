@@ -52,6 +52,7 @@ function Form({submit,categorie,annee}){
                     </div>
                 </>
                 )}
+                
                 <div className="form-line">
                     <label>Projets/troçons <span>*</span></label>
                     <textarea name="projet" required></textarea>
@@ -66,12 +67,26 @@ function Form({submit,categorie,annee}){
                     </select>
                 </div>
                 )}
+
+                {!categorie &&(
+                <div className="form-line">
+                    <label>Catégorie <span>*</span></label>
+                    <select name="categorie" required>
+                        <option value="">- - - - - - - - - - - - - - - - - - - - - </option>
+                        <option value="PROJET A GESTION CENTRALE">PROJET A GESTION CENTRALE</option>
+                        <option value="PROJET A GESTION REGIONALE">PROJET A GESTION REGIONALE</option>
+                        <option value="PROJET A GESTION COMMUNALE">PROJET A GESTION COMMUNALE</option>
+                    </select>
+                </div>
+                )}
                 
                 <div className="form-line">
                     <label>Type de travaux <span>*</span></label>
                     <select  name="type_travaux" required>
                         <option value="">- - - - - - - - - - - - - - - - - - - - - - - </option>
-                        {type.map((i,j)=><option key={j} value={i}>{i}</option>)}
+                        <option value="ROUTE BITUMÉE">ROUTE BITUMÉE</option>
+                        <option value="ROUTE EN TERRE">ROUTE EN TERRE</option>
+                        <option value="OUVRAGE D'ART">OUVRAGE D'ART</option>
                     </select>
                 </div>
                 
@@ -181,8 +196,10 @@ function UpdateForm({submit,categorie,data,annee}){
                 <div className="form-line">
                     <label>Type de travaux <span>*</span></label>
                     <select  name="type_travaux" defaultValue={data.type_travaux} required>
-                        <option value="">- - - - - - - - - - - - - - - - - - - - - - - </option>
-                        {type.map((i,j)=><option key={j} value={i}>{i}</option>)}
+                        <option value="">- - - - - - - - - - - - - - - - - - - - - </option>
+                        <option value="ROUTE BITUMÉE">ROUTE BITUMÉE</option>
+                        <option value="ROUTE EN TERRE">ROUTE EN TERRE</option>
+                        <option value="OUVRAGE D'ART">OUVRAGE D'ART</option>
                     </select>
                 </div>
                 
@@ -239,7 +256,7 @@ function UpdateForm({submit,categorie,data,annee}){
 }
 
 
-const type=["Projets phasés des programmes antérieurs","Axes routiers bitumés stratégiques","Projets contractualisés par anticipation","Projets nécessitant des ressources supplémentaires",
-            "Projets nouveaux","Protection du patrimoine routier","Travaux de cantonnage","Travaux à exécuter en régie","Contrôle des travaux"
-           ]
+// const type=["Projets phasés des programmes antérieurs","Axes routiers bitumés stratégiques","Projets contractualisés par anticipation","Projets nécessitant des ressources supplémentaires",
+//             "Projets nouveaux","Protection du patrimoine routier","Travaux de cantonnage","Travaux à exécuter en régie","Contrôle des travaux"
+//            ]
             

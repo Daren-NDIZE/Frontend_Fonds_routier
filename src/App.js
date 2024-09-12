@@ -32,6 +32,9 @@ import Action from "./page/ADMIN/action";
 import SyntheseOrdonnateur from "./page/ordonnateur/syntheseOrdonnateur";
 import ProgrammePaid from "./page/ordonnateur/ProgrammePaid";
 import DetailsPaid from "./page/ordonnateur/DetailsPaid";
+import Engagement from "./page/ordonnateur/engagement";
+import Payement from "./page/ordonnateur/payement";
+import Travaux from "./page/ordonnateur/travaux";
 
 
 function App() {
@@ -63,11 +66,11 @@ function App() {
       <Model ref={model}>
         <Routes>
           <Route element={["ACO","CO","DCO","STAGIAIRE","ADMIN"].includes(user.role)?<Outlet/>:<Navigate to="/programmes"/>}>
-            <Route path="/programmes/soumis" element={<SubmitProgramme role={user.role}/>}/>
-            <Route path="/execution-des-programme" element={<ValideProgramme/>}/>
-            <Route path="/execution-des-programme/programme-MINHDU/:id" element={<SuiviProgramme ordonnateur="MINHDU"/>}/>
-            <Route path="/execution-des-programme/programme-MINT/:id" element={<SuiviProgramme ordonnateur="MINT"/>}/>
-            <Route path="/execution-des-programme/programme-MINTP/:id" element={<SuiviProgramme ordonnateur="MINTP"/>}/>
+            <Route path="/programmes/soumis" element={<SubmitProgramme />}/>
+            <Route path="/execution-des-programme" element={<ValideProgramme role={user.role}/>}/>
+            <Route path="/execution-des-programme/programme-MINHDU/:id" element={<SuiviProgramme ordonnateur="MINHDU" role={user.role}/>}/>
+            <Route path="/execution-des-programme/programme-MINT/:id" element={<SuiviProgramme ordonnateur="MINT" role={user.role}/>}/>
+            <Route path="/execution-des-programme/programme-MINTP/:id" element={<SuiviProgramme ordonnateur="MINTP" role={user.role}/>}/>
             <Route path="/execution-des-programme/:ordonnateur/:id/prévision" element={<PrevisionFR role={user.role}/>}/>
             <Route path="/execution-des-programme/projet/:id/suivi-des-travaux" element={<SuiviTravaux/>}/>
             <Route path="/programmes/soumis/:id" element={<ProgrammeFR role={user.role}/>}/>
@@ -92,6 +95,9 @@ function App() {
             <Route path="/:ordonnateur/synthese" element={<SyntheseOrdonnateur role={user.role}/>}/>
             <Route path="/programmes/:ordonnateur/:id/prévision" element={<Prevision/>}/>
             <Route path="/suivi-payements" element={<ProgrammePaid/>}/>
+            <Route path="programmation/engagement" element={<Engagement role={user.role}/>}/>
+            <Route path="programmation/suivi-payements" element={<Payement role={user.role}/>}/>
+            <Route path="programmation/suivi-travaux" element={<Travaux role={user.role}/>}/>
             <Route path="/suivi-payements/:ordonnateur/:id" element={<DetailsPaid/>}/>
             <Route path="/programmes/projet/:id/suivi-des-travaux" element={<SuiviTravaux update="true"/>}/>
             <Route path="/programmes_cloturés" element={<ProgrammeCloture/>}/>

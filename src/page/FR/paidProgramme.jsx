@@ -106,7 +106,7 @@ function PaidProgramme(){
                                         <td>{i.intitule}</td>
                                         <td>{i.ordonnateur}</td>
                                         <td>{i.annee}</td>
-                                        <td>{ numStr(i.budget)}</td>
+                                        <td className="end">{ numStr(i.budget)}</td>
                                         <td>
                                             <i className="fa-solid fa-file-arrow-down i-circle" 
                                                 style={{borderRadius: "1px"}}

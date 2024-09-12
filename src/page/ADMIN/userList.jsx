@@ -15,9 +15,13 @@ function UserList(){
     let [loader,setLoader]=useState(true)
     let [erreur,setErreur]=useState("")
     let [pageLoader,setPageLoader]=useState()
+    let [check,setCheck]=useState()
+    let [userId,setUserId]=useState()
 
     let notification=useRef()
     let modalBox=useRef()
+    let modal1=useRef()
+    let modal2=useRef()
     let userList=useRef()
 
     const navigate=useNavigate()
@@ -33,8 +37,8 @@ function UserList(){
 
                 if(res.ok){
                     let resData= await res.json()
-                    setUsers(resData)
                     userList.current=resData
+                    setUsers(resData)
                 }
                 if(response.ok){
                     let resData= await response.json()
@@ -87,8 +91,8 @@ function UserList(){
    
                     if(response.ok){
                         let dataRes= await response.json()
-                        setUsers(dataRes)
                         userList.current=dataRes
+                        setUsers(dataRes)
                     }
                 }
 
@@ -104,6 +108,61 @@ function UserList(){
             setPageLoader(false)
         }
 
+    }
+
+    const deleteUser=async (e)=>{
+
+        setPageLoader(true)
+        modal1.current.setModal(false)
+
+        try{
+            let res= await Fetch(`deleteUser/${userId}`,"DELETE")
+            if(res.ok){
+                let resData= await res.json()
+                
+                if(resData.type==="succes"){
+                    let data= users.filter(i=>i.id!==userId)
+                    userList.current= userList.current.filter(i=>i.id!==userId)
+                    setUsers(data)
+                }
+
+                window.scroll({top: 0, behavior:"smooth"})
+                notification.current.setNotification(
+                    {visible: true, type:resData.type,message:resData.message}
+                )
+            }
+        }catch(e){
+            console.log(e)
+        }finally{
+            setPageLoader(false)
+        }
+    }
+
+    const resetPassword=async (e)=>{
+
+        setPageLoader(true)
+        modal2.current.setModal(false)
+
+        try{
+            let res= await Fetch(`resetPassword/${userId}`,"PUT")
+            if(res.ok){
+                let resData= await res.json()
+            
+                window.scroll({top: 0, behavior:"smooth"})
+                notification.current.setNotification(
+                    {visible: true, type:resData.type,message:resData.message}
+                )
+            }
+        }catch(e){
+            console.log(e)
+        }finally{
+            setPageLoader(false)
+        }
+    }
+
+    const openBox=(id,modal)=>{
+        setUserId(id)
+        modal.current.setModal(true)
     }
 
     if(loader){
@@ -125,7 +184,7 @@ function UserList(){
                     </button>
                 </div>
                 <div className="box b-search">
-                    <SearchBar/>
+                    <SearchBar data={userList.current} keys={["nom","prenom","username"]} onSetData={setUsers}/>
                 </div>
             </div>
 
@@ -142,13 +201,18 @@ function UserList(){
                     <table className="table">
                         <thead>
                             <tr>
-                                <th>N°</th>
+                                <th>
+                                    <input type="checkbox" onChange={(e)=>setCheck(e.target.checked)}/> N°
+                                </th>
                                 <th>Nom</th>
                                 <th>Prénom</th>
                                 <th>Username</th>
                                 <th>Role</th>
                                 <th>Email</th>
                                 <th>Téléphone</th>
+                                {check &&(
+                                    <th width="50px"></th>
+                                )}
                             </tr>
                         </thead>
                         <tbody>
@@ -161,6 +225,14 @@ function UserList(){
                                 <td>{i.role.roleName}</td>
                                 <td>{i.email}</td>
                                 <td>{i.telephone}</td>
+                                {check &&(
+                                    <td>
+                                        <div className="t-action">
+                                            <i className="fa-solid fa-key" onClick={()=>openBox(i.id,modal2)}></i>
+                                            <i className="fa-solid fa-trash-can" onClick={()=>openBox(i.id,modal1)} ></i>
+                                        </div>
+                                    </td>
+                                )}
                             </tr>
                             )}
                         </tbody>
@@ -215,6 +287,26 @@ function UserList(){
                     </div>     
                 </form>
 
+            </ModalBox>
+
+            <ModalBox ref={modal1}>
+                <div className="pg-modal">
+                    <p>Voulez vous vraiment supprimer cet utilisateur?</p>
+                    <div className="mb-content">
+                        <button className="s-btn" onClick={deleteUser}>OUI</button>
+                        <button className="b-btn" onClick={()=>{modal1.current.setModal(false)}}>NON</button>
+                    </div>
+                </div>
+            </ModalBox>
+
+            <ModalBox ref={modal2}>
+                <div className="pg-modal">
+                    <p>Voulez vous vraiment réinitialiser le mot de passe de cet utilisateur?</p>
+                    <div className="mb-content">
+                        <button className="s-btn" onClick={resetPassword}>OUI</button>
+                        <button className="b-btn" onClick={()=>{modal2.current.setModal(false)}}>NON</button>
+                    </div>
+                </div>
             </ModalBox>
 
             {pageLoader &&(

@@ -26,6 +26,9 @@ function SearchBar({data,keys, onSetData}){
 
             for(let j of keys){
 
+                if(i[j]===null){
+                    continue
+                }
                 let string=(i[j].toString()).toLowerCase()
 
                 if(string.indexOf(value.toLowerCase())!==-1){

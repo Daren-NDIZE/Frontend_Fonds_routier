@@ -57,6 +57,9 @@ function SuiviTravaux({update}){
 
     const submit=async (e)=>{
 
+        let content=["DAO en cours d'élaboration","DAO en cours d'examen en Commission","AAO lancé avec ouverture des offres",
+                     "Accord de gré gré attendu","Offres en cours d'examen","Décision d'attribution signée"]
+
         e.preventDefault()
         let form=e.target
 
@@ -64,7 +67,9 @@ function SuiviTravaux({update}){
             setErreur("")
         }
     
-        if(form.tauxConsommation.value==="" || form.tauxAvancement.value==="" || form.description.value===""){
+        if(form.tauxConsommation.value==="" || form.tauxAvancement.value==="" || form.numeroMarche.value===""
+            || form.dateOs.value==="" || !content.includes(form.contractualisation.value)
+        ){
             setErreur("Veuillez remplir tous les champs")
             return;
         }
@@ -110,6 +115,9 @@ function SuiviTravaux({update}){
 
     const updated=async (e)=>{
 
+        let content=["DAO en cours d'élaboration","DAO en cours d'examen en Commission","AAO lancé avec ouverture des offres",
+            "Accord de gré gré attendu","Offres en cours d'examen","Décision d'attribution signée"]
+
         e.preventDefault()
         let form=e.target
 
@@ -117,7 +125,9 @@ function SuiviTravaux({update}){
             setErreur("")
         }
     
-        if(form.tauxConsommation.value==="" || form.tauxAvancement.value==="" || form.description.value===""){
+        if(form.tauxConsommation.value==="" || form.tauxAvancement.value==="" || form.numeroMarche.value===""
+            || form.dateOs.value==="" || !content.includes(form.contractualisation.value)
+        ){
             setErreur("Veuillez remplir tous les champs")
             return;
         }
@@ -137,11 +147,6 @@ function SuiviTravaux({update}){
 
                 let resData= await res.json()
 
-                window.scroll({top: 0, behavior:"smooth"})
-                notification.current.setNotification(
-                    {visible: true, type:resData.type,message:resData.message}
-                )
-        
                 if(resData.type==="succes"){
 
                     let index=data.indexOf(focus)
@@ -150,6 +155,11 @@ function SuiviTravaux({update}){
                     data[index]=datas
                     setData(data)
                 }
+
+                window.scroll({top: 0, behavior:"smooth"})
+                notification.current.setNotification(
+                    {visible: true, type:resData.type,message:resData.message}
+                )
 
             }
 
@@ -202,7 +212,6 @@ function SuiviTravaux({update}){
             <Loader/>
         )
     }
-
     
     return(
         <div className="container">
@@ -247,9 +256,13 @@ function SuiviTravaux({update}){
                             <tr>
                                 <th>N°</th>
                                 <th>Date</th>
+                                <th className="min-w13">Niveau de contractualisation du projet</th>
+                                <th className="min-w4">N° du Marché</th>
+                                <th className="min-w4">Date OS avance de demarrage</th>
                                 <th>Taux de consommation</th>
                                 <th>Taux d'avancement</th>
-                                <th className="min-w12">Observation</th>
+                                <th className="min-w1">Contraintes/Difficultés éventuelles</th>
+                                <th className="min-w12">Propositions de solutions</th>
                                 {check &&
                                     <th></th>
                                 }
@@ -260,9 +273,13 @@ function SuiviTravaux({update}){
                                 <tr key={k}>
                                     <td>{k+1}</td>
                                     <td>{new Date(i.date).toLocaleDateString()}</td>
+                                    <td>{i.contractualisation}</td>
+                                    <td>{i.numeroMarche}</td>
+                                    <td>{new Date(i.dateOs).toLocaleDateString()}</td>
                                     <td>{i.tauxConsommation} %</td>
                                     <td>{i.tauxAvancement} %</td>
                                     <td>{i.description}</td>
+                                    <td>{i.proposition}</td>
                                     {check &&
                                     <td>
                                         <div className="t-action">
@@ -282,53 +299,112 @@ function SuiviTravaux({update}){
             
             <ModalBox ref={modalBox} >
                 <form className="flex-form" onSubmit={submit}>
-                    
-                    <div>   
+
+                    <div>  
                         {erreur.length!==0 &&(
                             <p className="error-msg">{erreur}</p>
-                        )}
+                        )} 
+                        <div className="form-line">
+                            <label>Niveau de contractualisation du projet <span>*</span></label>
+                            <select name="contractualisation" required>
+                                <option value="">- - - - - - - - - - - - - - - - - - - - - - - -  </option>
+                                <option value="DAO en cours d'élaboration">DAO en cours d'élaboration</option>
+                                <option value="DAO en cours d'examen en Commission">DAO en cours d'examen en Commission</option>
+                                <option value="AAO lancé avec ouverture des offres">AAO lancé avec ouverture des offres</option>
+                                <option value="Accord de gré gré attendu">Accord de gré gré attendu</option>
+                                <option value="Offres en cours d'examen">Offres en cours d'examen</option>
+                                <option value="Décision d'attribution signée">Décision d'attribution signée</option>
+                            </select>
+                        </div>
+                        <div className="form-line">
+                            <label>Numéro du marché <span>*</span></label>
+                            <input type="text" step="any" name="numeroMarche" required/>
+                        </div>
+                        <div className="form-line">
+                            <label>Date de notification de l'OS de démarrage <span>*</span></label>
+                            <input type="date" name="dateOs" max={new Date().toISOString().split("T")[0]} required/>
+                        </div>
                         <div className="form-line">
                             <label>Taux de consommation des délais   (en %) <span>*</span></label>
                             <input type="number" step="any" max="100" name="tauxConsommation" required/>
                         </div>
+                        
+                    </div>
+                    
+                    <div>   
                         <div className="form-line">
                             <label>Taux d'avancement des travaux (en %) <span>*</span></label>
                             <input type="number" step="any" max="100" name="tauxAvancement" required/>
                         </div>
                         <div className="form-line">
-                            <label>Observation <span>*</span></label>
-                            <textarea name="description" required/>
+                            <label>Contraintes/Difficultés éventuelles </label>
+                            <textarea name="description" />
+                        </div>
+                        <div className="form-line">
+                            <label>Proposition de solutions </label>
+                            <textarea name="proposition" />
                         </div>
                         <div className="form-line" style={{margin: "0"}}>
                             <button type="submit">Enregistrer</button>
                         </div>
-                    </div> 
+                    </div>
+                     
                 </form>
             </ModalBox>
 
             <ModalBox ref={modal1} >
 
                 <form className="flex-form" onSubmit={updated} >
-                    <div>   
+
+                    <div>  
                         {erreur.length!==0 &&(
                             <p className="error-msg">{erreur}</p>
-                        )}
+                        )} 
                         <div className="form-line">
-                            <label>Taux de consommation des délais (en %) <span>*</span></label>
+                            <label>Niveau de contractualisation du projet <span>*</span></label>
+                            <select name="contractualisation" defaultValue={focus.contractualisation} required>
+                                <option value="">- - - - - - - - - - - - - - - - - - - - - - - -  </option>
+                                <option value="DAO en cours d'élaboration">DAO en cours d'élaboration</option>
+                                <option value="DAO en cours d'examen en Commission">DAO en cours d'examen en Commission</option>
+                                <option value="AAO lancé avec ouverture des offres">AAO lancé avec ouverture des offres</option>
+                                <option value="Accord de gré gré attendu">Accord de gré gré attendu</option>
+                                <option value="Offres en cours d'examen">Offres en cours d'examen</option>
+                                <option value="Décision d'attribution signée">Décision d'attribution signée</option>
+                            </select>
+                        </div>
+                        <div className="form-line">
+                            <label>Numéro du marché <span>*</span></label>
+                            <input type="text" step="any" name="numeroMarche" defaultValue={focus.numeroMarche} required/>
+                        </div>
+                        <div className="form-line">
+                            <label>Date de notification de l'OS de démarrage <span>*</span></label>
+                            <input type="date" name="dateOs" defaultValue={focus.dateOs?new Date(focus.dateOs).toISOString().split("T")[0]:""} max={new Date().toISOString().split("T")[0]} required/>
+                        </div>
+                        <div className="form-line">
+                            <label>Taux de consommation des délais   (en %) <span>*</span></label>
                             <input type="number" step="any" max="100" name="tauxConsommation" defaultValue={focus.tauxConsommation} required/>
                         </div>
+                        
+                    </div>
+                    
+                    <div>   
                         <div className="form-line">
                             <label>Taux d'avancement des travaux (en %) <span>*</span></label>
                             <input type="number" step="any" max="100" name="tauxAvancement" defaultValue={focus.tauxAvancement} required/>
                         </div>
                         <div className="form-line">
-                            <label>Observation <span>*</span></label>
-                            <textarea name="description" defaultValue={focus.description} required/>
+                            <label>Contraintes/Difficultés éventuelles </label>
+                            <textarea name="description" defaultValue={focus.description} />
+                        </div>
+                        <div className="form-line">
+                            <label>Proposition de solutions </label>
+                            <textarea name="proposition" defaultValue={focus.proposition} />
                         </div>
                         <div className="form-line" style={{margin: "0"}}>
                             <button type="submit">Enregistrer</button>
                         </div>
-                    </div> 
+                    </div>
+
                 </form>
             </ModalBox>
 

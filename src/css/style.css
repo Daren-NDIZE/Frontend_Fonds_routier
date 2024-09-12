@@ -47,6 +47,14 @@ input,select{
 }
 .left-content{
     width: 265px;
+    background-color: var(--marron);
+    transition: 0.2s;
+}
+.view{
+    width: 0;
+}
+.view .sideBar{
+    transform: translateX(-265px);
 }
 .right-content{
     flex-grow: 1;
@@ -129,6 +137,7 @@ header > div:last-child{
     position: sticky;
     width: 265px;
     top: 0;
+    transition: 0.2s;
 }
 .s-bottom{
     position: absolute;
@@ -180,7 +189,24 @@ header > div:last-child{
     margin-top: 20px;
     overflow-y: auto;
     max-height: calc(100vh - 305px);
-    scrollbar-color: #00000033 transparent;
+    /* scrollbar-color: #00000033 transparent; */
+}
+nav::-webkit-scrollbar{
+    width: 8px;
+}
+nav::-webkit-scrollbar-track {
+    background: transparent; 
+    margin-right: 3px;
+}
+
+nav::-webkit-scrollbar-thumb {
+    background: #00000033; 
+    border-radius: 15px; 
+    padding-left: 3px;
+}
+
+nav::-webkit-scrollbar-thumb:hover {
+    background: #525252; 
 }
 .s-navigation li{
     list-style: none;
@@ -392,7 +418,7 @@ header > div:last-child{
     box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
 .b-col > div:first-child{
-    height: 45px;
+    height: 40px;
     font-weight: bold;
     font-size: 17px;
     color: var(--programme_t);
@@ -425,7 +451,7 @@ header > div:last-child{
     margin-bottom: 20px;
     margin-right: 5px;
     min-width: calc(100% - 5px);
-    font-size: 12px;
+    font-size: 11px;
 }
 .table thead{
     position: sticky;
@@ -439,7 +465,7 @@ table,tr,th,td{
 }
 
 .table tr{
-    height: 35px;
+    height: 30px;
 }
 .table .lineFocus{
     background: #3229af2e;
@@ -448,7 +474,7 @@ table,tr,th,td{
     text-align: left;
 }
 .table td, .table th{
-    padding: 6px 10px;
+    padding: 4px 6px;
 }
 tbody tr:nth-child(2n+1){
     background: #f3f5ff;
@@ -482,6 +508,9 @@ tr.height-line{
 .t-action i:active{
     box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
     color: black;
+}
+.t-action i.fa-key{
+    color: rgb(255, 172, 0);
 }
 .optionCol > div{
     position: relative;
@@ -558,16 +587,21 @@ tr.height-line{
     min-width: 320px;
 }
 .min-w13{
-    min-width: 230px;
+    /* min-width: 230px; */
+    min-width: 210px;
+
 }
 .min-w2{
-    min-width: 210px;
+    /* min-width: 210px; */
+    min-width: 190px;
 }
 .min-w3{
-    min-width: 150px;
+    /* min-width: 150px; */
+    min-width: 130px;
 }
 .min-w4{
-    min-width: 120px;
+    /* min-width: 120px; */
+    min-width: 110px;
 }
 .auto-w{
     width: auto;
@@ -576,7 +610,7 @@ tr.height-line{
     padding-bottom: 10px;
 }
 .mb-25{
-    margin-bottom: 20px;
+    margin-bottom: 8px;
 }
 .mr-10{
     margin-right: 10px;
@@ -584,14 +618,44 @@ tr.height-line{
 .flex{
     display: flex;
 }
+.flex-align{
+    display: flex;
+    align-items: center;
+}
 .bold{
     font-weight: bold;
 }
 .text-center{
     text-align: center;
 }
+td.end{
+    text-align: end;
+}
 table .text-center{
     text-align: center;
+}
+.eng{
+    background-color: #c1ddff;
+}
+.c-paid{
+    background-color: #bcffb9;
+}
+.p-im{
+    padding-top: 15px;
+    
+}
+.p-im p{
+    cursor: pointer;
+    text-align: end;
+    font-weight: bold;
+    color: #004cff;
+}
+.p-im p:active{
+    
+    color: #222931;
+}
+.str{
+    background-color: #fffbca;
 }
 .suivi-pg{
     display: flex;
@@ -1015,7 +1079,7 @@ form .load-button{
 }
 .top-element li{
     list-style: none;
-    padding: 10px 2px;
+    padding: 5px 2px;
     border-bottom: solid 3px transparent;
     font-weight: 500;
     cursor: pointer;
@@ -1117,9 +1181,9 @@ li.active{
 .multi-select input:focus{
     box-shadow: none;
 }
-.suivi .modal-content{
+/* .suivi .modal-content{
     overflow: visible;
-}
+} */
 .s-filter{
     display: flex;
     width: max-content;
@@ -1209,4 +1273,29 @@ li.active{
     border-color: #6e5214;
     color:#6e5214;
     background: #fff8e8;
+}
+
+@media  (max-width: 1200px) {
+
+    .left-content{
+        position: absolute;
+        height: 100vh;
+        width: 100vw;
+        z-index: 20;
+        background: rgba(0, 0, 0, 0.427);
+        backdrop-filter: blur(3px);
+        display: none;
+        transition: none;
+    }
+    .view{
+        display: block;
+    }
+    .sideBar{
+        transform: translateX(-265px);
+        transition: 0.2s;
+    }
+    .view .sideBar{
+        transform: translateX(0);
+    }
+    
 }

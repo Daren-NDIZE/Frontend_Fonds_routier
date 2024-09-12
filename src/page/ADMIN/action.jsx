@@ -12,14 +12,9 @@ function Action(){
     let [periode,setPeriode]=useState("")
     let [loader,setLoader]=useState(true)
     let [pageLoader,setPageLoader]=useState(false)
-
-
     
     let notification=useRef()
-    let data=useRef()
-
-
-
+    let data=useRef([])
 
     useEffect(()=>{
 
@@ -30,9 +25,8 @@ function Action(){
                 if(res.ok){
     
                     let resData= await res.json()
-                    
-                    setActions(resData)
                     data.current=resData
+                    setActions(resData)
                 }
     
             }catch(e){
@@ -58,11 +52,11 @@ function Action(){
         // }
        
         let formData =new FormData(form);
-        let data=Object.fromEntries(formData)
+        let datas=Object.fromEntries(formData)
         setPageLoader(true)
 
         try{
-            let res= await Fetch("action/getActionByPeriode","POST",data)
+            let res= await Fetch("action/getActionByPeriode","POST",datas)
             if(res.ok){
 
                 let resData= await res.json()
@@ -72,8 +66,8 @@ function Action(){
                     window.scroll({top: 0, behavior:"smooth"})
                     notification.current.setNotification({visible: true, type:resData.type,message:resData.message})
                 }else{
-                    setActions(resData)
                     data.current=resData
+                    setActions(resData)
                 }
 
                 
@@ -92,8 +86,6 @@ function Action(){
 
        setPeriode(e.target.value)
     }
-
-    
 
     if(loader){
         return(

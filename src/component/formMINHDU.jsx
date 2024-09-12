@@ -49,7 +49,7 @@ function Form({submit,annee}){
                     <select name="type_travaux" required>
                         <option value="">- - - - - - - - - - - - - - - - - - - - </option>
                         <option value="ENTRETIEN DES VOIRIES URBAINES">ENTRETIEN DES VOIRIES URBAINES</option>
-                        <option value="ETUDE DES CONTROLES TECHNIQUES">ETUDE DES CONTROLES TECHNIQUES</option>
+                        <option value="ETUDES ET CONTROLES TECHNIQUES">ETUDE DES CONTROLES TECHNIQUES</option>
                     </select>
                 </div>
                 <div className="form-line">
@@ -142,7 +142,7 @@ function UpdateForm({submit,data,annee}){
                     <select name="type_travaux" defaultValue={data.type_travaux} required>
                         <option value="">- - - - - - - - - - - - - - - - - - - - </option>
                         <option value="ENTRETIEN DES VOIRIES URBAINES">ENTRETIEN DES VOIRIES URBAINES</option>
-                        <option value="ETUDE DES CONTROLES TECHNIQUES">ETUDE DES CONTROLES TECHNIQUES</option>
+                        <option value="ETUDES ET CONTROLES TECHNIQUES">ETUDE DES CONTROLES TECHNIQUES</option>
                     </select>
                 </div>
                 <div className="form-line">
