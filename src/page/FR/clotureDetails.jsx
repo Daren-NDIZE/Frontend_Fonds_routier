@@ -23,7 +23,7 @@ function ClotureDetails(){
     let [loader,setLoader]=useState(true)
     let [data,setData]=useState([])
     let [pdf,setPdf]=useState()
-    let [categorie,setCategorie]=useState("CENTRALE")
+    let [categorie,setCategorie]=useState()
     
     const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
@@ -51,8 +51,13 @@ function ClotureDetails(){
                         setProgramme(resData)
                         projet.current=resData.projetList.filter(i=>i.financement!=="RESERVE")
                         if(resData.ordonnateur==="MINTP"){
+                            setCategorie("MINT")
                             setData(resData.projetList.filter(i=>(i.financement!=="RESERVE" && i.categorie!=="PROJET A GESTION COMMUNALE") ))
                             return;                  
+                        }else if(resData.ordonnateur==="MINT"){
+                            setCategorie("MINT")
+                            setData(resData.projetList.filter(i=>(i.financement!=="RESERVE" && i.ordonnateur==="MINT")))
+                            return;
                         }
                         setData(resData.projetList.filter(i=>i.financement!=="RESERVE"))
                     }
@@ -86,7 +91,25 @@ function ClotureDetails(){
         li.classList.add("active")
     }
 
+    const changeMINT=(e,i)=>{
 
+        let li=e.target
+
+        setCategorie(i)
+        if(i==="MINT"){
+            setData(projet.current.filter(i=>i.ordonnateur==="MINT"))
+        }else{
+            setData(projet.current.filter(i=>i.ordonnateur==="MAIRE"))
+        }
+        if(li.classList.contains("active")){
+            return;
+        }
+
+        Array.from(li.parentNode.children).forEach(i=>{
+            i.classList.remove("active")
+        })
+        li.classList.add("active")
+    }
     
     const loadPdf=async(id)=>{
 
@@ -110,6 +133,50 @@ function ClotureDetails(){
         downLoadExcel(document.querySelector(".table"),"feuille 1","Suivi "+fileName)
     }
 
+    const searchChoose=(ordonnateur)=>{
+
+        let data
+        let key
+
+        if(ordonnateur==="MINT"){
+
+            if(categorie==="MINT"){
+                data=projet.current.filter(i=>i.ordonnateur==="MINT")
+                key=["region","budget_n","prestataire","ordonnateur"]
+    
+                return ({data:data, key: key})
+    
+            }else{
+    
+                data=projet.current.filter(i=>i.ordonnateur==="MAIRE")
+                key=["region","departement","commune","budget_n","prestataire","ordonnateur"]
+            }
+           
+
+        }else if(ordonnateur==="MINHDU"){
+
+            data=projet.current
+            key=["region","ville","type_travaux","budget_n","prestataire","ordonnateur"]
+
+        }else if(ordonnateur==="MINTP"){
+
+            if(categorie==="CENTRALE"){
+
+                data=projet.current.filter(i=>i.categorie!=="PROJET A GESTION COMMUNALE")
+                key=["region","budget_n","categorie","code_route","prestataire"]
+    
+            }else{
+    
+                data=projet.current.filter(i=>i.categorie==="PROJET A GESTION COMMUNALE")
+                key=["region","departement","commune","budget_n","code_route","prestataire"]
+        
+            }
+        }
+
+        return ({data:data, key: key})
+        
+    }
+
    
     if(loader){
         return(
@@ -128,7 +195,7 @@ function ClotureDetails(){
                     </button>
                 </div>
                 <div className="box b-search">
-                    <SearchBar/>
+                    <SearchBar data={searchChoose(programme.ordonnateur).data} keys={searchChoose(programme.ordonnateur).key} onSetData={setData} />
                 </div>
             </div>
 
@@ -144,6 +211,14 @@ function ClotureDetails(){
                         <ul>
                             <li className="active" onClick={(e)=>changeTable(e,"CENTRALE")} >Gestion centrale/regionale</li>
                             <li onClick={(e)=>changeTable(e,"COMMUNE")}>Gestion communale</li>
+                        </ul>
+                    </div>
+                )}
+                {programme.ordonnateur==="MINT" &&(   
+                    <div className="top-element s-change">
+                        <ul>
+                            <li className="active" onClick={(e)=>changeMINT(e,"MINT")} >Gestion centrale</li>
+                            <li onClick={(e)=>changeMINT(e,"MAIRE")}>Gestion communale</li>
                         </ul>
                     </div>
                 )}
@@ -287,7 +362,7 @@ const TableMINHDU=({data,programme,onLoadPdf})=>{
                         <th>Ordonnateurs</th>
                         <th className="min-w1">Observations</th>
                         <th>Situation</th>
-                        <th className="min-w1">Motifs</th>
+                        <th className="min-w1">Motifs éventuels</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -364,7 +439,7 @@ const TableMINT=({data,programme,onLoadPdf})=>{
                         <th>Ordonnateurs</th>
                         <th className="min-w1">Observations</th> 
                         <th className="min-w4">situation</th>
-                        <th className="min-w1">Motifs</th>
+                        <th className="min-w1">Motifs éventuels</th>
                     </tr>
                 </thead>
                 <tbody> 
@@ -447,7 +522,7 @@ const TableMINTP=({data,programme,categorie,onLoadPdf})=>{
                     <th className="min-w4">{`Projection ${programme.annee+2}`}</th>
                     <th className="min-w1">Observations</th>
                     <th className="min-w4">Situation</th>
-                    <th className="min-w1">Motifs</th>
+                    <th className="min-w1">Motifs éventuels</th>
                 </tr>
             </thead>
                 <tbody> 

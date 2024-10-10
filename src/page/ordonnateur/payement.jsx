@@ -64,7 +64,7 @@ function Payement({role}){
                     projet.current=resData.projetList.filter((i=>i.financement!=="RESERVE" && i.bordereau ))
                     if(resData.ordonnateur==="MINTP"){
                         setCategorie("CENTRALE")
-                        setData(resData.projetList.filter(i=>(i.financement!=="RESERVE"  && i.bordereau && i.categorie!=="PROJET A GESTION COMMUNALE") ))
+                        setData(resData.projetList.filter(i=>(i.financement!=="RESERVE"  && i.bordereau && i.categorie==="PROJET A GESTION CENTRALE") ))
                         return;                  
                     }else if(resData.ordonnateur==="MINT"){
                         setCategorie("MINT")
@@ -91,11 +91,11 @@ function Payement({role}){
         let li=e.target
 
         setCategorie(i)
-        if(i==="CENTRALE"){
-            setData(projet.current.filter(i=>i.categorie!=="PROJET A GESTION COMMUNALE"))
-        }else{
-            setData(projet.current.filter(i=>i.categorie==="PROJET A GESTION COMMUNALE"))
-        }
+
+        let type= `PROJET A GESTION ${i}`
+
+        setData(projet.current.filter(i=>i.categorie=== type))
+       
         if(li.classList.contains("active")){
             return;
         }
@@ -160,16 +160,15 @@ function Payement({role}){
 
         }else if(ordonnateur==="MINTP"){
 
-            if(categorie==="CENTRALE"){
+            let type=`PROJET A GESTION ${categorie}`
+            data=projet.current.filter(i=>i.categorie===type)
 
-                data=projet.current.filter(i=>i.categorie!=="PROJET A GESTION COMMUNALE")
+            if(categorie!=="COMMUNALE"){
+
                 key=["region","budget_n","code_route","prestataire"]
-    
             }else{
     
-                data=projet.current.filter(i=>i.categorie==="PROJET A GESTION COMMUNALE")
                 key=["region","departement","commune","budget_n","code_route","prestataire"]
-        
             }
         }
 
@@ -234,8 +233,9 @@ function Payement({role}){
                 {programme.ordonnateur==="MINTP" &&  
                     <div className="top-element s-change">
                         <ul>
-                            <li className="active" onClick={(e)=>changeTable(e,"CENTRALE")} >Gestion centrale/regionale</li>
-                            <li onClick={(e)=>changeTable(e,"COMMUNE")}>Gestion communale</li>
+                            <li className="active" onClick={(e)=>changeTable(e,"CENTRALE")} >Centrale</li>
+                            <li onClick={(e)=>changeTable(e,"REGIONALE")} >Regionale</li>
+                            <li onClick={(e)=>changeTable(e,"COMMUNALE")}>Communale</li>
                         </ul>
                     </div>
                 }
@@ -403,8 +403,6 @@ const TableMINHDU=({data,programme,onLoadPdf})=>{
                         <th className="min-w4">Engagement</th>
                         <th className="min-w4">Reliquat</th>
                         <th className="min-w3">Prestataire</th>
-                        <th className="min-w4">Projection {programme.annee+1}</th>
-                        <th className="min-w4">Projection {programme.annee+2}</th>
                         <th>Ordonnateurs</th>
                         <th className="min-w4">Situation</th>
                         <th colSpan="9" className="text-center c-paid">Suivi des payements</th>
@@ -425,8 +423,6 @@ const TableMINHDU=({data,programme,onLoadPdf})=>{
                                 <td rowSpan={i.payement.length +2} className="end">{i.suivi && numStr(i.suivi.engagement)}</td>
                                 <td rowSpan={i.payement.length +2} className="end">{(i.suivi && i.suivi.engagement!==0) && numStr((i.budget_n - i.suivi.engagement),0)}</td>
                                 <td rowSpan={i.payement.length +2}>{i.prestataire}</td>
-                                <td rowSpan={i.payement.length +2} className="end">{numStr(i.budget_n1)}</td>
-                                <td rowSpan={i.payement.length +2} className="end">{numStr(i.budget_n2)}</td>
                                 <td rowSpan={i.payement.length +2}>{i.ordonnateur}</td>
                                 <td rowSpan={i.payement.length +2}>  
                                     <p  onClick={()=>onLoadPdf(i.id)} className="deco">{i.suivi.statut}</p>       
@@ -501,8 +497,6 @@ const TableMINT=({data,programme,categorie,onLoadPdf})=>{
                         <th className="min-w4">Engagement</th>
                         <th className="min-w4">Reliquat</th>
                         <th className="min-w3">Prestataire</th>
-                        <th className="min-w4">Projection {programme.annee+1}</th>
-                        <th className="min-w4">Projection {programme.annee+2}</th>
                         <th>Ordonnateurs</th>
                         <th className="min-w4">situation</th>
                         <th colSpan="9"  className="text-center c-paid">Suivi des payements</th>
@@ -529,8 +523,6 @@ const TableMINT=({data,programme,categorie,onLoadPdf})=>{
                             <td rowSpan={i.payement.length +2} className="end">{i.suivi && numStr(i.suivi.engagement)}</td>
                             <td rowSpan={i.payement.length +2} className="end">{(i.suivi && i.suivi.engagement!==0) && numStr(i.budget_n - i.suivi.engagement,0)}</td>
                             <td rowSpan={i.payement.length +2}>{i.prestataire}</td>
-                            <td rowSpan={i.payement.length +2} className="end">{numStr(i.budget_n1,"")}</td>
-                            <td rowSpan={i.payement.length +2} className="end">{numStr(i.budget_n2,"")}</td>
                             <td rowSpan={i.payement.length +2}>{i.ordonnateur}</td>
                             <td rowSpan={i.payement.length +2}>
                                 <p onClick={()=>onLoadPdf(i.id)} className="deco">{i.suivi.statut}</p>    
@@ -591,7 +583,7 @@ const TableMINTP=({data,programme,categorie,onLoadPdf})=>{
                 <tr>
                     <th>N°</th>
                     <th>Région</th>
-                    {categorie==="COMMUNE" &&(
+                    {categorie==="COMMUNALE" &&(
                     <>
                         <th className="min-w3">Département</th>
                         <th className="min-w3">Commune</th>
@@ -608,8 +600,6 @@ const TableMINTP=({data,programme,categorie,onLoadPdf})=>{
                     <th className="min-w4">Engagement</th>
                     <th className="min-w4">Reliquat</th>
                     <th className="min-w3">Prestataire</th>
-                    <th className="min-w4">Projection {programme.annee+1}</th>
-                    <th className="min-w4">Projection {programme.annee+2}</th>
                     <th className="min-w4">Situation</th>
                     <th colSpan="9" className="text-center c-paid">Suivi des payements</th>
                 </tr>
@@ -620,7 +610,7 @@ const TableMINTP=({data,programme,categorie,onLoadPdf})=>{
                         <tr rowSpan={i.payement.length +2} key={j}>
                             <td rowSpan={i.payement.length +2}>{j+1}</td>
                             <td rowSpan={i.payement.length +2}>{i.region.replaceAll("_","-")}</td>
-                            {categorie==="COMMUNE" &&(
+                            {categorie==="COMMUNALE" &&(
                             <>
                                 <td rowSpan={i.payement.length +2}>{i.departement}</td>
                                 <td rowSpan={i.payement.length +2}>{i.commune}</td>
@@ -637,8 +627,6 @@ const TableMINTP=({data,programme,categorie,onLoadPdf})=>{
                             <td rowSpan={i.payement.length +2} className="end">{i.suivi && numStr(i.suivi.engagement)}</td>
                             <td rowSpan={i.payement.length +2} className="end">{(i.suivi && i.suivi.engagement!==0) && numStr(i.budget_n - i.suivi.engagement,0)}</td>
                             <td rowSpan={i.payement.length +2}>{i.prestataire}</td>
-                            <td rowSpan={i.payement.length +2} className="end">{numStr(i.budget_n1,"")}</td>
-                            <td rowSpan={i.payement.length +2} className="end">{numStr(i.budget_n2,"")}</td>
                             <td rowSpan={i.payement.length +2}>
                                 <p  onClick={()=>onLoadPdf(i.id)} className="deco">{i.suivi.statut}</p>    
                             </td>

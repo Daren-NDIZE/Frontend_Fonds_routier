@@ -64,7 +64,7 @@ function Engagement({role}){
                     projet.current=resData.projetList.filter(i=>i.financement!=="RESERVE")
                     if(resData.ordonnateur==="MINTP"){
                         setCategorie("CENTRALE")
-                        setData(resData.projetList.filter(i=>(i.financement!=="RESERVE" && i.categorie!=="PROJET A GESTION COMMUNALE") ))
+                        setData(resData.projetList.filter(i=>(i.financement!=="RESERVE" && i.categorie==="PROJET A GESTION CENTRALE") ))
                         return;                  
                     }else if(resData.ordonnateur==="MINT"){
                         setCategorie("MINT")
@@ -89,12 +89,13 @@ function Engagement({role}){
     const changeTable=(e,i)=>{
 
         let li=e.target
+
         setCategorie(i)
-        if(i==="CENTRALE"){
-            setData(projet.current.filter(i=>i.categorie!=="PROJET A GESTION COMMUNALE"))
-        }else{
-            setData(projet.current.filter(i=>i.categorie==="PROJET A GESTION COMMUNALE"))
-        }
+
+        let type= `PROJET A GESTION ${i}`
+
+        setData(projet.current.filter(i=>i.categorie=== type))
+       
         if(li.classList.contains("active")){
             return;
         }
@@ -174,16 +175,15 @@ function Engagement({role}){
 
         }else if(ordonnateur==="MINTP"){
 
-            if(categorie==="CENTRALE"){
+            let type=`PROJET A GESTION ${categorie}`
+            data=projet.current.filter(i=>i.categorie===type)
 
-                data=projet.current.filter(i=>i.categorie!=="PROJET A GESTION COMMUNALE")
+            if(categorie!=="COMMUNALE"){
+
                 key=["region","budget_n","code_route","prestataire"]
-    
             }else{
     
-                data=projet.current.filter(i=>i.categorie==="PROJET A GESTION COMMUNALE")
                 key=["region","departement","commune","budget_n","code_route","prestataire"]
-        
             }
         }
 
@@ -191,7 +191,6 @@ function Engagement({role}){
         
     }
 
-   
     
     return(
         <div className="container pb-10 suivi" >
@@ -245,8 +244,9 @@ function Engagement({role}){
                 {programme.ordonnateur==="MINTP" &&(   
                     <div className="top-element s-change">
                         <ul>
-                            <li className="active" onClick={(e)=>changeTable(e,"CENTRALE")} >Gestion centrale/regionale</li>
-                            <li onClick={(e)=>changeTable(e,"COMMUNE")}>Gestion communale</li>
+                            <li className="active" onClick={(e)=>changeTable(e,"CENTRALE")} >Centrale</li>
+                            <li onClick={(e)=>changeTable(e,"REGIONALE")} >Regionale</li>
+                            <li onClick={(e)=>changeTable(e,"COMMUNALE")}>Communale</li>
                         </ul>
                     </div>
                 )}
@@ -399,8 +399,6 @@ const TableMINHDU=({data,programme,onLoadPdf})=>{
                         <th rowSpan="2" className="min-w4">Budget total TTC</th>
                         <th rowSpan="2" className="min-w4">Budget antérieur</th>
                         <th colSpan="6" className="text-center eng">Engagement</th>
-                        <th rowSpan="2" className="min-w4">{`Projection ${programme.annee+1}`}</th>
-                        <th rowSpan="2" className="min-w4">{`Projection ${programme.annee+2}`}</th>
                         <th rowSpan="2">Ordonnateurs</th>
                     </tr>
                     <tr>
@@ -439,8 +437,6 @@ const TableMINHDU=({data,programme,onLoadPdf})=>{
                                     parseTable(i.suivi.motif).map((k,l)=><li key={l}>{k}</li>)
                                 )}
                             </td>
-                            <td className="end">{numStr(i.budget_n1)}</td>
-                            <td className="end">{numStr(i.budget_n2)}</td>
                             <td>{i.ordonnateur}</td> 
                         </tr>
                     )
@@ -448,10 +444,10 @@ const TableMINHDU=({data,programme,onLoadPdf})=>{
                     
                     <tr>
                         <td colSpan="8">Provision de réserve</td>
-                        <td className="end">{numStr(programme.prevision,0)} fcfa</td>
-                        <td className="end">{numStr(totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
+                        <td className="end">{numStr(programme.prevision,0)}</td>
+                        <td className="end">{numStr(totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)}</td>
                         <td className="end">{numStr(programme.prevision-totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)}</td>
-                        <td colSpan="6">
+                        <td colSpan="3">
                             <Link to={`/programmes/programme-MINHDU/${programme.id}/prévision`} >Détails</Link>
                         </td>
                     </tr>
@@ -483,8 +479,6 @@ const TableMINT=({data,programme,categorie,onLoadPdf})=>{
                         <th rowSpan="2" className="min-w4">Budget total TTC</th>
                         <th rowSpan="2" className="min-w4">Budget antérieur</th>
                         <th className="text-center eng" colSpan="6">Engagement</th>
-                        <th rowSpan="2" className="min-w4">{`Projection ${programme.annee+1}`}</th>
-                        <th rowSpan="2" className="min-w4">{`Projection ${programme.annee+2}`}</th>
                         <th rowSpan="2">Ordonnateurs</th>
                     </tr>
                     <tr>
@@ -527,17 +521,15 @@ const TableMINT=({data,programme,categorie,onLoadPdf})=>{
                                 parseTable(i.suivi.motif).map((k,l)=><li key={l}>{k}</li>)
                             )}
                         </td>
-                        <td className="end">{numStr(i.budget_n1,"")}</td>
-                        <td className="end">{numStr(i.budget_n2,"")}</td>
                         <td>{i.ordonnateur}</td>                   
                     </tr>
                     )}
                     <tr>
                         <td colSpan={categorie==="MAIRE"?"9":"7"} >Provision de réserve</td>
-                        <td className="end">{numStr(programme.prevision,0)} fcfa</td>
-                        <td className="end">{numStr(totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
+                        <td className="end">{numStr(programme.prevision,0)}</td>
+                        <td className="end">{numStr(totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)}</td>
                         <td className="end">{numStr(programme.prevision-totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)}</td>
-                        <td colSpan="6">
+                        <td colSpan="3">
                             <Link to={`/programmes/programme-MINT/${programme.id}/prévision`} >Détails</Link>
                         </td>
                     </tr>
@@ -557,7 +549,7 @@ const TableMINTP=({data,programme,categorie,onLoadPdf})=>{
                     <tr>
                         <th rowSpan="2">N°</th>
                         <th rowSpan="2">Région</th>
-                        {categorie==="COMMUNE" &&(
+                        {categorie==="COMMUNALE" &&(
                         <>
                             <th rowSpan="2">Département</th>
                             <th rowSpan="2" className="min-w3">Commune</th>
@@ -571,8 +563,6 @@ const TableMINTP=({data,programme,categorie,onLoadPdf})=>{
                         <th rowSpan="2" className="min-w4">Budget total TTC</th>
                         <th rowSpan="2" className="min-w4">Budget antérieur</th>
                         <th className="text-center eng" colSpan="6">Engagement</th>
-                        <th rowSpan="2" className="min-w4">{`Projection ${programme.annee+1}`}</th>
-                        <th rowSpan="2" className="min-w4">{`Projection ${programme.annee+2}`}</th>
                     </tr>
                     <tr>
                         <th className="min-w4 eng">{`Budget ${programme.annee}`}</th>
@@ -585,48 +575,46 @@ const TableMINTP=({data,programme,categorie,onLoadPdf})=>{
                 </thead>
                 <tbody> 
                 {data.map((i,j)=>
-                        <tr key={j}>
-                            <td>{j+1}</td>
-                            <td>{i.region.replaceAll("_","-")}</td>
-                            {categorie==="COMMUNE" &&(
-                            <>
-                                <td>{i.departement}</td>
-                                <td>{i.commune}</td>
-                            </>
+                    <tr key={j}>
+                        <td>{j+1}</td>
+                        <td>{i.region.replaceAll("_","-")}</td>
+                        {categorie==="COMMUNALE" &&(
+                        <>
+                            <td>{i.departement}</td>
+                            <td>{i.commune}</td>
+                        </>
+                        )}
+                        <td>{i.categorie}</td>
+                        <td>{i.projet}</td>
+                        <td>{i.code_route}</td>
+                        <td className="end">{numStr(i.lineaire_route)}</td>
+                        <td className="end">{numStr(i.lineaire_oa)}</td>
+                        <td className="end">{numStr(i.ttc)}</td>
+                        <td className="end">{numStr(i.budget_anterieur)}</td>
+                        <td className="end">{numStr(i.budget_n) }</td>
+                        <td className="end">{i.suivi && numStr(i.suivi.engagement)}</td>
+                        <td className="end">{(i.suivi && i.suivi.engagement!==0) && numStr(i.budget_n - i.suivi.engagement,0)}</td>
+                        <td>{i.prestataire}</td>
+                        <td>
+                            {i.suivi &&(i.bordereau?
+                                <p  onClick={()=>onLoadPdf(i.id)} className="deco">{i.suivi.statut}</p>    
+                                :i.suivi.statut
                             )}
-                            <td>{i.categorie}</td>
-                            <td>{i.projet}</td>
-                            <td>{i.code_route}</td>
-                            <td className="end">{numStr(i.lineaire_route)}</td>
-                            <td className="end">{numStr(i.lineaire_oa)}</td>
-                            <td className="end">{numStr(i.ttc)}</td>
-                            <td className="end">{numStr(i.budget_anterieur)}</td>
-                            <td className="end">{numStr(i.budget_n) }</td>
-                            <td className="end">{i.suivi && numStr(i.suivi.engagement)}</td>
-                            <td className="end">{(i.suivi && i.suivi.engagement!==0) && numStr(i.budget_n - i.suivi.engagement,0)}</td>
-                            <td>{i.prestataire}</td>
-                            <td>
-                                {i.suivi &&(i.bordereau?
-                                    <p  onClick={()=>onLoadPdf(i.id)} className="deco">{i.suivi.statut}</p>    
-                                    :i.suivi.statut
-                                )}
-                            </td>
-                            <td>
-                                {i.suivi && (
-                                    parseTable(i.suivi.motif).map((k,l)=><li key={l}>{k}</li>)
-                                )}
-                            </td>  
-                            <td className="end">{numStr(i.budget_n1,"")}</td>
-                            <td className="end">{numStr(i.budget_n2,"")}</td>                        
-                        </tr>
-                    )
+                        </td>
+                        <td>
+                            {i.suivi && (
+                                parseTable(i.suivi.motif).map((k,l)=><li key={l}>{k}</li>)
+                            )}
+                        </td>                   
+                    </tr>
+                )
                     }
                     <tr>
-                        <td colSpan={categorie==="CENTRALE"?"9":"11"} >Provision de réserve</td>
-                        <td className="end">{numStr(programme.prevision,0)} fcfa</td>
-                        <td className="end">{numStr(totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)} fcfa</td>
+                        <td colSpan={categorie!=="COMMUNALE"?"9":"11"} >Provision de réserve</td>
+                        <td className="end">{numStr(programme.prevision,0)}</td>
+                        <td className="end">{numStr(totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)}</td>
                         <td className="end">{numStr(programme.prevision-totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)}</td>
-                        <td colSpan="5">
+                        <td colSpan="3">
                             <Link to={`/programmes/programme-MINTP/${programme.id}/prévision`} >Détails</Link>
                         </td>
                     </tr>

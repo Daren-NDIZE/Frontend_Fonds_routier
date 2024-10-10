@@ -298,7 +298,6 @@ function SuiviPayement(){
  
     }
 
-
     const changeTable=(e,i)=>{
 
         let li=e.target

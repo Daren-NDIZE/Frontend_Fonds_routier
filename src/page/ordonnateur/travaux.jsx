@@ -62,7 +62,7 @@ function Travaux({role}){
                     projet.current=resData.projetList.filter(i=>i.financement!=="RESERVE")
                     if(resData.ordonnateur==="MINTP"){
                         setCategorie("CENTRALE")
-                        setData(resData.projetList.filter(i=>(i.financement!=="RESERVE" && i.categorie!=="PROJET A GESTION COMMUNALE") ))
+                        setData(resData.projetList.filter(i=>(i.financement!=="RESERVE" && i.categorie==="PROJET A GESTION CENTRALE") ))
                         return;                  
                     }else if(resData.ordonnateur==="MINT"){
                         setCategorie("MINT")
@@ -87,12 +87,13 @@ function Travaux({role}){
     const changeTable=(e,i)=>{
 
         let li=e.target
+
         setCategorie(i)
-        if(i==="CENTRALE"){
-            setData(projet.current.filter(i=>i.categorie!=="PROJET A GESTION COMMUNALE"))
-        }else{
-            setData(projet.current.filter(i=>i.categorie==="PROJET A GESTION COMMUNALE"))
-        }
+
+        let type= `PROJET A GESTION ${i}`
+
+        setData(projet.current.filter(i=>i.categorie=== type))
+       
         if(li.classList.contains("active")){
             return;
         }
@@ -172,16 +173,15 @@ function Travaux({role}){
 
         }else if(ordonnateur==="MINTP"){
 
-            if(categorie==="CENTRALE"){
+            let type=`PROJET A GESTION ${categorie}`
+            data=projet.current.filter(i=>i.categorie===type)
 
-                data=projet.current.filter(i=>i.categorie!=="PROJET A GESTION COMMUNALE")
+            if(categorie!=="COMMUNALE"){
+
                 key=["region","budget_n","code_route","prestataire"]
-    
             }else{
     
-                data=projet.current.filter(i=>i.categorie==="PROJET A GESTION COMMUNALE")
                 key=["region","departement","commune","budget_n","code_route","prestataire"]
-        
             }
         }
 
@@ -243,8 +243,9 @@ function Travaux({role}){
                 {programme.ordonnateur==="MINTP" &&(   
                     <div className="top-element s-change">
                         <ul>
-                            <li className="active" onClick={(e)=>changeTable(e,"CENTRALE")} >Gestion centrale/regionale</li>
-                            <li onClick={(e)=>changeTable(e,"COMMUNE")}>Gestion communale</li>
+                            <li className="active" onClick={(e)=>changeTable(e,"CENTRALE")} >Centrale</li>
+                            <li onClick={(e)=>changeTable(e,"REGIONALE")} >Regionale</li>
+                            <li onClick={(e)=>changeTable(e,"COMMUNALE")}>Communale</li>
                         </ul>
                     </div>
                 )}
@@ -397,8 +398,6 @@ const TableMINHDU=({data,programme,onLoadPdf})=>{
                         <th rowSpan="2" className="min-w4">Budget total TTC</th>
                         <th rowSpan="2" className="min-w4">Budget antérieur</th>
                         <th rowSpan="2" className="min-w4">{`budget ${programme.annee}`}</th>
-                        <th rowSpan="2" className="min-w4">{`Projection ${programme.annee+1}`}</th>
-                        <th rowSpan="2" className="min-w4">{`Projection ${programme.annee+2}`}</th>
                         <th rowSpan="2" className="min-w3">Prestataire</th>
                         <th rowSpan="2">Ordonnateurs</th>
                         <th colSpan="8" className="text-center str">Suivi passation et exécution</th>
@@ -407,7 +406,7 @@ const TableMINHDU=({data,programme,onLoadPdf})=>{
                         <th className="str">Date</th>
                         <th className="min-w13 str">Niveau de contractualisation du projet</th>
                         <th className="min-w4 str">N° du Marché</th>
-                        <th className="min-w4 str">Date OS avance de demarrage</th>
+                        <th className="min-w4 str">Date OS  de demarrage</th>
                         <th className="str">Taux de consommation</th>
                         <th className="str">Taux d'avancement</th>
                         <th className="min-w12 str">Contraintes/Difficultés éventuelles</th>
@@ -426,8 +425,6 @@ const TableMINHDU=({data,programme,onLoadPdf})=>{
                             <td className="end">{numStr(i.ttc)}</td>
                             <td className="end">{numStr(i.budget_anterieur)}</td>
                             <td className="end">{numStr(i.budget_n) }</td>
-                            <td className="end">{numStr(i.budget_n1)}</td>
-                            <td className="end">{numStr(i.budget_n2)}</td>
                             <td>{i.prestataire}</td>
                             <td>{i.ordonnateur}</td> 
                             {i.suiviTravaux.length?
@@ -475,8 +472,6 @@ const TableMINT=({data,programme,categorie,onLoadPdf})=>{
                         <th rowSpan="2" className="min-w4">Budget total TTC</th>
                         <th rowSpan="2" className="min-w4">Budget antérieur</th>
                         <th rowSpan="2" className="min-w4">{`budget ${programme.annee}`}</th>
-                        <th rowSpan="2" className="min-w4">{`Projection ${programme.annee+1}`}</th>
-                        <th rowSpan="2" className="min-w4">{`Projection ${programme.annee+2}`}</th>
                         <th rowSpan="2" className="min-w3">Prestataire</th>
                         <th rowSpan="2">Ordonnateurs</th>
                         <th colSpan="8" className="text-center str">Suivi passation et exécution</th>
@@ -485,7 +480,7 @@ const TableMINT=({data,programme,categorie,onLoadPdf})=>{
                         <th className="str">Date</th>
                         <th className="min-w13 str">Niveau de contractualisation du projet</th>
                         <th className="min-w4 str">N° du Marché</th>
-                        <th className="min-w4 str">Date OS avance de demarrage</th>
+                        <th className="min-w4 str">Date OS de demarrage</th>
                         <th className="str">Taux de consommation</th>
                         <th className="str">Taux d'avancement</th>
                         <th className="min-w12 str">Contraintes/Difficultés éventuelles</th>
@@ -509,8 +504,6 @@ const TableMINT=({data,programme,categorie,onLoadPdf})=>{
                         <td className="end">{numStr(i.ttc,"")}</td>
                         <td className="end">{numStr(i.budget_anterieur)}</td>
                         <td className="end">{numStr(i.budget_n) }</td>
-                        <td className="end">{numStr(i.budget_n1,"")}</td>
-                        <td className="end">{numStr(i.budget_n2,"")}</td>
                         <td>{i.prestataire}</td>
                         <td>{i.ordonnateur}</td> 
                         {i.suiviTravaux.length?
@@ -546,7 +539,7 @@ const TableMINTP=({data,programme,categorie,onLoadPdf})=>{
                     <tr>
                         <th rowSpan="2">N°</th>
                         <th rowSpan="2">Région</th>
-                        {categorie==="COMMUNE" &&(
+                        {categorie==="COMMUNALE" &&(
                         <>
                             <th rowSpan="2">Département</th>
                             <th rowSpan="2" className="min-w3">Commune</th>
@@ -560,8 +553,6 @@ const TableMINTP=({data,programme,categorie,onLoadPdf})=>{
                         <th rowSpan="2" className="min-w4">Budget total TTC</th>
                         <th rowSpan="2" className="min-w4">Budget antérieur</th>
                         <th rowSpan="2" className="min-w4">{`budget ${programme.annee}`}</th>
-                        <th rowSpan="2" className="min-w4">{`Projection ${programme.annee+1}`}</th>
-                        <th rowSpan="2" className="min-w4">{`Projection ${programme.annee+2}`}</th>
                         <th rowSpan="2" className="min-w3">Prestataire</th>
                         <th colSpan="8" className="text-center str">Suivi passation et exécution</th>
                     </tr>
@@ -569,7 +560,7 @@ const TableMINTP=({data,programme,categorie,onLoadPdf})=>{
                         <th className="str">Date</th>
                         <th className="min-w13 str">Niveau de contractualisation du projet</th>
                         <th className="min-w4 str">N° du Marché</th>
-                        <th className="min-w4 str">Date OS avance de demarrage</th>
+                        <th className="min-w4 str">Date OS  de demarrage</th>
                         <th className="str">Taux de consommation</th>
                         <th className="str">Taux d'avancement</th>
                         <th className="min-w12 str">Contraintes/Difficultés éventuelles</th>
@@ -581,7 +572,7 @@ const TableMINTP=({data,programme,categorie,onLoadPdf})=>{
                     <tr key={j}>
                         <td>{j+1}</td>
                         <td>{i.region.replaceAll("_","-")}</td>
-                        {categorie==="COMMUNE" &&(
+                        {categorie==="COMMUNALE" &&(
                         <>
                             <td>{i.departement}</td>
                             <td>{i.commune}</td>
@@ -595,8 +586,6 @@ const TableMINTP=({data,programme,categorie,onLoadPdf})=>{
                         <td className="end">{numStr(i.ttc)}</td>
                         <td className="end">{numStr(i.budget_anterieur)}</td>
                         <td className="end">{numStr(i.budget_n) }</td>
-                        <td className="end">{numStr(i.budget_n1,"")}</td>
-                        <td className="end">{numStr(i.budget_n2,"")}</td> 
                         <td>{i.prestataire}</td>
                         {i.suiviTravaux.length?
                         <>

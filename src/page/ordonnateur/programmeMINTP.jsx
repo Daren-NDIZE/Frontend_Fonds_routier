@@ -63,7 +63,7 @@ function ProgrammeMINTP (){
                     }else{
                         setProgramme(resData)
                         projet.current=resData.projetList.filter(i=>i.financement!=="RESERVE")
-                        setData(resData.projetList.filter(i=>(i.financement!=="RESERVE" && i.categorie!=="PROJET A GESTION COMMUNALE") ))
+                        setData(resData.projetList.filter(i=>(i.financement!=="RESERVE" && i.categorie==="PROJET A GESTION CENTRALE") ))
                     }
                 }
             }catch(e){
@@ -110,12 +110,10 @@ function ProgrammeMINTP (){
                     if(response.ok){
                         let resdata= await response.json()
 
+                        let type=`PROJET A GESTION ${categorie}`
                         projet.current=resdata.projetList.filter(i=>i.financement!=="RESERVE")
-                        if(categorie==="CENTRALE"){
-                            setData(resdata.projetList.filter(i=>(i.financement!=="RESERVE" && i.categorie!=="PROJET A GESTION COMMUNALE") ))
-                        }else{
-                            setData(resdata.projetList.filter(i=>(i.financement!=="RESERVE" && i.categorie==="PROJET A GESTION COMMUNALE") ))
-                        }
+                        setData(resdata.projetList.filter(i=>(i.financement!=="RESERVE" && i.categorie===type) ))
+                        
                     }
                 }
 
@@ -244,13 +242,14 @@ function ProgrammeMINTP (){
                 if(resData.type==="succes"){
                     
                     let response = await fetchGet(`programmeByRole/${id}`)
-                    if(response.ok){
+                    if(response.ok){  
 
                         let resdata= await response.json()
 
                         setProgramme(resdata)
+                        let type=`PROJET A GESTION ${categorie}`
                         projet.current=resdata.projetList.filter(i=>i.financement!=="RESERVE")
-                        setData(resdata.projetList.filter(i=>(i.financement!=="RESERVE" && i.categorie!=="PROJET A GESTION COMMUNALE") ))
+                        setData(resdata.projetList.filter(i=>(i.financement!=="RESERVE" && i.categorie===type) ))             
                     }
                 }
 
@@ -302,11 +301,11 @@ function ProgrammeMINTP (){
         let li=e.target
 
         setCategorie(i)
-        if(i==="CENTRALE"){
-            setData(projet.current.filter(i=>i.categorie!=="PROJET A GESTION COMMUNALE"))
-        }else{
-            setData(projet.current.filter(i=>i.categorie==="PROJET A GESTION COMMUNALE"))
-        }
+
+        let type= `PROJET A GESTION ${i}`
+
+        setData(projet.current.filter(i=>i.categorie=== type))
+       
         if(li.classList.contains("active")){
             return;
         }
@@ -399,21 +398,21 @@ function ProgrammeMINTP (){
 
         let data
         let key
+        let type=`PROJET A GESTION ${categorie}`
 
-        if(categorie==="CENTRALE"){
-            data=projet.current.filter(i=>i.categorie!=="PROJET A GESTION COMMUNALE")
-            key=["region","budget_n","categorie","code_route","prestataire"]
+        data=projet.current.filter(i=>i.categorie===type)
 
-            return ({data:data, key: key})
+        if(categorie!=="COMMUNALE"){
 
+            key=["region","budget_n","code_route","prestataire"]
+ 
         }else{
 
-            data=projet.current.filter(i=>i.categorie==="PROJET A GESTION COMMUNALE")
             key=["region","departement","commune","budget_n","code_route","prestataire"]
-
-            return ({data:data, key: key})
-
         }
+
+        return ({data:data, key: key})
+
     }
 
 
@@ -457,8 +456,9 @@ function ProgrammeMINTP (){
                 <div className="top-element">
                     <div>
                         <ul>
-                            <li className="active" onClick={(e)=>changeTable(e,"CENTRALE")}>Gestion centrale/regionale</li>
-                            <li onClick={(e)=>changeTable(e,"COMMUNE")}>Gestion communale</li>
+                            <li className="active" onClick={(e)=>changeTable(e,"CENTRALE")}>Centrale</li>
+                            <li onClick={(e)=>changeTable(e,"REGIONALE")}>Regionale</li>
+                            <li onClick={(e)=>changeTable(e,"COMMUNALE")}>Communale</li>
                         </ul>
                         {statut.includes(programme.statut) &&(
                         <div className="check-update">
@@ -483,7 +483,7 @@ function ProgrammeMINTP (){
                             <tr>
                                 <th>N°</th>
                                 <th>Région</th>
-                                {categorie!=="CENTRALE" &&(
+                                {categorie==="COMMUNALE" &&(
                                     <>
                                     <th className="min-w3">Département</th>
                                     <th className="min-w3">Commune</th>
@@ -527,7 +527,7 @@ function ProgrammeMINTP (){
                             <tr key={j}>
                                 <td>{j+1}</td>
                                 <td>{i.region.replaceAll("_","-")}</td>
-                                {categorie!=="CENTRALE" &&(
+                                {categorie==="COMMUNALE" &&(
                                     <>
                                     <td>{i.departement}</td>
                                     <td>{i.commune}</td>
@@ -573,7 +573,7 @@ function ProgrammeMINTP (){
                             <tr key={j}>
                                 <td>{j+1}</td>
                                 <td>{i.region.replaceAll("_","-")}</td>
-                                {categorie!=="CENTRALE" &&(
+                                {categorie==="COMMUNALE" &&(
                                     <>
                                     <td>{i.departement}</td>
                                     <td>{i.commune}</td>
@@ -606,7 +606,7 @@ function ProgrammeMINTP (){
                         {programme.statut==="VALIDER" &&(
 
                             <tr>
-                                <td colSpan={categorie==="CENTRALE"?"9":"11"} >Provision de réserve</td>
+                                <td colSpan={categorie!=="COMMUNALE"?"9":"11"} >Provision de réserve</td>
                                 <td className="end">{numStr(programme.prevision,0)}</td>
                                 <td className="end">{numStr(totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)}</td>
                                 <td className="end">{numStr(programme.prevision-totalBudget(programme.projetList.filter(i=>i.financement==="RESERVE")),0)}</td>
@@ -700,7 +700,7 @@ function ProgrammeMINTP (){
                 <form  className="flex-form" onSubmit={(e)=>setPrevision(e,programme.id)}>
                     <div>
                         <div className="form-line">
-                            <label>prévision de réserve</label>
+                            <label>provision de réserve</label>
                             <input type="number" min="0" name="prevision" defaultValue={programme.prevision} required/>
                         </div>
                         <div className="form-line" style={{margin: "0"}}>

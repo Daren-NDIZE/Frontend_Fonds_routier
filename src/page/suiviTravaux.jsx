@@ -258,7 +258,7 @@ function SuiviTravaux({update}){
                                 <th>Date</th>
                                 <th className="min-w13">Niveau de contractualisation du projet</th>
                                 <th className="min-w4">N° du Marché</th>
-                                <th className="min-w4">Date OS avance de demarrage</th>
+                                <th className="min-w4">Date OS  de demarrage</th>
                                 <th>Taux de consommation</th>
                                 <th>Taux d'avancement</th>
                                 <th className="min-w1">Contraintes/Difficultés éventuelles</th>

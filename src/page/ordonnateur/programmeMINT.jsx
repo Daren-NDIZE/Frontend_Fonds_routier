@@ -659,7 +659,7 @@ function ProgrammeMINT (){
                 <form method="post" className="flex-form" onSubmit={(e)=>setPrevision(e,programme.id)}>
                     <div>
                         <div className="form-line">
-                            <label>prévision de réserve</label>
+                            <label>provision de réserve</label>
                             <input type="number" min="0" name="prevision" defaultValue={programme.prevision} required/>
                         </div>
                         <div className="form-line" style={{margin: "0"}}>
