@@ -38,7 +38,7 @@ function Engagement({role}){
         e.preventDefault()
         let form=e.target
 
-        if( !type.includes(form.type.value) || form.annee.value==="" || parseInt(form.annee.value) > date.getFullYear()  )
+        if( !type.includes(form.type.value) || form.annee.value==="" || parseInt(form.annee.value) > (date.getFullYear()+1)  )
         {
             return;
         }
@@ -214,7 +214,7 @@ function Engagement({role}){
                             </div>
                             <div className="form-line">
                                 <label>Année</label>
-                                <input type="number" max={date.getFullYear()} name="annee" required/>
+                                <input type="number" max={date.getFullYear()+1} name="annee" required/>
                             </div>
                         </div>
                         <div className="form-line">

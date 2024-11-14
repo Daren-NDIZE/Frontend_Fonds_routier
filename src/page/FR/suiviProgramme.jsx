@@ -5,7 +5,7 @@ import Notification from "../../component/notification"
 import PageLoader from "../../component/pageLoader"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import { Fetch, fetchFormData, fetchGet } from "../../config/FetchRequest"
-import { Rejet, numStr, parseTable, selectValue, totalBudget } from "../../script"
+import { Rejet, numStr, parseTable, selectValue, totalBudget, totalEngagement} from "../../script"
 import ModalBox from "../../component/modalBox"
 import Select from 'react-select'
 import { Viewer } from '@react-pdf-viewer/core';
@@ -545,7 +545,7 @@ function SuiviProgramme({ordonnateur,role}){
                 </div>
             </div>
 
-            <div className="box">
+            <div className="box slide">
                 <div id="pg-title" className="mb-25">
                     <h1>{programme.intitule}</h1>
                     {(["CO","DCO"].includes(role) && programme.type==="REPORT") &&(
@@ -645,6 +645,7 @@ function SuiviProgramme({ordonnateur,role}){
             </div>
 
             :
+
             <div className="box">
                 <div className="p-prevision">
                     <div>GESTION CENTRALE</div>
@@ -673,12 +674,13 @@ function SuiviProgramme({ordonnateur,role}){
 
             }
 
-               
-            <div className="p-sub" style={{marginBottom:"40px"}}>
-                <p>Vous ne pourrez plus travailler sur ce programme lorsqu'il sera cloturé.</p>
-                <button onClick={()=>cloture(id)}>CLOTURER</button>
-            </div>   
-
+            {role==="DCO" &&(
+                <div className="p-sub" style={{marginBottom:"30px"}}>
+                    <p>Vous ne pourrez plus travailler sur ce programme lorsqu'il sera cloturé.</p>
+                    <button onClick={()=>cloture(id)}>CLOTURER</button>
+                </div>   
+            )}  
+            
 
             <ModalBox ref={modalBox}>
                 {programme.ordonnateur==="MINHDU"?
@@ -709,7 +711,7 @@ function SuiviProgramme({ordonnateur,role}){
                                 <option value="Traitment DCO">Traitment DCO</option>
                                 <option value="Traitement DAF">Traitement DAF</option>
                                 <option value="En attente pour correction">En attente pour corrections</option>
-                                <option value="Rejeté">Rejté</option>
+                                <option value="Rejeté">Rejeté</option>
                                 <option value="Transmis pour visa">Transmis pour visa</option>
                                 <option value="Visé">Visé</option>
                             </select>
@@ -794,6 +796,9 @@ export default SuiviProgramme;
 
 const TableMINHDU=({data,programme,report,onLoadPdf,onHandleClick})=>{
 
+    let totalB=totalBudget(data)
+    let totalE=totalEngagement(data)
+
     return(
 
         <div className="tableBox">
@@ -870,8 +875,17 @@ const TableMINHDU=({data,programme,report,onLoadPdf,onHandleClick})=>{
                                 </div>
                             </td>
                         </tr>
-                    )
-                    }
+                    )}
+
+                    <tr className="t-line">
+                        <td colSpan="8" > Total</td>
+                        <td className="end">{numStr(totalB)}</td>
+                        <td className="end">{numStr( totalE ,0)}</td>
+                        <td className="end">{numStr(totalB-totalE , 0)}</td>
+                        <td colSpan="8">
+                        </td>
+                    </tr>
+
                     {programme.type!=="REPORT"&&(
                     <tr>
                         <td colSpan="8">Provision de réserve</td>
@@ -891,6 +905,9 @@ const TableMINHDU=({data,programme,report,onLoadPdf,onHandleClick})=>{
 }
 
 const TableMINT=({data,programme,report,categorie,onLoadPdf,onHandleClick})=>{
+
+    let totalB=totalBudget(data)
+    let totalE=totalEngagement(data)
 
     return(
 
@@ -978,8 +995,16 @@ const TableMINT=({data,programme,report,categorie,onLoadPdf,onHandleClick})=>{
                             </div>                      
                         </td>
                     </tr>
-                    )
-                    }
+                    )}
+
+                    <tr className="t-line">
+                        <td colSpan={categorie==="MINT"?"7":"9"} > Total</td>
+                        <td className="end">{numStr(totalB)}</td>
+                        <td className="end">{numStr( totalE ,0)}</td>
+                        <td className="end">{numStr(totalB-totalE , 0)}</td>
+                        <td colSpan="8">
+                        </td>
+                    </tr>
 
                     {programme.type!=="REPORT"&&(
                     <tr>
@@ -1000,6 +1025,9 @@ const TableMINT=({data,programme,report,categorie,onLoadPdf,onHandleClick})=>{
 }
 
 const TableMINTP=({data,programme,report,categorie,onLoadPdf,onHandleClick})=>{
+
+    let totalB=totalBudget(data)
+    let totalE=totalEngagement(data)
 
     return(
 
@@ -1089,8 +1117,17 @@ const TableMINTP=({data,programme,report,categorie,onLoadPdf,onHandleClick})=>{
                                 </div>
                             </td>
                         </tr>
-                    )
-                    }
+                    )}
+
+                    <tr className="t-line">
+                        <td colSpan={categorie==="CENTRALE"?"9":"11"} > Total</td>
+                        <td className="end">{numStr(totalB)}</td>
+                        <td className="end">{numStr( totalE ,0)}</td>
+                        <td className="end">{numStr(totalB-totalE , 0)}</td>
+                        <td colSpan="7">
+                        </td>
+                    </tr>
+
                     {programme.type!=="REPORT"&&(
                     <tr>
                         <td colSpan={categorie==="CENTRALE"?"9":"11"} >Provision de réserve</td>

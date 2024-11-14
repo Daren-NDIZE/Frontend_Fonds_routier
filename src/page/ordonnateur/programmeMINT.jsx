@@ -423,7 +423,7 @@ function ProgrammeMINT (){
                 </div>
             </div>
 
-            <div className="box">
+            <div className="box slide">
                 <div id="pg-title">
                     <h1>{programme.intitule}</h1>
 
@@ -586,7 +586,7 @@ function ProgrammeMINT (){
                             )
                         }
                         
-                        {programme.statut==="VALIDER" &&(
+                        { (programme.statut==="VALIDER" && programme.type!=="REPORT") &&(
                             <tr>
                                 <td colSpan="7">Provision de réserve</td>
                                 <td className="end">{numStr(programme.prevision,0)}</td>

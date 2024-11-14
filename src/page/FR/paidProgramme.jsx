@@ -84,19 +84,19 @@ function PaidProgramme(){
             <div className="box">
                 <div className="tableBox">
                     <div id="pg-title" className="mb-25">
-                        <h1>Suivi des payements</h1>
+                        <h1>Suivi des paiements</h1>
                     </div>
                     <div className="tableBox">
                         <table className="table">
                             <thead>
                                 <tr>
                                     <th>N°</th>
-                                    <th>Intitulé</th>
+                                    <th className="min-w13">Intitulé</th>
                                     <th>Ordonnateur</th>
                                     <th>année</th>
-                                    <th>Budget</th>
+                                    <th className="min-w4">Budget</th>
                                     <th>résolution</th>
-                                    <th>Suivi payements</th>
+                                    <th className="min-w4">Suivi payements</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -114,7 +114,7 @@ function PaidProgramme(){
                                             </i>
                                         </td>
                                         <td>
-                                            <Link to={`/suivi-des-payements/programme-${i.ordonnateur}/${i.id}`}>Détails payements</Link>
+                                            <Link to={`/suivi-des-paiements/programme-${i.ordonnateur}/${i.id}`}>Détails paiements</Link>
                                         </td>
                                     </tr>
                                 )}

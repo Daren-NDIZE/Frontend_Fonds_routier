@@ -35,6 +35,7 @@ import DetailsPaid from "./page/ordonnateur/DetailsPaid";
 import Engagement from "./page/ordonnateur/engagement";
 import Payement from "./page/ordonnateur/payement";
 import Travaux from "./page/ordonnateur/travaux";
+import Dashboard from "./page/ordonnateur/dashboard";
 
 
 function App() {
@@ -65,7 +66,7 @@ function App() {
    
       <Model ref={model}>
         <Routes>
-          <Route element={["ACO","CO","DCO","STAGIAIRE","ADMIN"].includes(user.role)?<Outlet/>:<Navigate to="/programmes"/>}>
+          <Route element={["ACO","CO","DCO","DAF","COMPTABLE FR","STAGIAIRE","ADMIN"].includes(user.role)?<Outlet/>:<Navigate to="/programmes"/>}>
             <Route path="/programmes/soumis" element={<SubmitProgramme />}/>
             <Route path="/execution-des-programme" element={<ValideProgramme role={user.role}/>}/>
             <Route path="/execution-des-programme/programme-MINHDU/:id" element={<SuiviProgramme ordonnateur="MINHDU" role={user.role}/>}/>
@@ -77,8 +78,8 @@ function App() {
             <Route path="/synthese-programme" element={<Synthese/>}/>
             <Route path="/programmes-cloturés" element={<Cloturer/>}/>
             <Route path="/programmes-cloturés/:ordonnateur/:id" element={<ClotureDetails/>}/>
-            <Route path="/suivi-des-payements" element={<PaidProgramme/>}/>
-            <Route path="/suivi-des-payements/:ordonnateur/:id" element={<SuiviPayement/>}/>
+            <Route path="/suivi-des-paiements" element={<PaidProgramme/>}/>
+            <Route path="/suivi-des-paiements/:ordonnateur/:id" element={<SuiviPayement role={user.role}/>}/>
           </Route>
 
           <Route element={user.role==="ADMIN"?<Outlet/>:<></>}>
@@ -94,11 +95,11 @@ function App() {
             <Route path="/modifier-programme/:id" element={<UpdatePg/>}/>
             <Route path="/:ordonnateur/synthese" element={<SyntheseOrdonnateur role={user.role}/>}/>
             <Route path="/programmes/:ordonnateur/:id/prévision" element={<Prevision/>}/>
-            <Route path="/suivi-payements" element={<ProgrammePaid/>}/>
+            <Route path="/suivi-paiements" element={<ProgrammePaid/>}/>
             <Route path="programmation/engagement" element={<Engagement role={user.role}/>}/>
-            <Route path="programmation/suivi-payements" element={<Payement role={user.role}/>}/>
+            <Route path="programmation/suivi-paiements" element={<Payement role={user.role}/>}/>
             <Route path="programmation/suivi-travaux" element={<Travaux role={user.role}/>}/>
-            <Route path="/suivi-payements/:ordonnateur/:id" element={<DetailsPaid/>}/>
+            <Route path="/suivi-paiements/:ordonnateur/:id" element={<DetailsPaid/>}/>
             <Route path="/programmes/projet/:id/suivi-des-travaux" element={<SuiviTravaux update="true"/>}/>
             <Route path="/programmes_cloturés" element={<ProgrammeCloture/>}/>
             <Route path="/programmes_cloturés/:ordonnateur/:id" element={<ClotureDetail/>}/>
@@ -121,7 +122,7 @@ function App() {
 
           <Route path="/*" element={<PageNotFound/>}/>
 
-          
+          <Route path="/acceuil" element={<Dashboard/>}/>
           
         </Routes>
     </Model>

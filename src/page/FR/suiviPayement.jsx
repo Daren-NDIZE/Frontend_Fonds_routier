@@ -16,7 +16,7 @@ import { downLoadExcel } from "jsxtabletoexcel"
 
 
 
-function SuiviPayement(){
+function SuiviPayement({role}){
 
     let modalBox=useRef()
     let modal=useRef()
@@ -424,7 +424,7 @@ function SuiviPayement(){
                 </div>
             </div>
 
-            <div className="box">
+            <div className="box slide">
                 <div id="pg-title" className="mb-25">
                     <h1>{programme.intitule}</h1>
                     <div className="check-update">
@@ -455,7 +455,8 @@ function SuiviPayement(){
                 
                 {programme.ordonnateur==="MINHDU"?
 
-                    <TableMINHDU 
+                    <TableMINHDU
+                     role={role}
                      data={data} 
                      programme={programme} 
                      onLoadPdf={loadPdf} 
@@ -466,6 +467,7 @@ function SuiviPayement(){
                 :programme.ordonnateur==="MINT"?
 
                     <TableMINT data={data}
+                     role={role}
                      programme={programme}
                      categorie={categorie}  
                      onLoadPdf={loadPdf} 
@@ -475,6 +477,7 @@ function SuiviPayement(){
 
                 :  
                     <TableMINTP 
+                     role={role}
                      data={data} 
                      programme={programme} 
                      categorie={categorie}  
@@ -727,7 +730,7 @@ function SuiviPayement(){
 export default SuiviPayement;
 
 
-const TableMINHDU=({data,programme,onLoadPdf,onHandleClick,option})=>{
+const TableMINHDU=({role,data,programme,onLoadPdf,onHandleClick,option})=>{
 
     return(
 
@@ -750,7 +753,7 @@ const TableMINHDU=({data,programme,onLoadPdf,onHandleClick,option})=>{
                         <th className="min-w4">Projection {programme.annee+2}</th>
                         <th>Ordonnateurs</th>
                         <th className="min-w4">Situation</th>
-                        <th colSpan={option.check?"10":"9"} className="text-center">Suivi des payements</th>
+                        <th colSpan={option.check?"10":"9"} className="text-center">Suivi des paiements</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -818,7 +821,10 @@ const TableMINHDU=({data,programme,onLoadPdf,onHandleClick,option})=>{
                                 <td className="end">{numStr(totalPayement(i.payement,"m_AIR") )}</td>
                                 <td className="end">{numStr(totalPayement(i.payement,"nap") )}</td>
                                 <td>
-                                    <i className="fa-solid fa-circle-plus i-circle" onClick={()=>onHandleClick(i.id)}></i>
+                                    {["DAF","COMPTABLE FR"].includes(role) &&(
+                                        <i className="fa-solid fa-circle-plus i-circle" onClick={()=>onHandleClick(i.id)}></i>
+   
+                                    ) }
                                 </td>
                             </tr>
                         </>
@@ -831,7 +837,7 @@ const TableMINHDU=({data,programme,onLoadPdf,onHandleClick,option})=>{
     )
 }
 
-const TableMINT=({data,programme,categorie,onLoadPdf,onHandleClick,option})=>{
+const TableMINT=({role,data,programme,categorie,onLoadPdf,onHandleClick,option})=>{
 
     return(
 
@@ -860,7 +866,7 @@ const TableMINT=({data,programme,categorie,onLoadPdf,onHandleClick,option})=>{
                         <th className="min-w4">Projection {programme.annee+2}</th>
                         <th>Ordonnateurs</th>
                         <th className="min-w4">situation</th>
-                        <th colSpan={option.check?"10":"9"} className="text-center">Suivi des payements</th>
+                        <th colSpan={option.check?"10":"9"} className="text-center">Suivi des paiements</th>
                     </tr>
                 </thead>
                 <tbody> 
@@ -934,7 +940,9 @@ const TableMINT=({data,programme,categorie,onLoadPdf,onHandleClick,option})=>{
                             <td className="end">{numStr(totalPayement(i.payement,"m_AIR") )}</td>
                             <td className="end">{numStr(totalPayement(i.payement,"nap") )}</td>
                             <td>
+                            {["DAF","COMPTABLE FR"].includes(role) &&(
                                 <i className="fa-solid fa-circle-plus i-circle" onClick={()=>onHandleClick(i.id)}></i>
+                            )}
                             </td>
                         </tr>
                         
@@ -949,7 +957,7 @@ const TableMINT=({data,programme,categorie,onLoadPdf,onHandleClick,option})=>{
     )
 }
 
-const TableMINTP=({data,programme,categorie,onLoadPdf,onHandleClick,option})=>{
+const TableMINTP=({role,data,programme,categorie,onLoadPdf,onHandleClick,option})=>{
 
     return(
 
@@ -979,7 +987,7 @@ const TableMINTP=({data,programme,categorie,onLoadPdf,onHandleClick,option})=>{
                     <th className="min-w4">Projection {programme.annee+1}</th>
                     <th className="min-w4">Projection {programme.annee+2}</th>
                     <th className="min-w4">Situation</th>
-                    <th colSpan={option.check?"10":"9"} className="text-center">Suivi des payements</th>
+                    <th colSpan={option.check?"10":"9"} className="text-center">Suivi des paiements</th>
                 </tr>
             </thead>
                 <tbody> 
@@ -1054,7 +1062,9 @@ const TableMINTP=({data,programme,categorie,onLoadPdf,onHandleClick,option})=>{
                             <td className="end">{numStr(totalPayement(i.payement,"m_AIR") )}</td>
                             <td className="end">{numStr(totalPayement(i.payement,"nap") )}</td>
                             <td>
+                            {["DAF","COMPTABLE FR"].includes(role) &&(
                                 <i className="fa-solid fa-circle-plus i-circle" onClick={()=>onHandleClick(i.id)}></i>
+                            )}
                             </td>
                         </tr>
                         

@@ -38,7 +38,7 @@ function Payement({role}){
         e.preventDefault()
         let form=e.target
 
-        if( !type.includes(form.type.value) || form.annee.value==="" || parseInt(form.annee.value) > date.getFullYear()  )
+        if( !type.includes(form.type.value) || form.annee.value==="" || parseInt(form.annee.value) > (date.getFullYear()+1 )  )
         {
             return;
         }
@@ -203,7 +203,7 @@ function Payement({role}){
                             </div>
                             <div className="form-line">
                                 <label>Année</label>
-                                <input type="number" max={date.getFullYear()} name="annee" required/>
+                                <input type="number" max={date.getFullYear()+1} name="annee" required/>
                             </div>
                         </div>
                         <div className="form-line">
@@ -405,7 +405,7 @@ const TableMINHDU=({data,programme,onLoadPdf})=>{
                         <th className="min-w3">Prestataire</th>
                         <th>Ordonnateurs</th>
                         <th className="min-w4">Situation</th>
-                        <th colSpan="9" className="text-center c-paid">Suivi des payements</th>
+                        <th colSpan="9" className="text-center c-paid">Suivi des paiements</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -499,7 +499,7 @@ const TableMINT=({data,programme,categorie,onLoadPdf})=>{
                         <th className="min-w3">Prestataire</th>
                         <th>Ordonnateurs</th>
                         <th className="min-w4">situation</th>
-                        <th colSpan="9"  className="text-center c-paid">Suivi des payements</th>
+                        <th colSpan="9"  className="text-center c-paid">Suivi des paiements</th>
                     </tr>
                 </thead>
                 <tbody> 
@@ -601,7 +601,7 @@ const TableMINTP=({data,programme,categorie,onLoadPdf})=>{
                     <th className="min-w4">Reliquat</th>
                     <th className="min-w3">Prestataire</th>
                     <th className="min-w4">Situation</th>
-                    <th colSpan="9" className="text-center c-paid">Suivi des payements</th>
+                    <th colSpan="9" className="text-center c-paid">Suivi des paiements</th>
                 </tr>
             </thead>
                 <tbody> 

@@ -179,8 +179,8 @@ function Roles(){
                         <thead>
                             <tr>
                                 <th>N°</th>
-                                <th className="min-w2">intitulé</th>
-                                <th>Description</th>
+                                <th>intitulé</th>
+                                <th className="min-w2">Description</th>
                                 {check &&(
                                     <th></th>
                                 )}

@@ -204,12 +204,12 @@ function UserList(){
                                 <th>
                                     <input type="checkbox" onChange={(e)=>setCheck(e.target.checked)}/> N°
                                 </th>
-                                <th>Nom</th>
-                                <th>Prénom</th>
-                                <th>Username</th>
+                                <th className="min-w4">Nom</th>
+                                <th className="min-w4">Prénom</th>
+                                <th className="min-w4">Username</th>
                                 <th>Role</th>
-                                <th>Email</th>
-                                <th>Téléphone</th>
+                                <th className="min-w4">Email</th>
+                                <th className="min-w4">Téléphone</th>
                                 {check &&(
                                     <th width="50px"></th>
                                 )}

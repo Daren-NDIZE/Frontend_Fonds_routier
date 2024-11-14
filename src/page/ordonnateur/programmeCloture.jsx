@@ -83,10 +83,10 @@ function ProgrammeCloture(){
                         <thead>
                             <tr>
                                 <th>N°</th>
-                                <th>Intitulé</th>
+                                <th className="min-w13">Intitulé</th>
                                 <th>Ordonnateur</th>
                                 <th>année</th>
-                                <th>Budget</th>
+                                <th className="min-w4">Budget</th>
                                 <th>résolution</th>
                             </tr>
                         </thead>

@@ -381,7 +381,7 @@ function ProgrammeMINHDU(){
                 </div>
             </div>
             
-            <div className="box">
+            <div className="box slide">
                 <div id="pg-title" className={statut.includes(programme.statut)?"":"mb-25"}>
                     <h1>{programme.intitule}</h1>
 
@@ -524,7 +524,7 @@ function ProgrammeMINHDU(){
                         
                         }
 
-                        {programme.statut==="VALIDER" &&(
+                        { (programme.statut==="VALIDER" && programme.type!=="REPORT") &&(
                             <tr>
                                 <td colSpan="8">Provision de réserve</td>
                                 <td className="end">{numStr(programme.prevision,0)}</td>

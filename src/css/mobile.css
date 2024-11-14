@@ -1,0 +1,210 @@
+@media  (max-width: 550px) {
+
+    .l-top h1{
+        font-size: 20px;
+    }
+
+    header{
+        height: 55px;
+        padding: 15px 10px;
+    }
+    .container{
+        padding: 15px 10px;
+    }
+    .h-profil img{
+        height: 35px;
+        width: 35px;
+    }
+    .h-profil{
+        gap: 8px;
+    }
+    .h-profil p:first-child{
+        font-size: 14px;
+    }
+    .h-profil p:last-child{
+        font-size: 12px;
+    }
+    .box{
+        padding: 18px;
+        margin-bottom: 8px;
+    }
+    .pg-box{
+        padding-bottom: 12px;
+    }
+    .b-search{
+        padding: 15px;
+    }
+    .searchbar input{
+        width: 125px;
+        padding: 8px 15px;
+    }
+    .searchbar button{
+        width: 35px;
+        position: relative;
+    }
+    .searchbar i{
+        font-size: 15px;
+    }
+    .programme-line{
+        font-size: 12px;
+        gap: 20px;
+        padding-bottom: 0;
+    }
+    .b-col > div:first-child{
+        font-size: 14px;
+        height: 28px;
+    }
+    .b-col > div:last-child{
+        font-size: 14px;
+    }
+    .desc{
+        font-size: 10px;
+        padding: 6px 10px;
+    }
+    .hidden-menu{
+        padding: 5px;
+        width: 110px;
+    }
+    .hidden-menu li{
+        font-size: 13px;
+        padding: 3px 8px;
+    }
+    .sideBar{
+        width: 250px;
+    }
+    .s-logo{
+        padding: 20px 0px;
+        padding-bottom: 15px;
+    }
+    .s-logo img{
+        width: 80px;
+        height: 80px;
+    }
+    .s-logo p{
+        font-size: 22px;
+    }
+    .s-navigation nav{
+        margin-top: 10px;
+    }
+    .box > div:first-child h1{
+        padding-bottom: 15px;
+        font-size: 13px;
+    }
+    .form-line{
+        gap: 7px;
+    }
+    .form-line input, .form-line select{
+        height: 36px;
+        border-radius: 5px;
+        font-size: 13px;
+    }
+    .form-line label{
+        font-size: 13px;
+    }
+    .b-pg{
+        max-width: 320px;
+    }
+    .form-line button{
+        margin-top: 5px;
+        font-size: 15px;
+    }
+    .form-line button{
+        height: 38px;
+    }
+    .modal-content{
+        padding: 25px;
+    }
+    .p-prevision{
+        font-size: 12px;
+    }
+    .p-total{
+        padding: 7px;
+    }
+    .p-total >div{
+        font-size: 13px;
+    }
+    .profil{
+        max-width: 340px;
+        margin-top: 30px;
+    }
+    .profil > div:first-child{
+        padding-bottom: 25px;
+    }
+    .profil img{
+        width: 100px;
+        height: 100px;
+        border-width: 5px;
+    }
+    .profil-line >div{
+        font-size: 14px;
+    }
+    .profil-line{
+        padding: 12px 8px;
+    }
+    .p-update{
+        padding: 15px;
+    }
+    .p-update button{
+
+        font-size: 13px;
+    }
+    .vide{
+        font-size: 70px;
+        letter-spacing: 20px;
+    }
+    .top-element{
+        padding-bottom: 4px;
+    }
+    .top-element li{
+        font-size: 12px;
+        height: 25px;
+    }
+    .n-projet button{
+        padding: 8px 10px;
+    }
+    .notification{
+        font-size: 13px;
+    }
+    .s-filter .form-line input ,.s-filter .form-line select{
+        width: 140px;
+        font-size: 12px;
+    }
+    .s-filter .form-line label{
+        font-size: 12px;
+    }
+    .synthese-top p{
+        font-size: 10px;
+    }
+    .p-sub p{
+        font-size: 14px;
+    }
+    .table thead th{
+        outline: solid 0.091em black;
+    }
+    .param{
+        gap: 7px;
+    }
+    .param .box{
+        margin-bottom: 0;
+        font-size: 13px;
+    }
+    .b-search + .param{
+        margin-top: 20px;
+    }
+
+    .ac-title{
+        font-size: 12px;
+    }
+    .chart-container{
+        margin-top: 25px;
+        gap: 10px;
+
+    }
+    div.chart-box{
+       height: 250px; 
+    }
+    .chart-title{
+        padding-top: 10px;
+        font-size: 12px;
+    }
+}

@@ -305,7 +305,7 @@ const TableMINHDU=({data,programme,onLoadPdf})=>{
                         <th className="min-w4">Projection {programme.annee+2}</th>
                         <th>Ordonnateurs</th>
                         <th className="min-w4">Situation</th>
-                        <th colSpan="9" className="text-center">Suivi des payements</th>
+                        <th colSpan="9" className="text-center">Suivi des paiements</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -397,7 +397,7 @@ const TableMINT=({data,programme,onLoadPdf})=>{
                         <th className="min-w4">Projection {programme.annee+2}</th>
                         <th>Ordonnateurs</th>
                         <th className="min-w4">situation</th>
-                        <th colSpan="9" className="text-center">Suivi des payements</th>
+                        <th colSpan="9" className="text-center">Suivi des paiements</th>
                     </tr>
                 </thead>
                 <tbody> 
@@ -497,7 +497,7 @@ const TableMINTP=({data,programme,categorie,onLoadPdf})=>{
                     <th className="min-w4">Projection {programme.annee+1}</th>
                     <th className="min-w4">Projection {programme.annee+2}</th>
                     <th className="min-w4">Situation</th>
-                    <th colSpan="9" className="text-center">Suivi des payements</th>
+                    <th colSpan="9" className="text-center">Suivi des paiements</th>
                 </tr>
             </thead>
                 <tbody> 

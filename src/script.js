@@ -217,8 +217,8 @@ export function totalEngagement(projet){
 
 projet.forEach(i =>{
 
-	if(projet.suivi){
-		total=total + parseInt(i.suivi.totalEngagement) 
+	if(i.suivi){
+		total=total + parseInt(i.suivi.engagement) 
 	}
 });
 

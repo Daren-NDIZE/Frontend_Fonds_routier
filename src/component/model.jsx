@@ -31,13 +31,16 @@ const Model=forwardRef(function ({children},ref){
             }catch(e){
                 console.log(e)
             }
-          })()
+          })();
     },[])
     
     return(
         <> 
             <div className="left-content">
                 <SideBar role={user.role.roleName}/>
+                <div className="x-close">
+                    <i className="fa-solid fa-xmark" onClick={slideBar}></i>
+                </div>
             </div>
             <div className="right-content" >
                 <Header user={user} onSlideBar={slideBar}/>

@@ -29,7 +29,7 @@ function Login(){
                 
                 if(resData.authenticate){
                     localStorage.setItem("token",resData.token)
-                    window.location.href="/programmes"
+                    window.location.href="/acceuil"
                 }
                 else{
                     notification.current.setNotification(
@@ -53,7 +53,7 @@ function Login(){
 
             <div className="l-top">
                 <img src="/logo.png" alt="error"/>
-                <h1>Connectez-vous à COWEB FR</h1>
+                <h1>Connectez-vous à PROGMA FR</h1>
             </div>
 
             <Notification ref={notification} />

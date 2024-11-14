@@ -35,7 +35,7 @@ function SyntheseOrdonnateur({role}){
         e.preventDefault()
         let form=e.target
 
-        if( !type.includes(form.type.value) || form.annee.value==="" || parseInt(form.annee.value) > date.getFullYear()  )
+        if( !type.includes(form.type.value) || form.annee.value==="" || parseInt(form.annee.value) > (date.getFullYear()+1)  )
         {
             return;
         }
@@ -86,7 +86,7 @@ function SyntheseOrdonnateur({role}){
                         </div>
                         <div className="form-line">
                             <label>Année</label>
-                            <input type="number" max={date.getFullYear()} name="annee" required/>
+                            <input type="number" max={date.getFullYear()+1} name="annee" required/>
                         </div>
                     </div>
                     <div className="form-line">
@@ -157,10 +157,10 @@ const SyntheseMINHDU=({prevision,engagement,lineaire})=>{
                 <thead>
                     <tr>
                         <th>ORDONNATEUR</th>
-                        <th>CATEGORIE</th>
-                        <th>PREVISION TTC</th>
-                        <th>ENGAGEMENTS</th>
-                        <th>Excédent/Insuffisance</th>
+                        <th className="min-w4">CATEGORIE</th>
+                        <th className="min-w4">PREVISION TTC</th>
+                        <th className="min-w4">ENGAGEMENTS</th>
+                        <th className="min-w4">Excédent/Insuffisance</th>
                         <th>Taux d'engagement</th>
                     </tr>
                 </thead>
@@ -199,7 +199,7 @@ const SyntheseMINHDU=({prevision,engagement,lineaire})=>{
                         <td colSpan="2">TOTAL</td>
                         <td className="end">{numStr(totalP)}</td>
                         <td className="end">{numStr(totalE,0)}</td>
-                        <td className="end">{numStr(totalP-totalE)}</td>
+                        <td className="end">{numStr(totalP-totalE,0)}</td>
                         <td className="end">{(totalE*100/totalP).toFixed(2)}%</td>
                     </tr>                    
                 </tbody>
@@ -208,7 +208,7 @@ const SyntheseMINHDU=({prevision,engagement,lineaire})=>{
             <table className="table">
                 <thead>
                     <tr>
-                        <th>Ordonnateur</th>
+                        <th className="min-w4">Ordonnateur</th>
                         <th>Total Lineaire programmé (ML)</th>
                         <th>Total Lineaire financé (ML)</th>
                     </tr>
@@ -236,10 +236,10 @@ const SyntheseMINTP=({prevision,engagement,lineaire})=>{
                 <thead>
                     <tr>
                         <th>ORDONNATEUR</th>
-                        <th>Rubrique</th>
-                        <th>PREVISION TTC</th>
-                        <th>ENGAGEMENTS</th>
-                        <th>Excédent/Insuffisance</th>
+                        <th className="min-w2">Rubrique</th>
+                        <th className="min-w4">PREVISION TTC</th>
+                        <th className="min-w4">ENGAGEMENTS</th>
+                        <th className="min-w4">Excédent/Insuffisance</th>
                         <th>Taux d'engagement</th>
                     </tr>
                 </thead>
@@ -270,7 +270,7 @@ const SyntheseMINTP=({prevision,engagement,lineaire})=>{
                         <td colSpan="2">TOTAL</td>
                         <td className="end">{numStr(totalP)}</td>
                         <td className="end">{numStr(totalE,0)}</td>
-                        <td className="end">{numStr(totalP-totalE)}</td>
+                        <td className="end">{numStr(totalP-totalE,0)}</td>
                         <td className="end">{(totalE*100/totalP).toFixed(2)}%</td>
                     </tr>                    
                 </tbody>
@@ -279,7 +279,7 @@ const SyntheseMINTP=({prevision,engagement,lineaire})=>{
             <table className="table">
                 <thead>
                     <tr>
-                        <th>Type de Travaux</th>
+                        <th className="min-w3">Type de Travaux</th>
                         <th>Total Lineaire programmé</th>
                         <th>Total Lineaire financé</th>
                     </tr>
@@ -316,12 +316,12 @@ const SyntheseMINT=({prevision,engagement})=>{
             <table className="table">
                 <thead>
                     <tr>
-                        <th>ORDONNATEUR</th>
+                        <th className="min-w4">ORDONNATEUR</th>
                         <th>CATEGORIE</th>
-                        <th>TYPE DE TRAVAUX</th>
-                        <th>PREVISION TTC</th>
-                        <th>ENGAGEMENTS</th>
-                        <th>Excédent/Insuffisance</th>
+                        <th className="min-w4">TYPE DE TRAVAUX</th>
+                        <th className="min-w4">PREVISION TTC</th>
+                        <th className="min-w4">ENGAGEMENTS</th>
+                        <th className="min-w4">Excédent/Insuffisance</th>
                         <th>Taux d'engagement</th>
                     </tr>
                 </thead>
@@ -347,7 +347,7 @@ const SyntheseMINT=({prevision,engagement})=>{
                         <td colSpan="3">TOTAL</td>
                         <td className="end">{numStr(totalP)}</td>
                         <td className="end">{numStr(totalE,0)}</td>
-                        <td className="end">{numStr(totalP-totalE)}</td>
+                        <td className="end">{numStr(totalP-totalE,0)}</td>
                         <td className="end">{(totalE*100/totalP).toFixed(2)}%</td>
                     </tr>                   
                 </tbody>

@@ -438,7 +438,7 @@ function ProgrammeMINTP (){
                 </div>
             </div>
 
-            <div className="box">
+            <div className="box slide">
                 <div id="pg-title">
                     <h1>{programme.intitule}</h1>
 
@@ -603,7 +603,7 @@ function ProgrammeMINTP (){
                         }
 
 
-                        {programme.statut==="VALIDER" &&(
+                        {(programme.statut==="VALIDER" && programme.type!=="REPORT") && (
 
                             <tr>
                                 <td colSpan={categorie!=="COMMUNALE"?"9":"11"} >Provision de réserve</td>

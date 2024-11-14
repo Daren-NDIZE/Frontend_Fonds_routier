@@ -239,7 +239,7 @@ function ProgrammeFR({role}){
                 </div>
             </div>
             
-            <div className="box">
+            <div className="box slide">
                 <div id="pg-title" className="suivi-pg"  style={programme.ordonnateur==="MINTP"?{paddingBottom:"0px"}:{}}>
                     <div>
                         <h1>{programme.intitule}</h1>
