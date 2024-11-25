@@ -8,8 +8,8 @@ import {
 import { useEffect, useState } from "react";
 
 import { Pie } from "react-chartjs-2"
-import { fetchGet } from "../../config/FetchRequest";
-import Loader from "../../component/loader";
+import { fetchGet } from "../config/FetchRequest";
+import Loader from "../component/loader";
 
 ChartJS.register(
     ArcElement,
@@ -60,14 +60,14 @@ function Dashboard (){
                 <h1>Bienvenue sur PROGMA FR</h1>
             </div>
 
-            {synthese.type==="GLOBAL"?
-                <ChartFR prevision={synthese.prevision} engagement={synthese.engagement}/>
-            :synthese.type==="MINTP"?
-                <ChartMINTP prevision={synthese.prevision} engagement={synthese.engagement}/>
-            :synthese.type==="MINT"?
-                <ChartMINT prevision={synthese.prevision} engagement={synthese.engagement}/>
-            :synthese.type==="MINHDU"?
-            <ChartMINHDU prevision={synthese.prevision} engagement={synthese.engagement}/>
+            {synthese.stat.type==="GLOBAL"?
+                <ChartFR annee={synthese.year} prevision={synthese.stat.prevision} engagement={synthese.stat.engagement}/>
+            :synthese.stat.type==="MINTP"?
+                <ChartMINTP annee={synthese.year} prevision={synthese.stat.prevision} engagement={synthese.stat.engagement}/>
+            :synthese.stat.type==="MINT"?
+                <ChartMINT annee={synthese.year} prevision={synthese.stat.prevision} engagement={synthese.stat.engagement}/>
+            :synthese.stat.type==="MINHDU"?
+                <ChartMINHDU annee={synthese.year} prevision={synthese.stat.prevision} engagement={synthese.stat.engagement}/>
             :<></>
             }
             
@@ -79,9 +79,7 @@ function Dashboard (){
 export default Dashboard
 
 
-const ChartFR=({engagement,prevision})=>{
-
-    console.log(prevision)
+const ChartFR=({annee,engagement,prevision})=>{
 
     let totalP=prevision[0]+prevision[1]+prevision[2]
     let totalE=engagement[0]+engagement[1]+engagement[2]
@@ -89,7 +87,7 @@ const ChartFR=({engagement,prevision})=>{
     return(
         <div>
             <div className="chart-title">
-                <h2>Taux d'engagement des différents ordonnateurs</h2>
+                <h2>Taux d'engagement {annee} des différents ordonnateurs</h2>
             </div>
 
             <div className="chart-container">
@@ -126,7 +124,7 @@ const ChartFR=({engagement,prevision})=>{
 
 }
 
-const ChartMINTP=({engagement,prevision})=>{
+const ChartMINTP=({annee,engagement,prevision})=>{
     
     let totalP=prevision[0]+prevision[1]+prevision[2]
     let totalE=engagement[0]+engagement[1]+engagement[2]
@@ -138,7 +136,7 @@ const ChartMINTP=({engagement,prevision})=>{
     return(
         <div>
             <div className="chart-title">
-                <h2>Taux d'engagement du programme 2024</h2>
+                <h2>Taux d'engagement du programme {annee}</h2>
             </div>
 
             <div className="chart-container">
@@ -184,7 +182,7 @@ const ChartMINTP=({engagement,prevision})=>{
 
 }
 
-const ChartMINT=({engagement,prevision})=>{
+const ChartMINT=({annee,engagement,prevision})=>{
 
     let totalP=prevision[0]+prevision[1] 
     let totalE=engagement[0]+engagement[1]
@@ -195,7 +193,7 @@ const ChartMINT=({engagement,prevision})=>{
     return(
         <div>
             <div className="chart-title">
-                <h2>Taux d'engagement du programme 2024</h2>
+                <h2>Taux d'engagement du programme {annee}</h2>
             </div>
 
             <div className="chart-container">
@@ -234,7 +232,7 @@ const ChartMINT=({engagement,prevision})=>{
 
 }
 
-const ChartMINHDU=({engagement,prevision})=>{
+const ChartMINHDU=({annee,engagement,prevision})=>{
 
     let totalP=prevision[0]+prevision[1]+prevision[2]+prevision[3] 
     let totalE=engagement[0]+engagement[1]+engagement[2]+engagement[3]
@@ -245,7 +243,7 @@ const ChartMINHDU=({engagement,prevision})=>{
     return(
         <div>
             <div className="chart-title">
-                <h2>Taux d'engagement du programme 2024</h2>
+                <h2>Taux d'engagement du programme {annee}</h2>
             </div>
 
             <div className="chart-container">

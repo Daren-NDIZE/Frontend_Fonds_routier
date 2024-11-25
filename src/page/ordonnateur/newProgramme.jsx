@@ -85,8 +85,8 @@ function CreatePg(){
                         <label>Programme</label>
                         <select name="type" required>
                             <option value="">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - </option>
-                            <option value="BASE">{`Programme ${user.role} ${annee.current}`}</option>
-                            <option value="ADDITIONNEL">{`Programme additionnel ${user.role} ${annee.current}`}</option>
+                            <option value="BASE">{`Programme ${user.structure} ${annee.current}`}</option>
+                            <option value="ADDITIONNEL">{`Programme additionnel ${user.structure} ${annee.current}`}</option>
                         </select>
                         <input type="hidden" name="annee" value={annee.current} />
                     </div>

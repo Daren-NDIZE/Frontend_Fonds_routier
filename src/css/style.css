@@ -271,7 +271,7 @@ nav::-webkit-scrollbar-thumb:hover {
 }
 .notFound{
     background-image: url("/public/page404.png");
-    height: calc(100% - 80px);
+    height: calc(100vh - 80px);
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -398,6 +398,9 @@ nav::-webkit-scrollbar-thumb:hover {
 .searchbar{
     display: flex;
 }
+.box + .box .searchbar{
+    margin-top: 15px;
+}
 .searchbar i{
     font-size: 20px;
     color: white;
@@ -464,7 +467,7 @@ nav::-webkit-scrollbar-thumb:hover {
 .tableBox{
     overflow: auto;
     max-height: 600px;
-    margin-top: 10px;
+    margin-top: 8px;
     min-height: 370px;
     padding-top: 0.05em;
 }
@@ -494,6 +497,7 @@ table,tr,th,td{
 }
 .table th{
     text-align: center;
+    outline: solid 1px black;
 }
 .table td{
     text-align: left;
@@ -518,9 +522,13 @@ table tr.t-line{
 .t-line td:first-child{
     text-align: center;
 }
-.slide{
-    
+tbody > tr.line-focus{
+    background: #74b1ff;
+    color: white;
 }
+/* .slide{
+    
+} */
 
 .t-action{
     display: flex;
@@ -653,6 +661,7 @@ table tr.t-line{
 }
 .flex{
     display: flex;
+    overflow: auto;
 }
 .flex-align{
     display: flex;
@@ -708,6 +717,14 @@ table .text-center{
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 100%;
+}
+.vf-loadBox{
+    height: 100vh;
+    width: 100%;
+}
+.vf-loadBox .flex-center{
+    height: 100%;
 }
 .modal-container{
     position: fixed;
@@ -920,12 +937,57 @@ form .load-button{
 .notification i{
     font-size: 18px;
     cursor: pointer;
+    padding-left: 5px;
 }
 
 .login-container .notification{
     width: 310px;
     margin-bottom: 8px;
+    align-items: center;
 }
+.v-container{
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 40px 10px;
+    gap: 90px;
+
+}
+.v-container .l-top{
+    margin-top: 50px;
+}
+.v-formBox{
+    align-items: center;
+    flex-direction: column;
+    display: flex;
+}
+.v-formBox input{
+    width: 400px;
+    height: 50px;
+    font-size: 20px;
+    border: solid 2px rgb(212, 212, 212);
+}
+.v-formBox .form-line{
+    gap: 16px;
+}
+.v-line{
+    display: flex;
+    gap: 10px;
+}
+.v-line button{
+    border-radius: 4px;
+    height: 45px;
+    width: 50%;
+    font-size: 16px;
+    background: var(--marron);
+    color: white;
+}
+.v-line .load-button{
+    background: #c7ab6a;
+}
+
 .erreur{
     background: #f7d6d9;
     border-color: #f1aeb5;
@@ -1104,6 +1166,10 @@ form .load-button{
     padding: 10px;
     overflow: auto;
 }
+.suivi-pg > .top-element{
+    padding: 0;
+}
+
 .top-element::-webkit-scrollbar{
     height: 7px;
 }
@@ -1312,6 +1378,7 @@ li.active{
     font-weight: 500;
     padding: 3px;
     border-radius: 5px;
+    margin-left: 5px;
 }
 .retour-btn i{
     margin-right: 5px;
@@ -1368,6 +1435,15 @@ div.chart-box{
     text-align: center;
     text-decoration: underline;
     padding-top: 35px;
+}
+.per-line{
+    padding: 3px 0;
+}
+.per-line i{
+    margin-left: 7px;
+    color: red;
+    font-size: 12px;
+    cursor: pointer;
 }
 
 
@@ -1453,6 +1529,9 @@ div.chart-box{
     .b-search{
         padding: 20px;
     }
+    .box + .box .searchbar{
+        margin-top: 20px;
+    }
     .searchbar input{
         width: 185px;
     }
@@ -1496,6 +1575,9 @@ div.chart-box{
     .chart-title{
         padding-top: 15px;
         font-size: 15px;
+    }
+    .notFound{
+        padding: 40px;
     }
     
     

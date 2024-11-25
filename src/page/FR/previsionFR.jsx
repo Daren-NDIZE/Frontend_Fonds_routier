@@ -206,7 +206,7 @@ function PrevisionFR({role}){
                     </button>
                 </div>
                 
-                { ["DCO","ADMIN"].includes(role) &&(
+                { ["DCO","CO"].includes(role) &&(
 
                     <div className="top-element">
                         <div className="check-update">

@@ -395,16 +395,16 @@ const TableMINHDU=({data,programme,onLoadPdf})=>{
                         <th rowSpan="2">Ville</th>
                         <th rowSpan="2" className="min-w13">Type de travaux</th>
                         <th rowSpan="2" className="min-w1">Troçons / Intitulé</th>
-                        <th rowSpan="2">Linéaire_(ml)</th>
-                        <th rowSpan="2" className="min-w4">Budget total TTC</th>
-                        <th rowSpan="2" className="min-w4">Budget antérieur</th>
+                        <th rowSpan="2">Linéaire (ml)</th>
+                        <th rowSpan="2" className="min-w4">Budget total TTC (FCFA)</th>
+                        <th rowSpan="2" className="min-w4">Budget antérieur (FCFA)</th>
                         <th colSpan="6" className="text-center eng">Engagement</th>
                         <th rowSpan="2">Ordonnateurs</th>
                     </tr>
                     <tr>
-                        <th className="min-w4 eng">{`Budget ${programme.annee}`}</th>
-                        <th className="min-w4 eng">Montant engagé</th>
-                        <th className="min-w4 eng">Reliquat</th>
+                        <th className="min-w4 eng">{`Budget ${programme.annee}`} (FCFA)</th>
+                        <th className="min-w4 eng">Montant engagé (FCFA)</th>
+                        <th className="min-w4 eng">Reliquat (FCFA)</th>
                         <th className="min-w3 eng">Prestataire</th>
                         <th className="min-w4 eng">Situation</th>
                         <th className="min-w1 eng">Motifs eventuels</th>
@@ -476,15 +476,14 @@ const TableMINT=({data,programme,categorie,onLoadPdf})=>{
                         <th rowSpan="2" className="min-w1">Activités</th>
                         <th rowSpan="2" className="min-w1">Objectifs</th>
                         <th rowSpan="2" className="min-w12">Allotissement</th>
-                        <th rowSpan="2" className="min-w4">Budget total TTC</th>
-                        <th rowSpan="2" className="min-w4">Budget antérieur</th>
+                        <th rowSpan="2" className="min-w4">Budget total TTC (FCFA)</th>
+                        <th rowSpan="2" className="min-w4">Budget antérieur (FCFA)</th>
                         <th className="text-center eng" colSpan="6">Engagement</th>
-                        <th rowSpan="2">Ordonnateurs</th>
                     </tr>
                     <tr>
-                        <th className="min-w4 eng">{`Budget ${programme.annee}`}</th>
-                        <th className="min-w4 eng">Montant engagé</th>
-                        <th className="min-w4 eng">Reliquat</th>
+                        <th className="min-w4 eng">{`Budget ${programme.annee}`} (FCFA)</th>
+                        <th className="min-w4 eng">Montant engagé (FCFA)</th>
+                        <th className="min-w4 eng">Reliquat (FCFA)</th>
                         <th className="min-w3 eng">Prestataire</th>
                         <th className="min-w4 eng">Situation</th>
                         <th className="min-w1 eng">Motifs eventuels</th>
@@ -521,7 +520,6 @@ const TableMINT=({data,programme,categorie,onLoadPdf})=>{
                                 parseTable(i.suivi.motif).map((k,l)=><li key={l}>{k}</li>)
                             )}
                         </td>
-                        <td>{i.ordonnateur}</td>                   
                     </tr>
                     )}
                     <tr>
@@ -560,14 +558,14 @@ const TableMINTP=({data,programme,categorie,onLoadPdf})=>{
                         <th rowSpan="2">Code route</th>
                         <th rowSpan="2">Linéaire_route (km)</th>
                         <th rowSpan="2">Linéaire_OA (ml)</th>
-                        <th rowSpan="2" className="min-w4">Budget total TTC</th>
-                        <th rowSpan="2" className="min-w4">Budget antérieur</th>
+                        <th rowSpan="2" className="min-w4">Budget total TTC (FCFA)</th>
+                        <th rowSpan="2" className="min-w4">Budget antérieur (FCFA)</th>
                         <th className="text-center eng" colSpan="6">Engagement</th>
                     </tr>
                     <tr>
-                        <th className="min-w4 eng">{`Budget ${programme.annee}`}</th>
-                        <th className="min-w4 eng">Montant engagé</th>
-                        <th className="min-w4 eng">Reliquat</th>
+                        <th className="min-w4 eng">{`Budget ${programme.annee}`} (FCFA)</th>
+                        <th className="min-w4 eng">Montant engagé (FCFA)</th>
+                        <th className="min-w4 eng">Reliquat (FCFA)</th>
                         <th className="min-w3 eng">Prestataire</th>
                         <th className="min-w4 eng">Situation</th>
                         <th className="min-w1 eng">Motifs eventuels</th>

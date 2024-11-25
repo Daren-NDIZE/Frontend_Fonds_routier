@@ -151,9 +151,9 @@ const SyntheseGlobal=({prevision,engagement})=>{
                 <thead>
                     <tr>
                         <th>ORDONNATEUR</th>
-                        <th className="min-w4">PREVISION TTC</th>
-                        <th className="min-w4">ENGAGEMENTS</th>
-                        <th className="min-w4">Excédent/Insuffisance</th>
+                        <th className="min-w4">PREVISION TTC (FCFA)</th>
+                        <th className="min-w4">ENGAGEMENTS (FCFA)</th>
+                        <th className="min-w4">Excédent/Insuffisance (FCFA)</th>
                         <th>Taux d'engagement</th>
                     </tr>
                 </thead>
@@ -204,9 +204,9 @@ const SyntheseMINHDU=({prevision,engagement,lineaire})=>{
                     <tr>
                         <th>ORDONNATEUR</th>
                         <th className="min-w4">CATEGORIE</th>
-                        <th className="min-w4">PREVISION TTC</th>
-                        <th className="min-w4">ENGAGEMENTS</th>
-                        <th className="min-w4">Excédent/Insuffisance</th>
+                        <th className="min-w4">PREVISION TTC (FCFA)</th>
+                        <th className="min-w4">ENGAGEMENTS (FCFA)</th>
+                        <th className="min-w4">Excédent/Insuffisance (FCFA)</th>
                         <th>Taux d'engagement</th>
                     </tr>
                 </thead>
@@ -284,9 +284,9 @@ const SyntheseMINTP=({prevision,engagement,lineaire})=>{
                     <tr>
                         <th>ORDONNATEUR</th>
                         <th className="min-w2">Rubrique</th>
-                        <th className="min-w4">PREVISION TTC</th>
-                        <th className="min-w4">ENGAGEMENTS</th>
-                        <th className="min-w4">Excédent/Insuffisance</th>
+                        <th className="min-w4">PREVISION TTC (FCFA)</th>
+                        <th className="min-w4">ENGAGEMENTS (FCFA)</th>
+                        <th className="min-w4">Excédent/Insuffisance (FCFA)</th>
                         <th>Taux d'engagement</th>
                     </tr>
                 </thead>
@@ -366,9 +366,9 @@ const SyntheseMINT=({prevision,engagement})=>{
                         <th className="min-w4">ORDONNATEUR</th>
                         <th>CATEGORIE</th>
                         <th className="min-w4">TYPE DE TRAVAUX</th>
-                        <th className="min-w4">PREVISION TTC</th>
-                        <th className="min-w4">ENGAGEMENTS</th>
-                        <th className="min-w4">Excédent/Insuffisance</th>
+                        <th className="min-w4">PREVISION TTC (FCFA)</th>
+                        <th className="min-w4">ENGAGEMENTS (FCFA)</th>
+                        <th className="min-w4">Excédent/Insuffisance (FCFA)</th>
                         <th>Taux d'engagement</th>
                     </tr>
                 </thead>

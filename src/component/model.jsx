@@ -37,7 +37,7 @@ const Model=forwardRef(function ({children},ref){
     return(
         <> 
             <div className="left-content">
-                <SideBar role={user.role.roleName}/>
+                <SideBar role={user.role.roleName} structure={user.administration} />
                 <div className="x-close">
                     <i className="fa-solid fa-xmark" onClick={slideBar}></i>
                 </div>

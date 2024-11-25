@@ -6,7 +6,7 @@ import Notification from "../../component/notification"
 import PageLoader from "../../component/pageLoader"
 import { useNavigate, useParams } from "react-router-dom"
 import { fetchFormData, fetchGet} from "../../config/FetchRequest"
-import { numStr, totalBudget } from "../../script"
+import { numStr, totalBudget, focusLine } from "../../script"
 import { downLoadExcel } from "jsxtabletoexcel"
 
 
@@ -433,7 +433,7 @@ const TableMINHDU=({data,annee})=>{
                 </thead>
                 <tbody>
                     {data.map((i,j)=>
-                        <tr key={j}>
+                        <tr key={j} onDoubleClick={focusLine}>
                             <td>{j+1}</td>
                             <td>{i.region.replaceAll("_","-")}</td>
                             <td >{i.ville}</td>
@@ -489,7 +489,7 @@ const TableMINT=({data,annee,categorie})=>{
                 </thead>
                 <tbody> 
                 {data.map((i,j)=>
-                    <tr key={j}>
+                    <tr key={j} onDoubleClick={focusLine}>
                         <td>{j+1}</td>
                         <td>{i.region.replaceAll("_","-")}</td>
                         {categorie==="MAIRE" &&(
@@ -551,7 +551,7 @@ const TableMINTP=({data,categorie,annee})=>{
             <tbody>
             {
                 data.map((i,j)=>
-                <tr key={j}>
+                <tr key={j} onDoubleClick={focusLine}>
                     <td>{j+1}</td>
                     <td>{i.region.replaceAll("_","-")}</td>
                     {categorie==="COMMUNE" &&(

@@ -1,6 +1,8 @@
-import { useState,useRef } from "react"
+import { useState,useRef, useEffect} from "react"
 import { LoginFetch } from "../config/FetchRequest";
 import Notification from "../component/notification";
+import { useNavigate } from "react-router-dom";
+import { chiffrement } from "../config/crypto";
 
 
 function Login(){
@@ -8,6 +10,9 @@ function Login(){
 
     let [loading,setLoading]=useState(false)
     let notification=useRef()
+
+    const navigate=useNavigate()
+
 
     const submit=async(e)=>{
 
@@ -36,6 +41,13 @@ function Login(){
                         {visible: true, type:"erreur",message:"vos identifiants sont incorrects"}
                     )
                 }
+
+
+            }else if(res.status===300){
+
+                let resData= await res.json()
+
+                navigate(`/verification/${chiffrement(resData.username)}`);
             }
 
            

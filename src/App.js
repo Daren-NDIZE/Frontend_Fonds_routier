@@ -1,4 +1,4 @@
-import {Routes,Route,  useNavigate, Outlet, Navigate} from "react-router-dom"
+import {Routes,Route, Outlet, Navigate} from "react-router-dom"
 import Login from "./page/login";
 import { useEffect, useRef } from "react";
 import Model from "./component/model";
@@ -35,23 +35,23 @@ import DetailsPaid from "./page/ordonnateur/DetailsPaid";
 import Engagement from "./page/ordonnateur/engagement";
 import Payement from "./page/ordonnateur/payement";
 import Travaux from "./page/ordonnateur/travaux";
-import Dashboard from "./page/ordonnateur/dashboard";
-
+import Dashboard from "./page/dashboard";
+import CodePage from "./page/CodePage";
+import Permission from "./page/ADMIN/permissions";
 
 function App() {
 
   let user=decode(localStorage.getItem("token"))
-  let navigate=useNavigate()
 
   let model=useRef()
 
   useEffect(()=>{
+
     if(user===null){
       localStorage.clear()
-      navigate("/login")
     }
 
-  },[user,navigate])
+  },[user])
 
   return (
 
@@ -59,14 +59,15 @@ function App() {
       {user===null?
         <Routes>
           <Route path="/login" element={<Login/> }/>
-          <Route path="/*" element={<></>}/>
+          <Route path="/verification/:id" element={<CodePage/> }/>
+          <Route path="/*" element={<Navigate to="/login"/>}/>
         </Routes>
 
       :
    
       <Model ref={model}>
         <Routes>
-          <Route element={["ACO","CO","DCO","DAF","COMPTABLE FR","STAGIAIRE","ADMIN"].includes(user.role)?<Outlet/>:<Navigate to="/programmes"/>}>
+          <Route element={user.structure==="FR"?<Outlet/>:<Navigate to="/programmes"/>}>
             <Route path="/programmes/soumis" element={<SubmitProgramme />}/>
             <Route path="/execution-des-programme" element={<ValideProgramme role={user.role}/>}/>
             <Route path="/execution-des-programme/programme-MINHDU/:id" element={<SuiviProgramme ordonnateur="MINHDU" role={user.role}/>}/>
@@ -87,18 +88,19 @@ function App() {
             <Route path="paramètres/gestion-des-utilisateurs" element={<UserList/>}/>
             <Route path="/paramètres/gestion-des-roles" element={<Roles/>}/>
             <Route path="/paramètres/suivi-des-actions" element={<Action/>}/>
+            <Route path="/paramètres/gestion-des-permissions" element={<Permission/>}/>
           </Route>
 
-          <Route element={["MINHDU","MINT","MINTP"].includes(user.role) ?<Outlet/>:<Navigate to="/programmes/soumis"/>}>
+          <Route element={user.structure!=="FR" ?<Outlet/>:<Navigate to="/programmes/soumis"/>}>
             <Route path="/créer-programme" element={<CreatePg/>}/>
             <Route path="/programmes" element={<Programme/>}/>
             <Route path="/modifier-programme/:id" element={<UpdatePg/>}/>
-            <Route path="/:ordonnateur/synthese" element={<SyntheseOrdonnateur role={user.role}/>}/>
+            <Route path="/:ordonnateur/synthese" element={<SyntheseOrdonnateur role={user.structure}/>}/>
             <Route path="/programmes/:ordonnateur/:id/prévision" element={<Prevision/>}/>
             <Route path="/suivi-paiements" element={<ProgrammePaid/>}/>
-            <Route path="programmation/engagement" element={<Engagement role={user.role}/>}/>
-            <Route path="programmation/suivi-paiements" element={<Payement role={user.role}/>}/>
-            <Route path="programmation/suivi-travaux" element={<Travaux role={user.role}/>}/>
+            <Route path="programmation/engagement" element={<Engagement role={user.structure}/>}/>
+            <Route path="programmation/suivi-paiements" element={<Payement role={user.structure}/>}/>
+            <Route path="programmation/suivi-travaux" element={<Travaux role={user.structure}/>}/>
             <Route path="/suivi-paiements/:ordonnateur/:id" element={<DetailsPaid/>}/>
             <Route path="/programmes/projet/:id/suivi-des-travaux" element={<SuiviTravaux update="true"/>}/>
             <Route path="/programmes_cloturés" element={<ProgrammeCloture/>}/>
@@ -106,15 +108,15 @@ function App() {
 
           </Route>
 
-          <Route element={user.role==="MINHDU"?<Outlet/>:<></>}>
+          <Route element={user.structure==="MINHDU"?<Outlet/>:<></>}>
             <Route path="/programmes/programme-MINHDU/:id" element={<ProgrammeMINHDU/>}/>
           </Route>
 
-          <Route element={user.role==="MINT"?<Outlet/>:<Navigate to="/programmes"/>}>
+          <Route element={user.structure==="MINT"?<Outlet/>:<Navigate to="/programmes"/>}>
             <Route path="/programmes/programme-MINT/:id" element={<ProgrammeMINT/>}/>
           </Route>
 
-          <Route element={user.role==="MINTP"?<Outlet/>:<Navigate to="/programmes/"/>}>
+          <Route element={user.structure==="MINTP"?<Outlet/>:<Navigate to="/programmes/"/>}>
             <Route path="/programmes/programme-MINTP/:id" element={<ProgrammeMINTP/>}/>
           </Route>
 

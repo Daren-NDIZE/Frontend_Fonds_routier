@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom"
 
 
-function SideBar({role}){
+function SideBar({role,structure}){
 
 
     const handleClick=()=>{
@@ -31,7 +31,7 @@ function SideBar({role}){
                     <p>NAVIGATION</p>
                 </div>
                 <nav>
-                    {["ACO","CO","DCO","DAF","COMPTABLE FR","STAGIAIRE"].includes(role)?
+                    {structure==="FR"?
                     <ul>
                         <li><NavLink to="/acceuil">Tableau de bord</NavLink></li>
                         <li><NavLink to="/programmes/soumis">Programmes en cours</NavLink></li>
@@ -39,19 +39,12 @@ function SideBar({role}){
                         <li><NavLink to="/synthese-programme">Synthèse des programmes</NavLink></li>
                         <li><NavLink to="/suivi-des-paiements">Suivi des paiements</NavLink></li>
                         <li><NavLink to="/programmes-cloturés">Programmes cloturés</NavLink></li>
-                    </ul>
-                    :role==="ADMIN"?
-                    <ul>
-                        <li><NavLink to="/acceuil">Tableau de bord</NavLink></li>
-                        <li><NavLink to="/programmes/soumis">Programmes en cours</NavLink></li>
-                        <li><NavLink to="/execution-des-programme">Execution des programmes</NavLink></li>
-                        <li><NavLink to="/synthese-programme">Synthèse des programmes</NavLink></li>
-                        <li><NavLink to="/suivi-des-paiements">Suivi des paiements</NavLink></li>
-                        <li><NavLink to="/programmes-cloturés">Programmes cloturés</NavLink></li>
-                        <li><NavLink to="/paramètres">Paramètres</NavLink></li>
+                        {role==="ADMIN"&&(
+                            <li><NavLink to="/paramètres">Paramètres</NavLink></li>
+                        )}
 
                     </ul>
-                    :["MINHDU","MINTP","MINT"].includes(role)?
+                    :
                     <ul>
                         <li><NavLink to="/acceuil">Tableau de bord</NavLink></li>
                         <li><NavLink to="/créer-programme">Créer un programme</NavLink></li>
@@ -64,14 +57,11 @@ function SideBar({role}){
                             </ul>
                         </li>
                         <li><NavLink to="/programmes">Programmes en cours</NavLink></li>
-                        <li><NavLink to={`/programme-${role}/synthese`}>Synthèse des programmes</NavLink></li>
+                        <li><NavLink to={`/programme-${structure}/synthese`}>Synthèse des programmes</NavLink></li>
                         {/* <li><NavLink to="/suivi-payements">Suivi des payements</NavLink></li> */}
                         <li><NavLink to="/programmes_cloturés">Programmes cloturés</NavLink></li>
                     </ul>
-                    :
-                    <></>
                     }
-                    
                     
                 </nav>
             </div>

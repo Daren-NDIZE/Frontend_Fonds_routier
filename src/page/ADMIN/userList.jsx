@@ -207,6 +207,7 @@ function UserList(){
                                 <th className="min-w4">Nom</th>
                                 <th className="min-w4">Prénom</th>
                                 <th className="min-w4">Username</th>
+                                <th className="min-w4">Administration</th>
                                 <th>Role</th>
                                 <th className="min-w4">Email</th>
                                 <th className="min-w4">Téléphone</th>
@@ -222,6 +223,7 @@ function UserList(){
                                 <td>{i.nom}</td>
                                 <td>{i.prenom}</td>
                                 <td>{i.username}</td>
+                                <td>{i.administration}</td>
                                 <td>{i.role.roleName}</td>
                                 <td>{i.email}</td>
                                 <td>{i.telephone}</td>
@@ -260,9 +262,6 @@ function UserList(){
                             <label>Username</label>
                             <input type="text" name="username" required/>
                         </div>
-                    </div>
-
-                    <div>
                         <div className="form-line">
                             <label>Role</label>
                             <select name="roleName" required> 
@@ -270,6 +269,20 @@ function UserList(){
                                 {roles.map((i,k)=>
                                     <option value={i.roleName} key={k}>{i.roleName}</option>
                                 )}
+                            </select>
+                        </div>
+                    </div>
+                    
+
+                    <div>
+                        <div className="form-line">
+                            <label>Administration</label>
+                            <select name="administration" required> 
+                                <option value="">- - - - - - - - - - - - - - - - - - - - - - - </option>
+                                <option value="FR">Fonds routier</option>
+                                <option value="MINTP">MINTP</option>
+                                <option value="MINHDU">MINHDU</option>
+                                <option value="MINT">MINT</option>
                             </select>
                         </div>
                         <div className="form-line">

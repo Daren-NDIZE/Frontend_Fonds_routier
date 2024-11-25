@@ -7,7 +7,7 @@ import Loader from "../../component/loader";
 import Notification from "../../component/notification";
 import PageLoader from "../../component/pageLoader";
 import FormMINTP from "../../component/formMINTP.";
-import { numStr, totalBudget } from "../../script";
+import { focusLine, numStr, totalBudget, totalEngagement } from "../../script";
 import { downLoadExcel } from "jsxtabletoexcel";
 import { Viewer } from '@react-pdf-viewer/core';
 import { Worker } from '@react-pdf-viewer/core';
@@ -30,6 +30,8 @@ function ProgrammeMINTP (){
     let [deleteId,setDeleteId]=useState()
     let [pdf,setPdf]=useState()
 
+    let totalB=totalBudget(data)
+    let totalE=totalEngagement(data)
 
     let [loader,setLoader]=useState(true)
     let[pageLoader,setPageLoader]=useState(false)
@@ -494,17 +496,17 @@ function ProgrammeMINTP (){
                                 <th>Code route</th>
                                 <th>Linéaire_route (km)</th>
                                 <th>Linéaire_OA (ml)</th>
-                                <th className="min-w4">Budget total TTC</th>
-                                <th className="min-w4">Budget antérieur</th>
-                                <th className="min-w4">Budget {programme.annee}</th>
+                                <th className="min-w4">Budget total TTC (FCFA)</th>
+                                <th className="min-w4">Budget antérieur (FCFA)</th>
+                                <th className="min-w4">Budget {programme.annee} (FCFA)</th>
                                 {(programme.statut==="VALIDER" || programme.type==="AJUSTER")&&(
                                 <>
-                                    <th className="min-w4">Engagement</th>
-                                    <th className="min-w4">Reliquat</th>
+                                    <th className="min-w4">Engagement (FCFA)</th>
+                                    <th className="min-w4">Reliquat (FCFA)</th>
                                 </> 
                                 )}
-                                <th className="min-w4">Projection {programme.annee+1}</th>
-                                <th className="min-w4">Projection {programme.annee+2}</th>
+                                <th className="min-w4">Projection {programme.annee+1} (FCFA)</th>
+                                <th className="min-w4">Projection {programme.annee+2} (FCFA)</th>
                                 <th className="min-w3">Prestataire</th>
                                 <th className="min-w1">Observations</th>
                                 {(programme.statut==="VALIDER" || programme.type==="AJUSTER")&&(
@@ -524,7 +526,7 @@ function ProgrammeMINTP (){
                         <tbody>
                         {programme.statut==="VALIDER"|| programme.type==="AJUSTER"?
                             data.map((i,j)=>
-                            <tr key={j}>
+                            <tr key={j} onDoubleClick={focusLine}>
                                 <td>{j+1}</td>
                                 <td>{i.region.replaceAll("_","-")}</td>
                                 {categorie==="COMMUNALE" &&(
@@ -570,7 +572,7 @@ function ProgrammeMINTP (){
                         )
                         :
                         data.map((i,j)=>
-                            <tr key={j}>
+                            <tr key={j} onDoubleClick={focusLine}>
                                 <td>{j+1}</td>
                                 <td>{i.region.replaceAll("_","-")}</td>
                                 {categorie==="COMMUNALE" &&(
@@ -602,6 +604,16 @@ function ProgrammeMINTP (){
                         )
                         }
 
+                        {(programme.statut==="VALIDER" || programme.type==="AJUSTER") &&(
+                            <tr className="t-line">
+                                <td colSpan={categorie!=="COMMUNALE"?"9":"11"} > Total</td>
+                                <td className="end">{numStr(totalB)}</td>
+                                <td className="end">{numStr( totalE ,0)}</td>
+                                <td className="end">{numStr(totalB-totalE , 0)}</td>
+                                <td colSpan="7">
+                                </td>
+                            </tr>
+                        )}
 
                         {(programme.statut==="VALIDER" && programme.type!=="REPORT") && (
 

@@ -12,11 +12,13 @@ function SuiviTravaux({update}){
 
     let [loader,setLoader]=useState(true)
     let [data,setData]=useState([])
+    let [projet,setProjet]=useState({})
     let [pageLoader,setPageLoader]=useState()
     let [erreur,setErreur]=useState("")
     let [check,setCheck]=useState(false)
     let [suiviId,setSuiviId]=useState()
     let [focus,setFocus]=useState({})
+    let [state,setState]=useState("PASSATION")
 
     let notification=useRef()
     let modalBox=useRef()
@@ -37,11 +39,12 @@ function SuiviTravaux({update}){
 
                 if(res.ok){
                     const resData= await res.json()
+                    setProjet(resData)
 
                     if(resData.type || !resData.bordereau){
                         navigate(-1)
                     }else{
-                        setData(resData.suiviTravaux)
+                        setData(resData.passation)
                     }
                 }
             }catch(e){
@@ -55,10 +58,7 @@ function SuiviTravaux({update}){
     },[id,navigate])
 
 
-    const submit=async (e)=>{
-
-        let content=["DAO en cours d'élaboration","DAO en cours d'examen en Commission","AAO lancé avec ouverture des offres",
-                     "Accord de gré gré attendu","Offres en cours d'examen","Décision d'attribution signée"]
+    const submitTravaux=async (e)=>{
 
         e.preventDefault()
         let form=e.target
@@ -67,9 +67,8 @@ function SuiviTravaux({update}){
             setErreur("")
         }
     
-        if(form.tauxConsommation.value==="" || form.tauxAvancement.value==="" || form.numeroMarche.value===""
-            || form.dateOs.value==="" || !content.includes(form.contractualisation.value)
-        ){
+        if( form.tauxConsommation.value==="" || form.tauxAvancement.value==="" ){
+
             setErreur("Veuillez remplir tous les champs")
             return;
         }
@@ -95,6 +94,7 @@ function SuiviTravaux({update}){
 
                     if(response.ok){
                         const dataRes= await response.json()
+                        setProjet(dataRes)
                         setData(dataRes.suiviTravaux)
                     } 
                 }
@@ -113,10 +113,10 @@ function SuiviTravaux({update}){
 
     }
 
-    const updated=async (e)=>{
+    const submitPassation=async (e)=>{
 
         let content=["DAO en cours d'élaboration","DAO en cours d'examen en Commission","AAO lancé avec ouverture des offres",
-            "Accord de gré gré attendu","Offres en cours d'examen","Décision d'attribution signée"]
+                     "Accord de gré gré attendu","Offres en cours d'examen","Décision d'attribution signée"]
 
         e.preventDefault()
         let form=e.target
@@ -125,9 +125,59 @@ function SuiviTravaux({update}){
             setErreur("")
         }
     
-        if(form.tauxConsommation.value==="" || form.tauxAvancement.value==="" || form.numeroMarche.value===""
-            || form.dateOs.value==="" || !content.includes(form.contractualisation.value)
-        ){
+        if( form.numeroMarche.value==="" || form.dateOs.value==="" || !content.includes(form.contractualisation.value)){
+
+            setErreur("Veuillez remplir tous les champs")
+            return;
+        }
+        
+        let formData =new FormData(form);
+        let data=Object.fromEntries(formData)
+        modalBox.current.setModal(false)
+        setPageLoader(true)
+
+        try{
+            let res= await Fetch(`projet/savePassation/${id}`,"POST",data)
+
+            if(res.ok){
+
+                let resData= await res.json()
+        
+                if(resData.type==="succes"){
+
+                    const response= await fetchGet(`projet/${id}`)
+
+                    if(response.ok){
+                        const dataRes= await response.json()
+                        setProjet(dataRes)
+                        setData(dataRes.passation)
+                    } 
+                }
+
+                window.scroll({top: 0, behavior:"smooth"})
+                notification.current.setNotification(
+                    {visible: true, type:resData.type,message:resData.message}
+                )
+            }
+
+        }catch(e){
+            console.log(e)
+        }finally{
+            setPageLoader(false)
+        }
+
+    }
+
+    const updatedTravaux=async (e)=>{
+
+        e.preventDefault()
+        let form=e.target
+
+        if(erreur.length!==0){
+            setErreur("")
+        }
+    
+        if(form.tauxConsommation.value==="" || form.tauxAvancement.value===""){
             setErreur("Veuillez remplir tous les champs")
             return;
         }
@@ -154,6 +204,10 @@ function SuiviTravaux({update}){
                     datas.date=focus.date
                     data[index]=datas
                     setData(data)
+                    setProjet(projet=>{
+                        projet.suiviTravaux=data;
+                        return projet;
+                    })
                 }
 
                 window.scroll({top: 0, behavior:"smooth"})
@@ -171,7 +225,63 @@ function SuiviTravaux({update}){
 
     }
 
-    const deleted=async()=>{
+    const updatedPassation=async (e)=>{
+
+        let content=["DAO en cours d'élaboration","DAO en cours d'examen en Commission","AAO lancé avec ouverture des offres",
+            "Accord de gré gré attendu","Offres en cours d'examen","Décision d'attribution signée"]
+
+        e.preventDefault()
+        let form=e.target
+
+        if(erreur.length!==0){
+            setErreur("")
+        }
+    
+        if( form.numeroMarche.value==="" || form.dateOs.value==="" || !content.includes(form.contractualisation.value) ){
+            setErreur("Veuillez remplir tous les champs")
+            return;
+        }
+        
+        let formData =new FormData(form);
+        let datas=Object.fromEntries(formData)
+        modal1.current.setModal(false)
+        setPageLoader(true)
+
+        try{
+            let res= await Fetch(`projet/updatePassation/${suiviId}`,"PUT",datas)
+            if(res.ok){
+
+                let resData= await res.json()
+
+                if(resData.type==="succes"){
+
+                    let index=data.indexOf(focus)
+                    datas.id=focus.id
+                    datas.date=focus.date
+                    data[index]=datas
+                    setData(data)
+                    setProjet(projet=>{
+                        projet.passation=data;
+                        return projet;
+                    })
+                }
+
+                window.scroll({top: 0, behavior:"smooth"})
+                notification.current.setNotification(
+                    {visible: true, type:resData.type,message:resData.message}
+                )
+
+            }
+
+        }catch(e){
+            console.log(e)
+        }finally{
+            setPageLoader(false)
+        }
+
+    }
+
+    const deletedTravaux=async()=>{
 
         setPageLoader(true)
         modal2.current.setModal(false)
@@ -186,8 +296,12 @@ function SuiviTravaux({update}){
                     {visible: true, type:resData.type,message:resData.message}
                 )
                 if(resData.type==="succes"){
-                    
-                    setData(data=>data.filter(i=>i.id!==suiviId))
+                    let change=data.filter(i=>i.id!==suiviId)
+                    setData(change)
+                    setProjet(projet=>{
+                        projet.suiviTravaux=change
+                        return projet
+                    })
                 }
             }
         }catch(e){
@@ -196,6 +310,61 @@ function SuiviTravaux({update}){
             setPageLoader(false)
         }
 
+    }
+
+    const deletedPassation=async()=>{
+
+        setPageLoader(true)
+        modal2.current.setModal(false)
+
+        try{
+            let res= await Fetch(`projet/deletePassation/${suiviId}`,"DELETE")
+            if(res.ok){
+
+                let resData= await res.json()
+                window.scroll({top: 0, behavior:"smooth"})
+                notification.current.setNotification(
+                    {visible: true, type:resData.type,message:resData.message}
+                )
+                if(resData.type==="succes"){
+                    let change=data.filter(i=>i.id!==suiviId)
+                    setData(change)
+                    setProjet(projet=>{
+                        projet.passation=change;
+                        return projet;
+                    })
+
+                }
+            }
+        }catch(e){
+            console.log(e)
+        }finally{
+            setPageLoader(false)
+        }
+
+    }
+
+    const changeTable=(e,i)=>{
+
+        let li=e.target
+
+        setState(i)
+
+        if(i==="TRAVAUX"){
+            setData(projet.suiviTravaux)
+
+        }else{
+            setData(projet.passation)
+        }
+       
+        if(li.classList.contains("active")){
+            return;
+        }
+
+        Array.from(li.parentNode.children).forEach(i=>{
+            i.classList.remove("active")
+        })
+        li.classList.add("active")
     }
 
     const openModal=(id,modal)=>{
@@ -214,6 +383,7 @@ function SuiviTravaux({update}){
     }
     
     return(
+
         <div className="container">
 
             <Notification ref={notification} />
@@ -232,9 +402,13 @@ function SuiviTravaux({update}){
 
             <div className="box">
                 <div id="pg-title" className="suivi-pg">
-                    <div>
-                        <h1>Suivi des travaux</h1>
+                    <div className="top-element">
+                        <ul>
+                            <li className="active" onClick={(e)=>changeTable(e,"PASSATION")}>Passation</li>
+                            <li onClick={(e)=>changeTable(e,"TRAVAUX")}>Travaux</li>
+                        </ul>
                     </div>
+
                     {update &&(
                         <>
                             <div className="check-update">
@@ -246,11 +420,13 @@ function SuiviTravaux({update}){
                             </div>
                         </>
                     )}
-                    
-                </div>
-            
 
+                </div>
+                
                 <div className="tableBox">
+
+                    {state==="PASSATION"?
+                    
                     <table className="table">
                         <thead>
                             <tr>
@@ -259,6 +435,41 @@ function SuiviTravaux({update}){
                                 <th className="min-w13">Niveau de contractualisation du projet</th>
                                 <th className="min-w4">N° du Marché</th>
                                 <th className="min-w4">Date OS  de demarrage</th>
+                                
+                                {check &&
+                                    <th></th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {data.map((i,k)=>
+                                <tr key={k}>
+                                    <td>{k+1}</td>
+                                    <td>{new Date(i.date).toLocaleDateString()}</td>
+                                    <td>{i.contractualisation}</td>
+                                    <td>{i.numeroMarche}</td>
+                                    <td>{new Date(i.dateOs).toLocaleDateString()}</td>
+                                    {check &&
+                                    <td>
+                                        <div className="t-action">
+                                            <i className="fa-solid fa-pen-to-square" onClick={()=>openModal(i.id,modal1)}></i>
+                                            <i className="fa-solid fa-trash-can" onClick={()=>openModal(i.id,modal2)} ></i>
+                                        </div>
+                                    </td>
+                                    
+                                    }
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                    
+                    :
+                      
+                    <table className="table">
+                        <thead>
+                            <tr>
+                                <th>N°</th>
+                                <th>Date</th>
                                 <th>Taux de consommation</th>
                                 <th>Taux d'avancement</th>
                                 <th className="min-w1">Contraintes/Difficultés éventuelles</th>
@@ -273,9 +484,6 @@ function SuiviTravaux({update}){
                                 <tr key={k}>
                                     <td>{k+1}</td>
                                     <td>{new Date(i.date).toLocaleDateString()}</td>
-                                    <td>{i.contractualisation}</td>
-                                    <td>{i.numeroMarche}</td>
-                                    <td>{new Date(i.dateOs).toLocaleDateString()}</td>
                                     <td>{i.tauxConsommation} %</td>
                                     <td>{i.tauxAvancement} %</td>
                                     <td>{i.description}</td>
@@ -293,127 +501,177 @@ function SuiviTravaux({update}){
                             )}
                         </tbody>
                     </table>
+                    
+                    }
+                    
                 </div>
             </div>
 
             
             <ModalBox ref={modalBox} >
-                <form className="flex-form" onSubmit={submit}>
 
-                    <div>  
-                        {erreur.length!==0 &&(
-                            <p className="error-msg">{erreur}</p>
-                        )} 
-                        <div className="form-line">
-                            <label>Niveau de contractualisation du projet <span>*</span></label>
-                            <select name="contractualisation" required>
-                                <option value="">- - - - - - - - - - - - - - - - - - - - - - - -  </option>
-                                <option value="DAO en cours d'élaboration">DAO en cours d'élaboration</option>
-                                <option value="DAO en cours d'examen en Commission">DAO en cours d'examen en Commission</option>
-                                <option value="AAO lancé avec ouverture des offres">AAO lancé avec ouverture des offres</option>
-                                <option value="Accord de gré gré attendu">Accord de gré gré attendu</option>
-                                <option value="Offres en cours d'examen">Offres en cours d'examen</option>
-                                <option value="Décision d'attribution signée">Décision d'attribution signée</option>
-                            </select>
+                {state==="TRAVAUX"?
+
+                    <form className="flex-form" onSubmit={submitTravaux}>
+
+                        <div>  
+                            {erreur.length!==0 &&(
+                                <p className="error-msg">{erreur}</p>
+                            )} 
+                            
+                            <div className="form-line">
+                                <label>Taux de consommation des délais  (en %) <span>*</span></label>
+                                <input type="number" step="any" max="100" name="tauxConsommation" required/>
+                            </div>
+                            
+                            <div className="form-line">
+                                <label>Taux d'avancement des travaux (en %) <span>*</span></label>
+                                <input type="number" step="any" max="100" name="tauxAvancement" required/>
+                            </div>
+                            <div className="form-line">
+                                <label>Contraintes/Difficultés éventuelles </label>
+                                <textarea name="description" />
+                            </div>
+                            <div className="form-line">
+                                <label>Proposition de solutions </label>
+                                <textarea name="proposition" />
+                            </div>
+                            <div className="form-line" style={{margin: "0"}}>
+                                <button type="submit">Enregistrer</button>
+                            </div>
+                        </div> 
+
+                    </form>
+                :
+                    <form className="flex-form" onSubmit={submitPassation}>
+
+                        <div>  
+                            {erreur.length!==0 &&(
+                                <p className="error-msg">{erreur}</p>
+                            )} 
+                            <div className="form-line">
+                                <label>Niveau de contractualisation du projet <span>*</span></label>
+                                <select name="contractualisation" required>
+                                    <option value="">- - - - - - - - - - - - - - - - - - - - - - - -  </option>
+                                    <option value="DAO en cours d'élaboration">DAO en cours d'élaboration</option>
+                                    <option value="DAO en cours d'examen en Commission">DAO en cours d'examen en Commission</option>
+                                    <option value="AAO lancé avec ouverture des offres">AAO lancé avec ouverture des offres</option>
+                                    <option value="Accord de gré gré attendu">Accord de gré gré attendu</option>
+                                    <option value="Offres en cours d'examen">Offres en cours d'examen</option>
+                                    <option value="Décision d'attribution signée">Décision d'attribution signée</option>
+                                </select>
+                            </div>
+                            <div className="form-line">
+                                <label>Numéro du marché <span>*</span></label>
+                                <input type="text" step="any" name="numeroMarche" required/>
+                            </div>
+                            <div className="form-line">
+                                <label>Date de notification de l'OS de démarrage <span>*</span></label>
+                                <input type="date" name="dateOs" max={new Date().toISOString().split("T")[0]} required/>
+                            </div>
+                           
+                            <div className="form-line" style={{margin: "0"}}>
+                                <button type="submit">Enregistrer</button>
+                            </div>
+
                         </div>
-                        <div className="form-line">
-                            <label>Numéro du marché <span>*</span></label>
-                            <input type="text" step="any" name="numeroMarche" required/>
-                        </div>
-                        <div className="form-line">
-                            <label>Date de notification de l'OS de démarrage <span>*</span></label>
-                            <input type="date" name="dateOs" max={new Date().toISOString().split("T")[0]} required/>
-                        </div>
-                        <div className="form-line">
-                            <label>Taux de consommation des délais   (en %) <span>*</span></label>
-                            <input type="number" step="any" max="100" name="tauxConsommation" required/>
-                        </div>
-                        
-                    </div>
                     
-                    <div>   
-                        <div className="form-line">
-                            <label>Taux d'avancement des travaux (en %) <span>*</span></label>
-                            <input type="number" step="any" max="100" name="tauxAvancement" required/>
-                        </div>
-                        <div className="form-line">
-                            <label>Contraintes/Difficultés éventuelles </label>
-                            <textarea name="description" />
-                        </div>
-                        <div className="form-line">
-                            <label>Proposition de solutions </label>
-                            <textarea name="proposition" />
-                        </div>
-                        <div className="form-line" style={{margin: "0"}}>
-                            <button type="submit">Enregistrer</button>
-                        </div>
-                    </div>
-                     
-                </form>
+                    </form>
+                }
+                
             </ModalBox>
+
 
             <ModalBox ref={modal1} >
 
-                <form className="flex-form" onSubmit={updated} >
+                {state==="TRAVAUX"?
 
-                    <div>  
-                        {erreur.length!==0 &&(
-                            <p className="error-msg">{erreur}</p>
-                        )} 
-                        <div className="form-line">
-                            <label>Niveau de contractualisation du projet <span>*</span></label>
-                            <select name="contractualisation" defaultValue={focus.contractualisation} required>
-                                <option value="">- - - - - - - - - - - - - - - - - - - - - - - -  </option>
-                                <option value="DAO en cours d'élaboration">DAO en cours d'élaboration</option>
-                                <option value="DAO en cours d'examen en Commission">DAO en cours d'examen en Commission</option>
-                                <option value="AAO lancé avec ouverture des offres">AAO lancé avec ouverture des offres</option>
-                                <option value="Accord de gré gré attendu">Accord de gré gré attendu</option>
-                                <option value="Offres en cours d'examen">Offres en cours d'examen</option>
-                                <option value="Décision d'attribution signée">Décision d'attribution signée</option>
-                            </select>
-                        </div>
-                        <div className="form-line">
-                            <label>Numéro du marché <span>*</span></label>
-                            <input type="text" step="any" name="numeroMarche" defaultValue={focus.numeroMarche} required/>
-                        </div>
-                        <div className="form-line">
-                            <label>Date de notification de l'OS de démarrage <span>*</span></label>
-                            <input type="date" name="dateOs" defaultValue={focus.dateOs?new Date(focus.dateOs).toISOString().split("T")[0]:""} max={new Date().toISOString().split("T")[0]} required/>
-                        </div>
-                        <div className="form-line">
-                            <label>Taux de consommation des délais   (en %) <span>*</span></label>
-                            <input type="number" step="any" max="100" name="tauxConsommation" defaultValue={focus.tauxConsommation} required/>
-                        </div>
-                        
-                    </div>
-                    
-                    <div>   
-                        <div className="form-line">
-                            <label>Taux d'avancement des travaux (en %) <span>*</span></label>
-                            <input type="number" step="any" max="100" name="tauxAvancement" defaultValue={focus.tauxAvancement} required/>
-                        </div>
-                        <div className="form-line">
-                            <label>Contraintes/Difficultés éventuelles </label>
-                            <textarea name="description" defaultValue={focus.description} />
-                        </div>
-                        <div className="form-line">
-                            <label>Proposition de solutions </label>
-                            <textarea name="proposition" defaultValue={focus.proposition} />
-                        </div>
-                        <div className="form-line" style={{margin: "0"}}>
-                            <button type="submit">Enregistrer</button>
-                        </div>
-                    </div>
+                    <form className="flex-form" onSubmit={updatedTravaux} >
 
-                </form>
+                        <div>  
+                            {erreur.length!==0 &&(
+                                <p className="error-msg">{erreur}</p>
+                            )} 
+                            
+                            <div className="form-line">
+                                <label>Taux de consommation des délais   (en %) <span>*</span></label>
+                                <input type="number" step="any" max="100" name="tauxConsommation" defaultValue={focus.tauxConsommation} required/>
+                            </div>
+                 
+                            <div className="form-line">
+                                <label>Taux d'avancement des travaux (en %) <span>*</span></label>
+                                <input type="number" step="any" max="100" name="tauxAvancement" defaultValue={focus.tauxAvancement} required/>
+                            </div>
+
+                            <div className="form-line">
+                                <label>Contraintes/Difficultés éventuelles </label>
+                                <textarea name="description" defaultValue={focus.description} />
+                            </div>
+                            <div className="form-line">
+                                <label>Proposition de solutions </label>
+                                <textarea name="proposition" defaultValue={focus.proposition} />
+                            </div>
+                            <div className="form-line" style={{margin: "0"}}>
+                                <button type="submit">Enregistrer</button>
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                :
+                    <form className="flex-form" onSubmit={updatedPassation} >
+
+                        <div>  
+                            {erreur.length!==0 &&(
+                                <p className="error-msg">{erreur}</p>
+                            )} 
+                            <div className="form-line">
+                                <label>Niveau de contractualisation du projet <span>*</span></label>
+                                <select name="contractualisation" defaultValue={focus.contractualisation} required>
+                                    <option value="">- - - - - - - - - - - - - - - - - - - - - - - -  </option>
+                                    <option value="DAO en cours d'élaboration">DAO en cours d'élaboration</option>
+                                    <option value="DAO en cours d'examen en Commission">DAO en cours d'examen en Commission</option>
+                                    <option value="AAO lancé avec ouverture des offres">AAO lancé avec ouverture des offres</option>
+                                    <option value="Accord de gré gré attendu">Accord de gré gré attendu</option>
+                                    <option value="Offres en cours d'examen">Offres en cours d'examen</option>
+                                    <option value="Décision d'attribution signée">Décision d'attribution signée</option>
+                                </select>
+                            </div>
+                            <div className="form-line">
+                                <label>Numéro du marché <span>*</span></label>
+                                <input type="text" step="any" name="numeroMarche" defaultValue={focus.numeroMarche} required/>
+                            </div>
+                            <div className="form-line">
+                                <label>Date de notification de l'OS de démarrage <span>*</span></label>
+                                <input type="date" name="dateOs" defaultValue={focus.dateOs?new Date(focus.dateOs).toISOString().split("T")[0]:""} max={new Date().toISOString().split("T")[0]} required/>
+                            </div>
+            
+                            <div className="form-line" style={{margin: "0"}}>
+                                <button type="submit">Enregistrer</button>
+                            </div>
+                        </div>
+
+                    </form>
+
+                }
+                
             </ModalBox>
+
 
             <ModalBox ref={modal2}>
                 <div className="pg-modal">
-                    <p>Voulez vous vraiment supprimer ce payement?</p>
+                    <p>Voulez vous vraiment supprimer cet élément?</p>
                     <div className="mb-content">
-                        <button className="s-btn" onClick={deleted}>OUI</button>
+
+                        {state==="TRAVAUX"?
+                            <button className="s-btn" onClick={deletedTravaux}>OUI</button>
+                        :
+                            <button className="s-btn" onClick={deletedPassation}>OUI</button>
+                        }
+
                         <button className="b-btn" onClick={()=>modal2.current.setModal(false)}>NON</button>
+
                     </div>
                 </div>
             </ModalBox>

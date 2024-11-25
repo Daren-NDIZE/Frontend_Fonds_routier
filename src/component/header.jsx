@@ -31,7 +31,7 @@ function Header({user,onSlideBar}){
                                     {user.prenom+" "+user.nom}
                                     </Link>
                                 </p>
-                                <p>{user.role.roleName.replaceAll("_"," ")}</p>
+                                <p>{user.role.roleName }{user.administration!=="FR" &&  " "+user.administration}</p>
                             </div>
                         </>
                     :

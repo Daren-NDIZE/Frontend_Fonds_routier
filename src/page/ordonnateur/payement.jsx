@@ -396,16 +396,16 @@ const TableMINHDU=({data,programme,onLoadPdf})=>{
                         <th>Région</th>
                         <th>Ville</th>
                         <th className="min-w1">Troçons / Intitulé</th>
-                        <th>Linéaire_(ml)</th>
-                        <th className="min-w4">Budget total TTC</th>
-                        <th className="min-w4">Budget_antérieur</th>
-                        <th className="min-w4">Budget {programme.annee}</th>
-                        <th className="min-w4">Engagement</th>
-                        <th className="min-w4">Reliquat</th>
+                        <th>Linéaire (ml)</th>
+                        <th className="min-w4">Budget total TTC (FCFA)</th>
+                        <th className="min-w4">Budget_antérieur (FCFA)</th>
+                        <th className="min-w4">Budget {programme.annee} (FCFA)</th>
+                        <th className="min-w4">Engagement (FCFA)</th>
+                        <th className="min-w4">Reliquat (FCFA)</th>
                         <th className="min-w3">Prestataire</th>
                         <th>Ordonnateurs</th>
                         <th className="min-w4">Situation</th>
-                        <th colSpan="9" className="text-center c-paid">Suivi des paiements</th>
+                        <th colSpan="9" className="text-center c-paid">Suivi des paiements (FCFA)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -491,15 +491,15 @@ const TableMINT=({data,programme,categorie,onLoadPdf})=>{
                         <th className="min-w1">Activités</th>
                         <th className="min-w1">Objectifs</th>
                         <th className="min-w12">Allotissement</th>
-                        <th className="min-w4">Budget total TTC</th>
-                        <th className="min-w4">Budget antérieur</th>
-                        <th className="min-w4">Budget {programme.annee}</th>
-                        <th className="min-w4">Engagement</th>
-                        <th className="min-w4">Reliquat</th>
+                        <th className="min-w4">Budget total TTC (FCFA)</th>
+                        <th className="min-w4">Budget antérieur (FCFA)</th>
+                        <th className="min-w4">Budget {programme.annee} (FCFA)</th>
+                        <th className="min-w4">Engagement (FCFA)</th>
+                        <th className="min-w4">Reliquat (FCFA)</th>
                         <th className="min-w3">Prestataire</th>
                         <th>Ordonnateurs</th>
                         <th className="min-w4">situation</th>
-                        <th colSpan="9"  className="text-center c-paid">Suivi des paiements</th>
+                        <th colSpan="9"  className="text-center c-paid">Suivi des paiements (FCFA)</th>
                     </tr>
                 </thead>
                 <tbody> 
@@ -594,14 +594,14 @@ const TableMINTP=({data,programme,categorie,onLoadPdf})=>{
                     <th>Code route</th>
                     <th>Linéaire_route (km)</th>
                     <th>Linéaire_OA (ml)</th>
-                    <th className="min-w4">Budget total TTC</th>
-                    <th className="min-w4">Budget antérieur</th>
-                    <th className="min-w4">Budget {programme.annee}</th>
-                    <th className="min-w4">Engagement</th>
-                    <th className="min-w4">Reliquat</th>
+                    <th className="min-w4">Budget total TTC (FCFA)</th>
+                    <th className="min-w4">Budget antérieur (FCFA)</th>
+                    <th className="min-w4">Budget {programme.annee} (FCFA)</th>
+                    <th className="min-w4">Engagement (FCFA)</th>
+                    <th className="min-w4">Reliquat (FCFA)</th>
                     <th className="min-w3">Prestataire</th>
                     <th className="min-w4">Situation</th>
-                    <th colSpan="9" className="text-center c-paid">Suivi des paiements</th>
+                    <th colSpan="9" className="text-center c-paid">Suivi des paiements (FCFA)</th>
                 </tr>
             </thead>
                 <tbody> 

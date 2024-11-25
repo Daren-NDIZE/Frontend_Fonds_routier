@@ -31,8 +31,8 @@ function Param(){
                 <div className="box" onClick={()=>nav("suivi-des-actions")}>
                     <p>Suivi des actions</p>
                 </div>
-                <div className="box">
-                    <p>Motifs de rejet</p>
+                <div className="box" onClick={()=>nav("gestion-des-permissions")}>
+                    <p>Gestion des permissions</p>
                 </div>
            </div>
            

@@ -383,6 +383,7 @@ export default Travaux;
 
 const TableMINHDU=({data,programme,onLoadPdf})=>{
 
+
     return(
 
         <div className="tableBox">
@@ -394,16 +395,15 @@ const TableMINHDU=({data,programme,onLoadPdf})=>{
                         <th rowSpan="2">Ville</th>
                         <th rowSpan="2" className="min-w13">Type de travaux</th>
                         <th rowSpan="2" className="min-w1">Troçons / Intitulé</th>
-                        <th rowSpan="2">Linéaire_(ml)</th>
-                        <th rowSpan="2" className="min-w4">Budget total TTC</th>
-                        <th rowSpan="2" className="min-w4">Budget antérieur</th>
-                        <th rowSpan="2" className="min-w4">{`budget ${programme.annee}`}</th>
+                        <th rowSpan="2">Linéaire (ml)</th>
+                        <th rowSpan="2" className="min-w4">Budget total TTC (FCFA)</th>
+                        <th rowSpan="2" className="min-w4">Budget antérieur (FCFA)</th>
+                        <th rowSpan="2" className="min-w4">{`budget ${programme.annee}`} (FCFA)</th>
                         <th rowSpan="2" className="min-w3">Prestataire</th>
                         <th rowSpan="2">Ordonnateurs</th>
-                        <th colSpan="8" className="text-center str">Suivi passation et exécution</th>
+                        <th colSpan="7" className="text-center str">Suivi passation et exécution</th>
                     </tr>
                     <tr>
-                        <th className="str">Date</th>
                         <th className="min-w13 str">Niveau de contractualisation du projet</th>
                         <th className="min-w4 str">N° du Marché</th>
                         <th className="min-w4 str">Date OS  de demarrage</th>
@@ -427,20 +427,27 @@ const TableMINHDU=({data,programme,onLoadPdf})=>{
                             <td className="end">{numStr(i.budget_n) }</td>
                             <td>{i.prestataire}</td>
                             <td>{i.ordonnateur}</td> 
+                            {i.passation.length?
+                                <>
+                                    <td>{i.passation.slice(-1).pop().contractualisation}</td>
+                                    <td>{i.passation.slice(-1).pop().numeroMarche}</td>
+                                    <td>{new Date(i.passation.slice(-1).pop().dateOs).toLocaleDateString()}</td>
+                                </>
+                            :
+                                <><td></td><td></td><td></td></>
+                            }
+
                             {i.suiviTravaux.length?
-                            <>
-                            <td>{new Date(i.suiviTravaux.slice(-1).pop().date).toLocaleDateString()}</td>
-                            <td>{i.suiviTravaux.slice(-1).pop().contractualisation}</td>
-                            <td>{i.suiviTravaux.slice(-1).pop().numeroMarche}</td>
-                            <td>{new Date(i.suiviTravaux.slice(-1).pop().dateOs).toLocaleDateString()}</td>
-                            <td>{i.suiviTravaux.slice(-1).pop().tauxConsommation} %</td>
-                            <td>{i.suiviTravaux.slice(-1).pop().tauxAvancement} %</td>
-                            <td>{i.suiviTravaux.slice(-1).pop().description}</td>
-                            <td>{i.suiviTravaux.slice(-1).pop().proposition}</td>
+                            <>                
+                                <td>{i.suiviTravaux.slice(-1).pop().tauxConsommation} %</td>
+                                <td>{i.suiviTravaux.slice(-1).pop().tauxAvancement} %</td>
+                                <td>{i.suiviTravaux.slice(-1).pop().description}</td>
+                                <td>{i.suiviTravaux.slice(-1).pop().proposition}</td>
                             </>
                             :<>
-                            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-                            </>}
+                                <td></td><td></td><td></td><td></td>
+                            </>
+                            }
                         </tr>
                     )}
                     
@@ -469,15 +476,14 @@ const TableMINT=({data,programme,categorie,onLoadPdf})=>{
                         <th rowSpan="2" className="min-w1">Activités</th>
                         <th rowSpan="2" className="min-w1">Objectifs</th>
                         <th rowSpan="2" className="min-w12">Allotissement</th>
-                        <th rowSpan="2" className="min-w4">Budget total TTC</th>
-                        <th rowSpan="2" className="min-w4">Budget antérieur</th>
-                        <th rowSpan="2" className="min-w4">{`budget ${programme.annee}`}</th>
+                        <th rowSpan="2" className="min-w4">Budget total TTC (FCFA)</th>
+                        <th rowSpan="2" className="min-w4">Budget antérieur (FCFA)</th>
+                        <th rowSpan="2" className="min-w4">{`budget ${programme.annee}`} (FCFA)</th>
                         <th rowSpan="2" className="min-w3">Prestataire</th>
                         <th rowSpan="2">Ordonnateurs</th>
-                        <th colSpan="8" className="text-center str">Suivi passation et exécution</th>
+                        <th colSpan="7" className="text-center str">Suivi passation et exécution</th>
                     </tr>
                     <tr>
-                        <th className="str">Date</th>
                         <th className="min-w13 str">Niveau de contractualisation du projet</th>
                         <th className="min-w4 str">N° du Marché</th>
                         <th className="min-w4 str">Date OS de demarrage</th>
@@ -506,23 +512,29 @@ const TableMINT=({data,programme,categorie,onLoadPdf})=>{
                         <td className="end">{numStr(i.budget_n) }</td>
                         <td>{i.prestataire}</td>
                         <td>{i.ordonnateur}</td> 
+
+                        {i.passation.length?
+                            <>
+                                <td>{i.passation.slice(-1).pop().contractualisation}</td>
+                                <td>{i.passation.slice(-1).pop().numeroMarche}</td>
+                                <td>{new Date(i.passation.slice(-1).pop().dateOs).toLocaleDateString()}</td>
+                            </>
+                        :
+                            <><td></td><td></td><td></td></>
+                        }
                         {i.suiviTravaux.length?
-                        <>
-                            <td>{new Date(i.suiviTravaux.slice(-1).pop().date).toLocaleDateString()}</td>
-                            <td>{i.suiviTravaux.slice(-1).pop().contractualisation}</td>
-                            <td>{i.suiviTravaux.slice(-1).pop().numeroMarche}</td>
-                            <td>{new Date(i.suiviTravaux.slice(-1).pop().dateOs).toLocaleDateString()}</td>
+                        <>                
                             <td>{i.suiviTravaux.slice(-1).pop().tauxConsommation} %</td>
                             <td>{i.suiviTravaux.slice(-1).pop().tauxAvancement} %</td>
                             <td>{i.suiviTravaux.slice(-1).pop().description}</td>
                             <td>{i.suiviTravaux.slice(-1).pop().proposition}</td>
                         </>
                         :<>
-                            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-                        </>}                  
+                            <td></td><td></td><td></td><td></td>
+                        </>
+                        }                
                     </tr>
-                    )
-                    }
+                )}
                 </tbody>
             </table>
         </div>
@@ -550,14 +562,13 @@ const TableMINTP=({data,programme,categorie,onLoadPdf})=>{
                         <th rowSpan="2">Code route</th>
                         <th rowSpan="2">Linéaire_route (km)</th>
                         <th rowSpan="2">Linéaire_OA (ml)</th>
-                        <th rowSpan="2" className="min-w4">Budget total TTC</th>
-                        <th rowSpan="2" className="min-w4">Budget antérieur</th>
-                        <th rowSpan="2" className="min-w4">{`budget ${programme.annee}`}</th>
+                        <th rowSpan="2" className="min-w4">Budget total TTC (FCFA)</th>
+                        <th rowSpan="2" className="min-w4">Budget antérieur (FCFA)</th>
+                        <th rowSpan="2" className="min-w4">{`budget ${programme.annee}`} (FCFA)</th>
                         <th rowSpan="2" className="min-w3">Prestataire</th>
-                        <th colSpan="8" className="text-center str">Suivi passation et exécution</th>
+                        <th colSpan="7" className="text-center str">Suivi passation et exécution</th>
                     </tr>
                     <tr>
-                        <th className="str">Date</th>
                         <th className="min-w13 str">Niveau de contractualisation du projet</th>
                         <th className="min-w4 str">N° du Marché</th>
                         <th className="min-w4 str">Date OS  de demarrage</th>
@@ -587,20 +598,27 @@ const TableMINTP=({data,programme,categorie,onLoadPdf})=>{
                         <td className="end">{numStr(i.budget_anterieur)}</td>
                         <td className="end">{numStr(i.budget_n) }</td>
                         <td>{i.prestataire}</td>
+                        {i.passation.length?
+                            <>
+                                <td>{i.passation.slice(-1).pop().contractualisation}</td>
+                                <td>{i.passation.slice(-1).pop().numeroMarche}</td>
+                                <td>{new Date(i.passation.slice(-1).pop().dateOs).toLocaleDateString()}</td>
+                            </>
+                        :
+                            <><td></td><td></td><td></td></>
+                        }
+
                         {i.suiviTravaux.length?
-                        <>
-                            <td>{new Date(i.suiviTravaux.slice(-1).pop().date).toLocaleDateString()}</td>
-                            <td>{i.suiviTravaux.slice(-1).pop().contractualisation}</td>
-                            <td>{i.suiviTravaux.slice(-1).pop().numeroMarche}</td>
-                            <td>{new Date(i.suiviTravaux.slice(-1).pop().dateOs).toLocaleDateString()}</td>
+                        <>                
                             <td>{i.suiviTravaux.slice(-1).pop().tauxConsommation} %</td>
                             <td>{i.suiviTravaux.slice(-1).pop().tauxAvancement} %</td>
                             <td>{i.suiviTravaux.slice(-1).pop().description}</td>
                             <td>{i.suiviTravaux.slice(-1).pop().proposition}</td>
                         </>
                         :<>
-                            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-                        </>}                       
+                            <td></td><td></td><td></td><td></td>
+                        </>
+                        }                       
                     </tr>
 
                 )}

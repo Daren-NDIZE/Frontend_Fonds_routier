@@ -7,7 +7,7 @@ import PageLoader from "../../component/pageLoader"
 import FormMINHDU from "../../component/formMINHDU"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import { fetchGet,Fetch, fetchFormData } from "../../config/FetchRequest"
-import { numStr, parseTable, totalBudget } from "../../script"
+import { numStr, parseTable, totalBudget ,totalEngagement, focusLine} from "../../script"
 import { Viewer } from '@react-pdf-viewer/core';
 import { Worker } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
@@ -40,6 +40,9 @@ function ProgrammeMINHDU(){
     const navigate=useNavigate()
 
     let searchKey=["region","ville","type_travaux","budget_n","prestataire","ordonnateur"]
+
+    let totalB=totalBudget(data)
+    let totalE=totalEngagement(data)
 
     const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
@@ -419,18 +422,18 @@ function ProgrammeMINHDU(){
                                 <th>Ville</th>
                                 <th className="min-w13">Type de travaux</th>
                                 <th className="min-w1">Troçons / Intitulé</th>
-                                <th>Linéaire_(ml)</th>
-                                <th className="min-w4">Budget total TTC</th>
-                                <th className="min-w4">Budget antérieur</th>
-                                <th className="min-w4">Budget {programme.annee}</th>
+                                <th>Linéaire (ml)</th>
+                                <th className="min-w4">Budget total TTC (FCFA)</th>
+                                <th className="min-w4">Budget antérieur (FCFA)</th>
+                                <th className="min-w4">Budget {programme.annee} (FCFA)</th>
                                 {(programme.statut==="VALIDER" || programme.type==="AJUSTER") &&(
                                 <>
-                                    <th className="min-w4">Engagement</th>
-                                    <th className="min-w4">Reliquat</th>
+                                    <th className="min-w4">Engagement (FCFA)</th>
+                                    <th className="min-w4">Reliquat (FCFA)</th>
                                 </> 
                                 )}
-                                <th className="min-w4">Projection {programme.annee+1}</th>
-                                <th className="min-w4">Projection {programme.annee+2}</th>
+                                <th className="min-w4">Projection {programme.annee+1} (FCFA)</th>
+                                <th className="min-w4">Projection {programme.annee+2} (FCFA)</th>
                                 <th className="min-w3">Prestataire</th>
                                 <th>Ordonnateur</th>
                                 <th className="min-w1">Observation</th>
@@ -450,7 +453,7 @@ function ProgrammeMINHDU(){
                         {programme.statut==="VALIDER" || programme.type==="AJUSTER"?
 
                            data.map((i,j)=>
-                            <tr key={j}>
+                            <tr key={j} onDoubleClick={focusLine}>
                                 <td>{j+1}</td>
                                 <td>{i.region.replaceAll("_","-")}</td>
                                 <td >{i.ville}</td>
@@ -496,7 +499,7 @@ function ProgrammeMINHDU(){
                         :
                         
                         data.map((i,j)=>
-                            <tr key={j}>
+                            <tr key={j} onDoubleClick={focusLine}>
                                 <td>{j+1}</td>
                                 <td>{i.region.replaceAll("_","-")}</td>
                                 <td >{i.ville}</td>
@@ -520,9 +523,19 @@ function ProgrammeMINHDU(){
                                 </td>
                                 )}
                             </tr>
-                        )
-                        
-                        }
+                        )}
+
+                        {(programme.statut==="VALIDER" || programme.type==="AJUSTER")  &&(
+
+                            <tr className="t-line">
+                                <td colSpan="8" > Total</td>
+                                <td className="end">{numStr(totalB)}</td>
+                                <td className="end">{numStr( totalE ,0)}</td>
+                                <td className="end">{numStr(totalB-totalE , 0)}</td>
+                                <td colSpan="8">
+                                </td>
+                            </tr>
+                        )}
 
                         { (programme.statut==="VALIDER" && programme.type!=="REPORT") &&(
                             <tr>

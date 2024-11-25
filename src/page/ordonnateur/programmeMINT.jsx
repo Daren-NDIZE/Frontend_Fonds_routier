@@ -13,7 +13,7 @@ import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams, } from "react-router-dom";
 import { Fetch, fetchFormData, fetchGet } from "../../config/FetchRequest";
-import { numStr,parseTable,totalBudget } from "../../script";
+import { numStr,parseTable,totalBudget, totalEngagement, focusLine } from "../../script";
 import { downLoadExcel } from "jsxtabletoexcel";
 
 function ProgrammeMINT (){
@@ -41,7 +41,8 @@ function ProgrammeMINT (){
     const {id}=useParams()
     const navigate=useNavigate()
 
-
+    let totalB=totalBudget(data)
+    let totalE=totalEngagement(data)
 
     const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
@@ -159,7 +160,11 @@ function ProgrammeMINT (){
                     data[index]=datas
                     index= projet.current.indexOf(projet.current.find(i=>i.id===id))
                     projet.current[index]=datas
-                    setData(data)
+                    if(datas.ordonnateur===categorie){
+                        setData(data)
+                    }else{
+                        setData(data=>data.filter(i=>i.id!==id))
+                    }
                 }
                 window.scroll({top: 0, behavior:"smooth"})
                 notification.current.setNotification(
@@ -475,17 +480,17 @@ function ProgrammeMINT (){
                                 <th className="min-w1">Activités</th>
                                 <th className="min-w1">Objectifs</th>
                                 <th className="min-w12">Allotissement</th>
-                                <th className="min-w4">Budget total TTC</th>
-                                <th className="min-w4">Budget_antérieur</th>
-                                <th className="min-w4">Budget {programme.annee}</th>
+                                <th className="min-w4">Budget total TTC (FCFA)</th>
+                                <th className="min-w4">Budget_antérieur (FCFA)</th>
+                                <th className="min-w4">Budget {programme.annee} (FCFA)</th>
                                 {(programme.statut==="VALIDER"|| programme.type==="AJUSTER")&&(
                                 <>
-                                    <th className="min-w4">Engagement</th>
-                                    <th className="min-w4">Reliquat</th>
+                                    <th className="min-w4">Engagement (FCFA)</th>
+                                    <th className="min-w4">Reliquat (FCFA)</th>
                                 </> 
                                 )}
-                                <th className="min-w4">Projection {programme.annee+1}</th>
-                                <th className="min-w4">Projection {programme.annee+2}</th>
+                                <th className="min-w4">Projection {programme.annee+1} (FCFA)</th>
+                                <th className="min-w4">Projection {programme.annee+2} (FCFA)</th>
                                 <th className="min-w3">Prestataire</th>
                                 <th>Ordonnateur</th>
                                 <th className="min-w1">Observations</th>
@@ -505,7 +510,7 @@ function ProgrammeMINT (){
                         {programme.statut==="VALIDER" || programme.type==="AJUSTER"?
 
                             data.map((i,j)=>
-                                <tr key={j}>
+                                <tr key={j} onDoubleClick={focusLine}>
                                     <td>{j+1}</td>
                                     <td>{i.region.replaceAll("_","-")}</td>
                                     {categorie==="MAIRE" &&(
@@ -555,7 +560,7 @@ function ProgrammeMINT (){
                         
                         :
                             data.map((i,j)=>
-                                <tr key={j}>
+                                <tr key={j} onDoubleClick={focusLine}>
                                     <td>{j+1}</td>
                                     <td>{i.region.replaceAll("_","-")}</td>
                                     {categorie==="MAIRE" &&(
@@ -585,6 +590,18 @@ function ProgrammeMINT (){
                                 </tr>
                             )
                         }
+
+                        {(programme.statut==="VALIDER" || programme.type==="AJUSTER") &&(
+                            <tr className="t-line">
+                                <td colSpan={categorie==="MINT"?"7":"9"} > Total</td>
+                                <td className="end">{numStr(totalB)}</td>
+                                <td className="end">{numStr( totalE ,0)}</td>
+                                <td className="end">{numStr(totalB-totalE , 0)}</td>
+                                <td colSpan="8">
+                                </td>
+                            </tr>
+                        )}
+                        
                         
                         { (programme.statut==="VALIDER" && programme.type!=="REPORT") &&(
                             <tr>

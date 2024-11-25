@@ -5,7 +5,7 @@ import Notification from "../../component/notification"
 import PageLoader from "../../component/pageLoader"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import { Fetch, fetchFormData, fetchGet } from "../../config/FetchRequest"
-import { Rejet, numStr, parseTable, selectValue, totalBudget, totalEngagement} from "../../script"
+import { Rejet, numStr, parseTable, selectValue, totalBudget, totalEngagement, focusLine } from "../../script"
 import ModalBox from "../../component/modalBox"
 import Select from 'react-select'
 import { Viewer } from '@react-pdf-viewer/core';
@@ -829,7 +829,7 @@ const TableMINHDU=({data,programme,report,onLoadPdf,onHandleClick})=>{
                 </thead>
                 <tbody>
                     {data.map((i,j)=>
-                        <tr key={j}>
+                        <tr key={j} onDoubleClick={focusLine} >
                             <td>{j+1}</td>
                             <td>{i.region.replaceAll("_","-")}</td>
                             <td>{i.ville}</td>
@@ -944,7 +944,7 @@ const TableMINT=({data,programme,report,categorie,onLoadPdf,onHandleClick})=>{
                 </thead>
                 <tbody> 
                 {data.map((i,j)=>
-                    <tr key={j}>
+                    <tr key={j} onDoubleClick={focusLine}>
                         <td>{j+1}</td>
                         <td>{i.region.replaceAll("_","-")}</td>
                         {categorie==="MAIRE" &&(
@@ -1065,7 +1065,7 @@ const TableMINTP=({data,programme,report,categorie,onLoadPdf,onHandleClick})=>{
             </thead>
                 <tbody> 
                 {data.map((i,j)=>
-                        <tr key={j}>
+                        <tr key={j} onDoubleClick={focusLine} >
                             <td>{j+1}</td>
                             <td>{i.region.replaceAll("_","-")}</td>
                             {categorie==="COMMUNE" &&(

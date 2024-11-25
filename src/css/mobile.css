@@ -111,6 +111,15 @@
     .form-line button{
         height: 38px;
     }
+    .v-formBox input{
+        width: 400px;
+        height: 50px;
+        font-size: 20px;
+        border: solid 2px rgb(212, 212, 212);
+    }
+    .v-formBox label{
+        font-size: 16px;
+    }
     .modal-content{
         padding: 25px;
     }
@@ -206,5 +215,10 @@
     .chart-title{
         padding-top: 10px;
         font-size: 12px;
+    }
+    .notFound{
+        background-image: url("/public/phone404.png");
+        padding: 30px 20px;
+
     }
 }

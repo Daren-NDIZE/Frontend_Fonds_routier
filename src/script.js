@@ -282,6 +282,20 @@ export function cursorLine(){
 	})
 }
 
+export const focusLine=(e)=>{
+
+	let line=e.currentTarget;
+	let parent=line.parentNode;
+
+	Array.from(parent.children).forEach(i=>{
+		if(i!==line){
+			i.classList.remove("line-focus")
+		}
+	});
+
+	line.classList.toggle("line-focus")
+}
+
 
 export const Rejet=[{label:"La non inscription du projet dans la programmation validée" ,value:"La non inscription du projet dans la programmation validée" },
 				{label:"La non désignation du Fonds Routier comme payeur",value:"La non désignation du Fonds Routier comme payeur" },

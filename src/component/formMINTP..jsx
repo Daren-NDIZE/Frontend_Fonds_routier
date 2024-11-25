@@ -57,16 +57,21 @@ function Form({submit,categorie,annee}){
                     <label>Projets/troçons <span>*</span></label>
                     <textarea name="projet" required></textarea>
                 </div>
-                {categorie==="CENTRALE"&&(
                 <div className="form-line">
                     <label>Catégorie <span>*</span></label>
                     <select name="categorie" required>
                         <option value="">- - - - - - - - - - - - - - - - - - - - - </option>
-                        <option value="PROJET A GESTION CENTRALE">PROJET A GESTION CENTRALE</option>
+                        {categorie==="CENTRALE"&&(
+                            <option value="PROJET A GESTION CENTRALE">PROJET A GESTION CENTRALE</option>
+                        )}
+                        {categorie==="REGIONALE"&&(
                         <option value="PROJET A GESTION REGIONALE">PROJET A GESTION REGIONALE</option>
+                        )}
+                        {categorie==="COMMUNALE"&&(
+                        <option value="PROJET A GESTION COMMUNALE">PROJET A GESTION COMMUNALE</option>
+                        )}
                     </select>
                 </div>
-                )}
 
                 {!categorie &&(
                 <div className="form-line">
@@ -182,16 +187,21 @@ function UpdateForm({submit,categorie,data,annee}){
                     <label>Projets/troçons <span>*</span></label>
                     <textarea name="projet" defaultValue={data.projet} required></textarea>
                 </div>
-                {categorie==="CENTRALE"&&(
                 <div className="form-line">
                     <label>Catégorie <span>*</span></label>
                     <select name="categorie" defaultValue={data.categorie} required>
                         <option value="">- - - - - - - - - - - - - - - - - - - - - </option>
-                        <option value="PROJET A GESTION CENTRALE">PROJET A GESTION CENTRALE</option>
+                        {categorie==="CENTRALE"&&(
+                            <option value="PROJET A GESTION CENTRALE">PROJET A GESTION CENTRALE</option>
+                        )}
+                        {categorie==="REGIONALE"&&(
                         <option value="PROJET A GESTION REGIONALE">PROJET A GESTION REGIONALE</option>
+                        )}
+                        {categorie==="COMMUNALE"&&(
+                        <option value="PROJET A GESTION COMMUNALE">PROJET A GESTION COMMUNALE</option>
+                        )}
                     </select>
                 </div>
-                )}
                 
                 <div className="form-line">
                     <label>Type de travaux <span>*</span></label>

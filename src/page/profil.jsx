@@ -179,7 +179,7 @@ function Profil({header}){
                     <hr/>
                     <div className="profil-line">
                         <div>Role :</div>
-                        <div>{user.role.roleName}</div>
+                        <div>{user.role.roleName}{user.administration!=="FR" &&  " "+user.administration}</div>
                     </div>
                 </div>
             </div>
